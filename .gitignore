@@ -30,14 +30,17 @@
 *.exe
 *.out
 *.app
+terraingen
 
-#
+# CMake and build system
+*cmake
+CMakeFiles
+CMakeCache.txt
 .ninja_deps
 .ninja_log
-.vscode
 build
 build.ninja
-cmake_install.cmake
-CMakeCache.txt
-terraingen
-CMakeFiles
+
+.vscode
+DartConfiguration.tcl
+Testing

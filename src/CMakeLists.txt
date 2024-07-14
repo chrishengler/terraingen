@@ -1,0 +1,1 @@
+add_library(terrainlib terrain/terrain.cpp)
