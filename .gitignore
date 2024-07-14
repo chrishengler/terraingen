@@ -30,9 +30,11 @@
 *.exe
 *.out
 *.app
-.vscode/external_libs
+
+#
 .ninja_deps
 .ninja_log
+.vscode
 build.ninja
 cmake_install.cmake
 CMakeCache.txt
