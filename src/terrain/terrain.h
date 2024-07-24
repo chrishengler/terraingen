@@ -1,14 +1,14 @@
 #include <vector>
 
-typedef std::vector<std::vector<size_t>> Heightmap;
+typedef std::vector<std::vector<unsigned int>> Heightmap;
 
 class Terrain{
     private:
         Heightmap heightmap;
-        const size_t size_x, size_y;
+        const unsigned int size_x, size_y;
 
     public:
-        Terrain(size_t x, size_t y);
+        Terrain(unsigned int x, unsigned int y);
         Terrain(Heightmap initialize);
         Heightmap get_terrain();
         size_t get_size_x(){return size_x;}
