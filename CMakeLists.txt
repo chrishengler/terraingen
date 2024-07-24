@@ -16,9 +16,9 @@ target_link_libraries(terraingen ${wxWidgets_LIBRARIES} ${PNG_LIBRARY} terrainli
 
 find_package(Catch2 3 REQUIRED)
 # These tests can use the Catch2-provided main
-add_executable(tests test/test.cpp)
+add_executable(tests test/terrain.cpp test/generator.cpp)
 target_include_directories(tests PUBLIC src)
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain terrainlib)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain terrainlib generationlib)
 include(Catch)
 include(CTest)
 catch_discover_tests(tests)
