@@ -8,7 +8,7 @@ TEST_CASE("GENERATOR")
 {
     SECTION("FLAT TERRAIN GENERATOR")
     {
-        FlatTerrainGenerator ftg = FlatTerrainGenerator(0);
+        FlatTerrainGenerator ftg(0);
         Heightmap result = ftg.generate(2,3);
 
         REQUIRE(result.size() == 2);
