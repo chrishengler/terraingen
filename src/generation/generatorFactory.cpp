@@ -12,4 +12,5 @@ Generator GeneratorFactory::createGenerator(GeneratorType type){
         case GeneratorType::PERLIN:
             return PerlinTerrainGenerator(4);
     }
+
 }
