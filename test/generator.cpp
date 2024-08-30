@@ -21,4 +21,9 @@ TEST_CASE("GENERATOR")
             }
         }
     }
+
+    SECTION("PERLIN GENERATOR")
+    {
+        
+    }
 }

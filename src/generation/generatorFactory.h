@@ -1,6 +1,8 @@
+#pragma once
 #include "generator.h"
 #include "generatorTypes.h"
 
 class GeneratorFactory{
-    Generator createGenerator(GeneratorType type);
+    public:
+        static Generator createGenerator(GeneratorType type);
 };

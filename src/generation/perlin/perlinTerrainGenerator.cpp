@@ -1,10 +1,10 @@
-#include "flatTerrainGenerator.h"
+#include "perlinTerrainGenerator.h"
 
-FlatTerrainGenerator::FlatTerrainGenerator(unsigned int seed)
-    : Generator(seed, GeneratorType::FLAT)
+PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed)
+    : Generator(seed, GeneratorType::PERLIN)
 {}
 
-Heightmap FlatTerrainGenerator::generate(unsigned int size_x, unsigned int size_y){
+Heightmap PerlinTerrainGenerator::generate(unsigned int size_x, unsigned int size_y){
     Heightmap heightmap;   
     unsigned int height = 4; //standard random number
     for(int x=0; x<size_x; x++){
