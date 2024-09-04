@@ -1,6 +1,4 @@
-#include <vector>
-
-typedef std::vector<std::vector<unsigned int>> Heightmap;
+#include "data_types.h"
 
 class Terrain{
     private:

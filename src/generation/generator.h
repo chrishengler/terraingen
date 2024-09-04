@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 
+#include "data_types.h"
 #include "generatorTypes.h"
 
 typedef std::vector<std::vector<unsigned int>> Heightmap;
@@ -8,7 +9,7 @@ typedef std::vector<std::vector<unsigned int>> Heightmap;
 class Generator{
     public:
         Generator(unsigned int seed, GeneratorType type);
-        virtual Heightmap generate(unsigned int size_x, unsigned int size_y);
+        virtual Heightmap generate(Vector2<unsigned int> dimensions);
         GeneratorType getGeneratorType(){ return type; }
 
     private:

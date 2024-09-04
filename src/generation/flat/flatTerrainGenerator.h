@@ -4,5 +4,5 @@
 class FlatTerrainGenerator : public Generator{
     public:
         FlatTerrainGenerator(unsigned int seed);
-        Heightmap generate(unsigned int size_x, unsigned int size_y) override;
+        Heightmap generate(Vector2<unsigned int> dimensions) override;
 };
