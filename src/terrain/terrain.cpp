@@ -10,8 +10,6 @@ Terrain::Terrain(unsigned int x, unsigned int y)
     {
         heightmap[i] = std::vector<unsigned int>(size_y);
     }
-
-    std::cout << heightmap.capacity() << std::endl;
 }
 
 Terrain::Terrain(Heightmap _heightmap):

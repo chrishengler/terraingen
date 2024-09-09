@@ -1,5 +1,3 @@
-#include <iomanip>
-#include <iostream>
 #include "catch2/catch_test_macros.hpp"
 
 #include "terrain/terrain.h"
@@ -36,10 +34,9 @@ TEST_CASE("PERLIN GENERATOR")
         REQUIRE(result.at(0).size() == expected_size.y);
         for(int y = 0; y<expected_size.y; y++)
         {
-            double abs_noise_value = std::abs((double)result.at(x).at(y));
-            // REQUIRE(abs_noise_value <= max_abs_value);
-            std::cout << std::setw(3) << result.at(x).at(y) << ",";
+            auto val = result.at(x).at(y);
+            REQUIRE(val >= 0);
+            REQUIRE(val < 256);
         }
-        std::cout << std::endl;
     }
 }

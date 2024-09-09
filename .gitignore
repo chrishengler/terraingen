@@ -44,3 +44,4 @@ build.ninja
 .vscode
 DartConfiguration.tcl
 Testing
+.DS_Store
