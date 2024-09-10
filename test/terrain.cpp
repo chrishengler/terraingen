@@ -3,7 +3,7 @@
 
 #include "terrain/terrain.h"
 
-TEST_CASE("TERRAIN")
+TEST_CASE("Terrain")
 {
     SECTION("Constructing by size")
     {
@@ -19,7 +19,7 @@ TEST_CASE("TERRAIN")
         }
     }
 
-    SECTION("CONSTRUCTING FROM DATA")
+    SECTION("Constructing from data")
     {
         std::vector<unsigned int> row_1{0, 1};
         std::vector<unsigned int> row_2{1, 2};

@@ -4,7 +4,7 @@
 #include "flat/flatTerrainGenerator.h"
 #include "perlin/perlinTerrainGenerator.h"
 
-TEST_CASE("FLAT TERRAIN GENERATOR")
+TEST_CASE("Flat terrain generator")
 {
     FlatTerrainGenerator ftg(0);
     Heightmap result = ftg.generate(Vector2<unsigned int>(2, 3));
@@ -20,7 +20,7 @@ TEST_CASE("FLAT TERRAIN GENERATOR")
     }
 }
 
-TEST_CASE("PERLIN GENERATOR")
+TEST_CASE("Perlin generator")
 {
     Vector2<unsigned int> cell_sizes(16,16);
     PerlinTerrainGenerator ptg(0, cell_sizes);
