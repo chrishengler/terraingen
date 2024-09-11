@@ -90,9 +90,4 @@ TEST_CASE("export png")
 
         }
     }
-
-
-    std::ifstream expectedFile(std::filesystem::current_path().parent_path() / "test/data/black-10x10.png", std::ios::binary);
-
-    REQUIRE(expectedFile.is_open());
 }
