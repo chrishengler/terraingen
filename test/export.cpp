@@ -21,12 +21,13 @@ std::filesystem::path get_temp_filepath(const std::string &extension)
         return filepath;
 }
 
+
 TEST_CASE("export png")
 {
     SECTION("image exporter writes a file")
     {
         Heightmap testHeightmap;
-        testHeightmap.push_back(std::vector<unsigned int>(1));
+        testHeightmap.push_back(std::vector<double>(1));
 
         ImageExporter imgExporter;
         auto filepath = get_temp_filepath("png");
@@ -41,7 +42,7 @@ TEST_CASE("export png")
             Heightmap testHeightmap;
             for(int x=0; x<10; x++)
             {
-                auto row = std::vector<unsigned int>(10);
+                auto row = std::vector<double>(10);
                 testHeightmap.push_back(row);
             }
 
@@ -65,7 +66,7 @@ TEST_CASE("export png")
             Heightmap testHeightmap;
             for(int x=0; x<10; x++)
             {
-                auto row = std::vector<unsigned int>(10);
+                auto row = std::vector<double>(10);
                 for(int y=0; y<10; y++)
                 {
                     row[y]=1;
@@ -78,7 +79,7 @@ TEST_CASE("export png")
             imgExporter.saveToFile(testHeightmap, filepath);
             REQUIRE(std::filesystem::exists(filepath));
 
-            auto exampleFilepath = std::filesystem::current_path() / "data/black-10x10.png";
+            auto exampleFilepath = std::filesystem::current_path() / "data/white-10x10.png";
             REQUIRE(std::filesystem::exists(exampleFilepath));
 
             boost::gil::gray16_image_t exampleImage;

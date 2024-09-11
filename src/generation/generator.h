@@ -4,8 +4,6 @@
 #include "data_types.h"
 #include "generatorTypes.h"
 
-typedef std::vector<std::vector<unsigned int>> Heightmap;
-
 class Generator{
     public:
         Generator(unsigned int seed, GeneratorType type);

@@ -21,9 +21,9 @@ TEST_CASE("Terrain")
 
     SECTION("Constructing from data")
     {
-        std::vector<unsigned int> row_1{0, 1};
-        std::vector<unsigned int> row_2{1, 2};
-        std::vector<std::vector<unsigned int>> heightmap_initial_data = {row_1, row_2};
+        std::vector<double> row_1{0, 0.5};
+        std::vector<double> row_2{0.5, 1};
+        std::vector<std::vector<double>> heightmap_initial_data = {row_1, row_2};
 
         Terrain terrain = Terrain(heightmap_initial_data);
         Heightmap heightmap = terrain.get_terrain();
@@ -34,8 +34,8 @@ TEST_CASE("Terrain")
             REQUIRE(row.capacity() == 2);
         }
         REQUIRE(heightmap.at(0).at(0) == 0);
-        REQUIRE(heightmap.at(0).at(1) == 1);
-        REQUIRE(heightmap.at(1).at(0) == 1);
-        REQUIRE(heightmap.at(1).at(1) == 2);
+        REQUIRE(heightmap.at(0).at(1) == 0.5);
+        REQUIRE(heightmap.at(1).at(0) == 0.5);
+        REQUIRE(heightmap.at(1).at(1) == 1);
     }
 }

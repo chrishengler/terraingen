@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-typedef std::vector<std::vector<unsigned int>> Heightmap;
+typedef std::vector<std::vector<double>> Heightmap;
 
 template<typename T>
 struct Vector2{

@@ -19,7 +19,7 @@ PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<
 Heightmap PerlinTerrainGenerator::generate(Vector2<unsigned int> dimensions){
     Heightmap heightmap;   
     for(int x=0; x<dimensions.x; x++){
-        std::vector<unsigned int> row = std::vector<unsigned int>();
+        std::vector<double> row;
         for(int y=0; y<dimensions.y; y++){
             row.push_back(128 * perlin(Vector2<int>(x,y)) + 128);
         }
