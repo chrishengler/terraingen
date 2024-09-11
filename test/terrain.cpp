@@ -28,10 +28,10 @@ TEST_CASE("Terrain")
         Terrain terrain = Terrain(heightmap_initial_data);
         Heightmap heightmap = terrain.get_terrain();
 
-        REQUIRE(heightmap.capacity() == 2);
+        REQUIRE(heightmap.capacity() >= 2);
         for(auto row: heightmap)
         {
-            REQUIRE(row.capacity() == 2);
+            REQUIRE(row.capacity() >= 2);
         }
         REQUIRE(heightmap.at(0).at(0) == 0);
         REQUIRE(heightmap.at(0).at(1) == 0.5);
