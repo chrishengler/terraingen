@@ -10,12 +10,14 @@
 #include <boost/gil/io/read_and_convert_image.hpp>
 
 #include "imageExporter.h"
+namespace bg = boost::gil;
+namespace fs = std::filesystem;
 
-std::filesystem::path get_temp_filepath(const std::string &extension)
+fs::path get_temp_filepath(const std::string &extension)
 {
         std::stringstream filename("");
         filename << "terraingen-test-export-" << std::rand() << "." << extension;
-        auto filepath = std::filesystem::path(std::filesystem::temp_directory_path() / filename.str());
+        auto filepath = fs::path(fs::temp_directory_path() / filename.str());
 
         WARN(filepath);
         return filepath;
@@ -32,7 +34,7 @@ TEST_CASE("export png")
         ImageExporter imgExporter;
         auto filepath = get_temp_filepath("png");
         imgExporter.saveToFile(testHeightmap, filepath);
-        REQUIRE(std::filesystem::exists(filepath));
+        REQUIRE(fs::exists(filepath));
     }
 
     SECTION("exported image has correct data")
@@ -49,15 +51,15 @@ TEST_CASE("export png")
             ImageExporter imgExporter;
             auto filepath = get_temp_filepath("png");
             imgExporter.saveToFile(testHeightmap, filepath);
-            REQUIRE(std::filesystem::exists(filepath));
+            REQUIRE(fs::exists(filepath));
 
-            auto exampleFilepath = std::filesystem::current_path() / "data/black-10x10.png";
-            REQUIRE(std::filesystem::exists(exampleFilepath));
+            auto exampleFilepath = fs::current_path() / "data/black-10x10.png";
+            REQUIRE(fs::exists(exampleFilepath));
 
-            boost::gil::gray16_image_t exampleImage;
-            boost::gil::read_and_convert_image(exampleFilepath, exampleImage, boost::gil::png_tag());
-            boost::gil::gray16_image_t writtenImage;
-            boost::gil::read_and_convert_image(filepath, writtenImage, boost::gil::png_tag());
+            bg::gray16_image_t exampleImage;
+            bg::read_and_convert_image(exampleFilepath, exampleImage, bg::png_tag());
+            bg::gray16_image_t writtenImage;
+            bg::read_and_convert_image(filepath, writtenImage, bg::png_tag());
             REQUIRE(exampleImage == writtenImage);
         }
 
@@ -77,15 +79,15 @@ TEST_CASE("export png")
             ImageExporter imgExporter;
             auto filepath = get_temp_filepath("png");
             imgExporter.saveToFile(testHeightmap, filepath);
-            REQUIRE(std::filesystem::exists(filepath));
+            REQUIRE(fs::exists(filepath));
 
-            auto exampleFilepath = std::filesystem::current_path() / "data/white-10x10.png";
-            REQUIRE(std::filesystem::exists(exampleFilepath));
+            auto exampleFilepath = fs::current_path() / "data/white-10x10.png";
+            REQUIRE(fs::exists(exampleFilepath));
 
-            boost::gil::gray16_image_t exampleImage;
-            boost::gil::read_and_convert_image(exampleFilepath, exampleImage, boost::gil::png_tag());
-            boost::gil::gray16_image_t writtenImage;
-            boost::gil::read_and_convert_image(filepath, writtenImage, boost::gil::png_tag());
+            bg::gray16_image_t exampleImage;
+            bg::read_and_convert_image(exampleFilepath, exampleImage, bg::png_tag());
+            bg::gray16_image_t writtenImage;
+            bg::read_and_convert_image(filepath, writtenImage, bg::png_tag());
             REQUIRE(exampleImage == writtenImage);
 
         }
