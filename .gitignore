@@ -45,3 +45,4 @@ build.ninja
 DartConfiguration.tcl
 Testing
 .DS_Store
+debug

@@ -8,7 +8,7 @@ class Terrain{
     public:
         Terrain(unsigned int x, unsigned int y);
         Terrain(Heightmap initialize);
-        Heightmap get_terrain();
+        Heightmap get_terrain(){return heightmap;}
         size_t get_size_x(){return size_x;}
         size_t get_size_y(){return size_y;}
 };

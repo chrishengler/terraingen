@@ -13,15 +13,19 @@ Terrain::Terrain(unsigned int x, unsigned int y)
 }
 
 Terrain::Terrain(Heightmap _heightmap):
-size_x(_heightmap.capacity()), size_y(_heightmap.at(0).capacity())
+size_x(_heightmap.size()), size_y(_heightmap.at(0).size())
 {
     heightmap = std::vector<std::vector<double>>(size_x);
+    for(int x=1; x<_heightmap.size(); x++)
+    {
+        if(_heightmap.at(x).size() != size_y)
+        {
+            // TODO: specific exception
+            throw std::exception();
+        }
+    }
     for(int i=0; i<size_x; i++)
     {
         heightmap[i] = _heightmap.at(i);
     }
-}
-
-Heightmap Terrain::get_terrain(){
-    return heightmap;
 }
