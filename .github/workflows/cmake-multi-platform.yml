@@ -45,13 +45,13 @@ jobs:
             cpp_compiler: clang++
         exclude:
           - os: windows-latest
-            compiler: gcc
+            c_compiler: gcc
           - os: windows-latest
-            compiler: clang
+            c_compiler: clang
           - os: ubuntu-latest
-            compiler: cl
+            c_compiler: cl
           - os: macos-latest
-            compiler: cl
+            c_compiler: cl
 
     steps:
     - uses: actions/checkout@v4
