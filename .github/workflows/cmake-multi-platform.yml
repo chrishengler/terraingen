@@ -69,6 +69,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         brew install libpng
+        brew cleanup libpng
 
     # Install libpng on Windows
     - name: Install libpng on Windows
