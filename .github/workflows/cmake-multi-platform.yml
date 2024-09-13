@@ -25,16 +25,24 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         build_type: [Release]
-        compiler: [gccc clang, cl]
+        c_compiler: [gcc, clang, cl]
+        cpp_compiler: [g++, clang++, cl]
         include:
           - os: windows-latest
-            compiler: cl
+            c_compiler: cl
+            cpp_compiler: cl
           - os: ubuntu-latest
-            compiler: gcc
+            c_compiler: gcc
+            cpp_compiler: g++
           - os: ubuntu-latest
-            compiler: clang
+            c_compiler: clang
+            cpp_compiler: clang++
           - os: macos-latest
-            compiler: clang
+            c_compiler: gcc
+            cpp_compiler: g++
+          - os: macos-latest
+            c_compiler: clang
+            cpp_compiler: clang++
         exclude:
           - os: windows-latest
             compiler: gcc
@@ -48,17 +56,25 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install libpng
+    # Install libpng on Ubuntu
+    - name: Install libpng on Ubuntu
+      if: runner.os == 'Linux'
       run: |
-        if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-          sudo apt-get update
-          sudo apt-get install -y libpng-dev
-        elif [ ${{ matrix.os }} == 'macos-latest' ]; then
-          brew install libpng
-        elif [ ${{ matrix.os }} == 'windows-latest' ]; then
-          choco install vcpkg -y
-          vcpkg install libpng
-        fi
+        sudo apt-get update
+        sudo apt-get install -y libpng-dev
+
+    # Install libpng on macOS
+    - name: Install libpng on macOS
+      if: runner.os == 'macOS'
+      run: |
+        brew install libpng
+
+    # Install libpng on Windows
+    - name: Install libpng on Windows
+      if: runner.os == 'Windows'
+      run: |
+        choco install vcpkg -y
+        vcpkg install libpng
 
     - name: install Boost
       uses: MarkusJx/install-boost@v2.4.5
