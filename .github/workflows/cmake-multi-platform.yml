@@ -70,6 +70,18 @@ jobs:
         sudo cmake --build build/ --target install
         cd ..
 
+    - name: Install libpng
+      run: |
+        if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+          sudo apt-get update
+          sudo apt-get install -y libpng-dev
+        elif [ ${{ matrix.os }} == 'macos-latest' ]; then
+          brew install libpng
+        elif [ ${{ matrix.os }} == 'windows-latest' ]; then
+          choco install vcpkg -y
+          vcpkg install libpng
+        fi
+
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
