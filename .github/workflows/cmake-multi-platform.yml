@@ -70,6 +70,7 @@ jobs:
       run: |
         brew install libpng
         brew cleanup libpng
+        brew list libpng
 
     # Install libpng on Windows
     - name: Install libpng on Windows
