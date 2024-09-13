@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include <vector>
 
 typedef std::vector<std::vector<double>> Heightmap;
