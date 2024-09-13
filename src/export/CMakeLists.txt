@@ -1,5 +1,5 @@
 add_library(exportlib imageExporter.cpp)
 find_package(PNG REQUIRED)
 find_package(Boost CONFIG REQUIRED)
-target_include_directories(exportlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PARENT_DIRECTORY}../ ${Boost_INCLUDE_DIRS})
+target_include_directories(exportlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PARENT_DIRECTORY}../ ${Boost_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS})
 target_link_libraries(exportlib ${PNG_LIBRARIES})
