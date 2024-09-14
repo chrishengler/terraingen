@@ -13,6 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install PkgConfig on Windows
+      run: |
+        choco install pkgconfiglite
+
     # Install libpng on Windows
     - name: Install libpng on Windows
       run: |
