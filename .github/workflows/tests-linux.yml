@@ -1,6 +1,4 @@
-# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
-# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
-name: CMake on multiple platforms
+name: Tests Linux
 
 on:
   push:
@@ -10,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
@@ -23,61 +21,25 @@ jobs:
       # 4. <MacOS, Release, latest>
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        # os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [ubuntu-latest, macos-latest]
         build_type: [Release]
-        # cpp_compiler: [g++, clang++, cl]
+        # cpp_compiler: [g++, clang++]
         cpp_compiler: [g++]
         include:
-          # - os: windows-latest
-          #   c_compiler: cl
-          #   cpp_compiler: cl
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
           # - os: ubuntu-latest
           #   c_compiler: clang
           #   cpp_compiler: clang++
-          - os: macos-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-          # - os: macos-latest
-          #   c_compiler: clang
-          #   cpp_compiler: clang++
-        # exclude:
-        #   - os: windows-latest
-        #     cpp_compiler: g++
-        #   - os: windows-latest
-        #     cpp_compiler: clang++
-        #   - os: ubuntu-latest
-        #     cpp_compiler: cl
-        #   - os: macos-latest
-        #     cpp_compiler: cl
 
     steps:
     - uses: actions/checkout@v4
 
     # Install libpng on Ubuntu
     - name: Install libpng on Ubuntu
-      if: runner.os == 'Linux'
       run: |
         sudo apt-get update
         sudo apt-get install -y libpng-dev
-
-    # Install libpng on macOS
-    - name: Install libpng on macOS
-      if: runner.os == 'macOS'
-      run: |
-        brew install libpng
-        brew cleanup libpng
-        brew list libpng
-
-    # Install libpng on Windows
-    - name: Install libpng on Windows
-      if: runner.os == 'Windows'
-      run: |
-        choco install vcpkg -y
-        vcpkg install libpng
 
     - name: install Boost
       uses: MarkusJx/install-boost@v2.4.5
