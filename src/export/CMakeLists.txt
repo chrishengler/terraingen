@@ -1,5 +1,6 @@
 add_library(exportlib imageExporter.cpp)
-find_package(PNG 1.6 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(PNG libpng16 REQUIRED)
 find_package(Boost CONFIG REQUIRED)
 target_include_directories(exportlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PARENT_DIRECTORY}../ ${PNG_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 include(CMakePrintHelpers)
