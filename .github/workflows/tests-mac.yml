@@ -72,6 +72,8 @@ jobs:
       env:
         Boost_DIR: ${{steps.install-boost.outputs.BOOST_ROOT}}
       run: |
+        LIBPNG_PREFIX=$(brew --prefix libpng)
+        PKG_CONFIG_PATH=$LIBPNG_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
         cmake -B ${{ steps.strings.outputs.build-output-dir }} \
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
