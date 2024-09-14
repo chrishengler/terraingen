@@ -38,7 +38,6 @@ jobs:
     # Install libpng on macOS
     - name: Install libpng on macOS
       run: |
-        brew remove libpng@1.4
         brew install libpng
         brew list libpng
 
