@@ -7,7 +7,7 @@
 class Generator{
     public:
         Generator(unsigned int seed, GeneratorType type);
-        virtual Heightmap generate(Vector2<unsigned int> dimensions);
+        virtual Heightmap generate(Vector2<int> dimensions);
         GeneratorType getGeneratorType(){ return type; }
 
     private:

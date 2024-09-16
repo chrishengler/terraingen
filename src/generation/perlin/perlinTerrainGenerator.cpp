@@ -5,7 +5,7 @@
 #include <vector>
 #include "perlinTerrainGenerator.h"
 
-PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<unsigned int> &cell_sizes)
+PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<int> &cell_sizes)
     : Generator(seed, GeneratorType::PERLIN), cell_sizes(cell_sizes)
 {
     permutations.reserve(256);
@@ -16,7 +16,7 @@ PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<
     std::shuffle(permutations.begin(), permutations.end(), std::mt19937(seed));
 }
 
-Heightmap PerlinTerrainGenerator::generate(Vector2<unsigned int> dimensions){
+Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
     Heightmap heightmap;   
     for(int x=0; x<dimensions.x; x++){
         std::vector<double> row;

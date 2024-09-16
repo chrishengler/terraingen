@@ -50,7 +50,7 @@ TEST_CASE("export png")
 
             ImageExporter imgExporter;
             auto filepath = get_temp_filepath("png");
-            imgExporter.saveToFile(testHeightmap, filepath);
+            imgExporter.saveToFile(testHeightmap, filepath.string());
             REQUIRE(fs::exists(filepath));
 
             auto exampleFilepath = fs::current_path() / "data/black-10x10.png";
@@ -78,7 +78,7 @@ TEST_CASE("export png")
 
             ImageExporter imgExporter;
             auto filepath = get_temp_filepath("png");
-            imgExporter.saveToFile(testHeightmap, filepath);
+            imgExporter.saveToFile(testHeightmap, filepath.string());
             REQUIRE(fs::exists(filepath));
 
             auto exampleFilepath = fs::current_path() / "data/white-10x10.png";

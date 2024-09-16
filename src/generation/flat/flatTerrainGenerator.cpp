@@ -4,9 +4,9 @@ FlatTerrainGenerator::FlatTerrainGenerator(unsigned int seed)
     : Generator(seed, GeneratorType::FLAT)
 {}
 
-Heightmap FlatTerrainGenerator::generate(Vector2<unsigned int> dimensions){
+Heightmap FlatTerrainGenerator::generate(Vector2<int> dimensions){
     Heightmap heightmap;   
-    unsigned int height = 4; //standard random number
+    int height = 4; //standard random number
     for(int x=0; x<dimensions.x; x++){
         std::vector<double> row = std::vector<double>();
         for(int y=0; y<dimensions.y; y++){

@@ -7,7 +7,7 @@
 TEST_CASE("Flat terrain generator")
 {
     FlatTerrainGenerator ftg(0);
-    Heightmap result = ftg.generate(Vector2<unsigned int>(2, 3));
+    Heightmap result = ftg.generate(Vector2<int>(2, 3));
 
     REQUIRE(result.size() == 2);
     for (int x = 0; x < 2; x++)
@@ -22,9 +22,9 @@ TEST_CASE("Flat terrain generator")
 
 TEST_CASE("Perlin generator")
 {
-    Vector2<unsigned int> cell_sizes(16,16);
+    Vector2<int> cell_sizes(16,16);
     PerlinTerrainGenerator ptg(0, cell_sizes);
-    Vector2<unsigned int> expected_size(64,64);
+    Vector2<int> expected_size(64,64);
     Heightmap result = ptg.generate(expected_size);
 
     double max_abs_value = std::sqrt(2);
