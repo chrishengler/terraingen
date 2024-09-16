@@ -57,9 +57,9 @@ TEST_CASE("export png")
             REQUIRE(fs::exists(exampleFilepath));
 
             bg::gray16_image_t exampleImage;
-            bg::read_and_convert_image(exampleFilepath, exampleImage, bg::png_tag());
+            bg::read_and_convert_image(exampleFilepath.string(), exampleImage, bg::png_tag());
             bg::gray16_image_t writtenImage;
-            bg::read_and_convert_image(filepath, writtenImage, bg::png_tag());
+            bg::read_and_convert_image(filepath.string(), writtenImage, bg::png_tag());
             REQUIRE(exampleImage == writtenImage);
         }
 
@@ -85,9 +85,9 @@ TEST_CASE("export png")
             REQUIRE(fs::exists(exampleFilepath));
 
             bg::gray16_image_t exampleImage;
-            bg::read_and_convert_image(exampleFilepath, exampleImage, bg::png_tag());
+            bg::read_and_convert_image(exampleFilepath.string(), exampleImage, bg::png_tag());
             bg::gray16_image_t writtenImage;
-            bg::read_and_convert_image(filepath, writtenImage, bg::png_tag());
+            bg::read_and_convert_image(filepath.string(), writtenImage, bg::png_tag());
             REQUIRE(exampleImage == writtenImage);
 
         }

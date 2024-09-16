@@ -1,5 +1,6 @@
 add_library(exportlib imageExporter.cpp)
 if (WIN32)
+    # On Windows, manually specify libpng paths or use vcpkg for dependency management
     find_package(PNG REQUIRED)
 else ()
     find_package(PkgConfig REQUIRED)
