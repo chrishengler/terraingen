@@ -14,31 +14,22 @@ jobs:
     - uses: actions/checkout@v4
 
     # Install libpng on Windows
-    - name: Install libpng on Windows
+    - name: Install dependencies with vcpkg
       run: |
         choco install vcpkg -y
         vcpkg integrate install
-        vcpkg install libpng zlib
+        vcpkg install libpng zlib catch2 boost
 
-    - name: install Boost
-      uses: MarkusJx/install-boost@v2.4.5
-      id: install-boost
-      with:
-          # REQUIRED: Specify the required boost version
-          # A list of supported versions can be found here:
-          # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
-          boost_version: 1.86.0
-          toolset: msvc
-          platform_version: 2022
-
-    - name: install Catch2
-      id: install-catch
-      run: |
-        git clone https://github.com/catchorg/Catch2.git
-        cd Catch2
-        cmake -Bbuild -S. -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
-        cmake --build build/ --target install
-        cd ..
+    # - name: install Boost
+    #   uses: MarkusJx/install-boost@v2.4.5
+    #   id: install-boost
+    #   with:
+    #       # REQUIRED: Specify the required boost version
+    #       # A list of supported versions can be found here:
+    #       # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
+    #       boost_version: 1.86.0
+    #       toolset: msvc
+    #       platform_version: 2022
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
