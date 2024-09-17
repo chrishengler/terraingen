@@ -33,7 +33,7 @@ TEST_CASE("export png")
 
         ImageExporter imgExporter;
         auto filepath = get_temp_filepath("png");
-        imgExporter.saveToFile(testHeightmap, filepath);
+        imgExporter.saveToFile(testHeightmap, filepath.string());
         REQUIRE(fs::exists(filepath));
     }
 
