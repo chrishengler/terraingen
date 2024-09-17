@@ -25,7 +25,7 @@ void ImageExporter::saveToFile(const Heightmap &terrain, const std::string &file
     {
         for(auto y=0; y<terrain[x].size(); y++)
         {
-            image_view(x,y) = bg::gray16_pixel_t(terrain[x][y] * max_pixel_value);
+            image_view(x,y) = bg::gray16_pixel_t((uint16_t)(terrain[x][y] * max_pixel_value));
         }
     }
 
