@@ -2,9 +2,14 @@
 
 #include <iostream>
 
-Terrain::Terrain(unsigned int x, unsigned int y)
+Terrain::Terrain(int x, int y)
     : size_x(x), size_y(y)
 {
+    if(size_x <= 0 || size_y <= 0)
+    {
+        // TODO: specific exception
+        throw std::exception();
+    }
     heightmap = std::vector<std::vector<double>>(size_x);
     for(int i=0; i<size_x; i++)
     {
