@@ -5,6 +5,9 @@
 #include <vector>
 #include "perlinTerrainGenerator.h"
 
+const double OFFSET = 1;
+const double SCALE = 0.5;
+
 PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<int> &cell_sizes)
     : Generator(seed, GeneratorType::PERLIN), cell_sizes(cell_sizes)
 {
@@ -18,20 +21,32 @@ PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<
 
 Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
     Heightmap heightmap;   
+    double max=0.5;
+    double min=0.5;
     for(int x=0; x<dimensions.x; x++){
         std::vector<double> row;
         for(int y=0; y<dimensions.y; y++){
-            row.push_back(128 * perlin(Vector2<int>(x,y)) + 128);
+            auto result = perlin(Vector2<int>(x,y));
+            if(result > max)
+            {
+                max = result;
+            }
+            if(result < min)
+            {
+                min = result;
+            }
+            row.push_back(perlin(Vector2<int>(x,y)));
         }
         heightmap.push_back(row);
     }
+    std::cout << "max: " << max << "\nmin: " << min << std::endl;
     return heightmap;
 }
 
 double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates)
 {
-    double reduced_x = (double)(coordinates.x % 256)/ cell_sizes.x;
-    double reduced_y = (double)(coordinates.y % 256)/ cell_sizes.y;
+    double reduced_x = (double)(coordinates.x) / cell_sizes.x;
+    double reduced_y = (double)(coordinates.y) / cell_sizes.y;
     int const floor_x = std::floor(reduced_x);
     int const floor_y = std::floor(reduced_y);
 
@@ -41,27 +56,42 @@ double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates)
     double x_fraction = fade(x);
     double y_fraction = fade(y);
 
-    double const bottom_left = gradient(permutations[permutations[floor_x] + floor_y], {x, y});
-    double const bottom_right = gradient(permutations[permutations[floor_x + 1] + floor_y], {x-1, y});
-    double const top_left = gradient(permutations[permutations[floor_x] + floor_y + 1], {x, y-1});
-    double const top_right = gradient(permutations[permutations[floor_x + 1] + floor_y + 1], {x-1, y-1});
+    double const bottom_left = gradient(retrievePermutation(retrievePermutation(floor_x) + floor_y), {x, y});
+    double const bottom_right = gradient(retrievePermutation(retrievePermutation((floor_x + 1)) + floor_y), {x-1, y});
+    double const top_left = gradient(retrievePermutation(retrievePermutation(floor_x) + floor_y + 1), {x, y-1});
+    double const top_right = gradient(retrievePermutation(retrievePermutation((floor_x + 1)) + floor_y + 1), {x-1, y-1});
 
     double bottom_value = std::lerp(bottom_left, bottom_right, x_fraction);
     double top_value = std::lerp(top_left, top_right, x_fraction);
-    return std::lerp(bottom_value, top_value, y_fraction);
+    auto raw_result = std::lerp(bottom_value, top_value, y_fraction);
+    return (raw_result + OFFSET) * SCALE;
 }
 
 double PerlinTerrainGenerator::fade(double t)
 {
+    if(t<0 || t>1){
+        std::cout << "t" << t <<std::endl;
+    }
     return std::pow(t, 3) * (t * (t * 6 - 15) + 10);
 }
 
 double PerlinTerrainGenerator::gradient(int hash, const Vector2<double> &coordinates)
 {
-      int h = hash&7;                      
-      
-      double u = h<4 ? coordinates.x : coordinates.y;
-      double v = h < 4 ? coordinates.y : h == 12 || h == 14 ? coordinates.x
-                                                            : 0;
-      return ((h&1) == 0 ? u : -u) + ((h&2) == 0 ? v : -v);
+    switch (hash & 7)
+    {
+        case 0: return coordinates.x + coordinates.y;   // (1, 1)
+        case 1: return -coordinates.x + coordinates.y;  // (-1, 1)
+        case 2: return coordinates.x - coordinates.y;   // (1, -1)
+        case 3: return -coordinates.x - coordinates.y;  // (-1, -1)
+        case 4: return coordinates.x;                   // (1, 0)
+        case 5: return -coordinates.x;                  // (-1, 0)
+        case 6: return coordinates.y;                   // (0, 1)
+        case 7: return -coordinates.y;                  // (0, -1)
+        default: return 0;  // Should not reach here
+    }
+}
+
+int PerlinTerrainGenerator::retrievePermutation(int permutationIndex)
+{
+    return permutations[permutationIndex % 256];
 }

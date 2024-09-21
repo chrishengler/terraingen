@@ -10,19 +10,9 @@
 #include <boost/gil/io/read_and_convert_image.hpp>
 
 #include "imageExporter.h"
+#include "helpers/helpers.h"
+
 namespace bg = boost::gil;
-namespace fs = std::filesystem;
-
-fs::path get_temp_filepath(const std::string &extension)
-{
-        std::stringstream filename("");
-        filename << "terraingen-test-export-" << std::rand() << "." << extension;
-        auto filepath = fs::path(fs::temp_directory_path() / filename.str());
-
-        WARN(filepath);
-        return filepath;
-}
-
 
 TEST_CASE("export png")
 {
@@ -89,7 +79,6 @@ TEST_CASE("export png")
             bg::gray16_image_t writtenImage;
             bg::read_and_convert_image(filepath.string(), writtenImage, bg::png_tag());
             REQUIRE(exampleImage == writtenImage);
-
         }
     }
 }
