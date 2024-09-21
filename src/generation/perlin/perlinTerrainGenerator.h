@@ -11,6 +11,7 @@ class PerlinTerrainGenerator : public Generator{
         double perlin(const Vector2<int> &coordinates);
         double fade(double t);
         double gradient(const int hash, const Vector2<double> &coordinates);
+        int retrievePermutation(int permutationIndex);
         std::vector<int> permutations;
         Vector2<int> cell_sizes;
 };

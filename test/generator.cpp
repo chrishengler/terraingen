@@ -24,7 +24,7 @@ TEST_CASE("Perlin generator")
 {
     Vector2<int> cell_sizes(16,16);
     PerlinTerrainGenerator ptg(0, cell_sizes);
-    Vector2<int> expected_size(64,64);
+    Vector2<int> expected_size(512,512);
     Heightmap result = ptg.generate(expected_size);
 
     double max_abs_value = std::sqrt(2);
@@ -35,8 +35,8 @@ TEST_CASE("Perlin generator")
         for(int y = 0; y<expected_size.y; y++)
         {
             auto val = result.at(x).at(y);
-            REQUIRE(val >= 0);
-            REQUIRE(val < 256);
+            REQUIRE(val >= -1);
+            REQUIRE(val <= 1);
         }
     }
 }
