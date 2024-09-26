@@ -8,7 +8,8 @@ class Terrain{
     public:
         Terrain(int x, int y);
         Terrain(Heightmap initialize);
-        Heightmap get_terrain(){return heightmap;}
-        size_t get_size_x(){return size_x;}
-        size_t get_size_y(){return size_y;}
+        Heightmap getTerrain(){return heightmap;}
+        size_t getSizeX(){return size_x;}
+        size_t getSizeY(){return size_y;}
+        Vector2<int> getDimensions(){return {size_x, size_y};}
 };

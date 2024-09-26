@@ -1,2 +1,2 @@
-add_library(generationlib generator.cpp generatorFactory.cpp flat/flatTerrainGenerator.cpp perlin/perlinTerrainGenerator.cpp)
+add_library(generationlib generator.cpp generatorFactory.cpp terrainCombination.cpp flat/flatTerrainGenerator.cpp perlin/perlinTerrainGenerator.cpp)
 target_include_directories(generationlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PARENT_DIRECTORY}../)

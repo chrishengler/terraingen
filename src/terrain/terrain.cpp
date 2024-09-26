@@ -10,17 +10,17 @@ Terrain::Terrain(int x, int y)
         // TODO: specific exception
         throw std::exception();
     }
-    heightmap = std::vector<std::vector<double>>(size_x);
+    heightmap = std::vector<std::valarray<double>>(size_x);
     for(int i=0; i<size_x; i++)
     {
-        heightmap[i] = std::vector<double>(size_y);
+        heightmap[i] = std::valarray<double>(size_y);
     }
 }
 
 Terrain::Terrain(Heightmap _heightmap):
 size_x(_heightmap.size()), size_y(_heightmap.at(0).size())
 {
-    heightmap = std::vector<std::vector<double>>(size_x);
+    heightmap = std::vector<std::valarray<double>>(size_x);
     for(int x=1; x<_heightmap.size(); x++)
     {
         if(_heightmap.at(x).size() != size_y)
