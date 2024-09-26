@@ -23,7 +23,7 @@ TEST_CASE("Terrain combination")
         {
             for (int j = 0; j < terrain[i].size(); j++)
             {
-                REQUIRE_THAT(terrain[i][j], Catch::Matchers::WithinRel(average[i][j], 0.001));
+                REQUIRE_THAT(terrain[i][j], Catch::Matchers::WithinRel(average[i][j], 0.0001));
             }
         }
     }
@@ -41,7 +41,7 @@ TEST_CASE("Terrain combination")
         {
             for (int j = 0; j < terrain[i].size(); j++)
             {
-                REQUIRE_THAT(terrain[i][j], Catch::Matchers::WithinRel(average[i][j], 0.001));
+                REQUIRE_THAT(terrain[i][j], Catch::Matchers::WithinRel(average[i][j], 0.0001));
             }
         }
 
