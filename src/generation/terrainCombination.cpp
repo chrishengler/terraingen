@@ -13,11 +13,16 @@ Terrain TerrainCombination::combineTerrains(std::vector<Terrain> terrains, std::
     }
     auto dimensions = terrains[0].getDimensions();
 
+    if(weights.size() != numTerrains)
+    {
+        throw std::invalid_argument("Combining terrains requires list of terrains and list of weights of the same length");
+    }
     for(int i=1; i<numTerrains; i++){
         if(terrains[i].getDimensions() != dimensions){
             throw std::invalid_argument("Combining terrians requires terrains with the same dimensions");
         }
     }
+
     auto sumWeights = std::accumulate(weights.begin(), weights.end(), (float)0);
     if(sumWeights != 1)
     {
