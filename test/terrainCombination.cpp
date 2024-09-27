@@ -2,7 +2,6 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "terrainCombination.h"
-#include <iostream>
 
 TEST_CASE("Terrain combination")
 {

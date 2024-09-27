@@ -1,4 +1,3 @@
-#include <iostream>
 #include <numeric>
 #include <sstream>
 #include <stdexcept>
@@ -6,7 +5,6 @@
 
 Terrain TerrainCombination::combineTerrains(std::vector<Terrain> terrains, std::vector<float> weights)
 {
-    std::cout << "hello" << std::endl;
     int numTerrains = terrains.size();
     if(numTerrains < 2)
     {
