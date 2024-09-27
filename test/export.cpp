@@ -19,7 +19,7 @@ TEST_CASE("export png")
     SECTION("image exporter writes a file")
     {
         Heightmap testHeightmap;
-        testHeightmap.push_back(std::vector<double>(1));
+        testHeightmap.push_back(std::valarray<double>(1));
 
         ImageExporter imgExporter;
         auto filepath = get_temp_filepath("png");
@@ -34,7 +34,7 @@ TEST_CASE("export png")
             Heightmap testHeightmap;
             for(int x=0; x<10; x++)
             {
-                auto row = std::vector<double>(10);
+                auto row = std::valarray<double>(10);
                 testHeightmap.push_back(row);
             }
 
@@ -58,7 +58,7 @@ TEST_CASE("export png")
             Heightmap testHeightmap;
             for(int x=0; x<10; x++)
             {
-                auto row = std::vector<double>(10);
+                auto row = std::valarray<double>(10);
                 for(int y=0; y<10; y++)
                 {
                     row[y]=1;

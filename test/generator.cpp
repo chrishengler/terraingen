@@ -15,7 +15,7 @@ TEST_CASE("Flat terrain generator")
         REQUIRE(result.at(0).size() == 3);
         for (int y = 0; y < 3; y++)
         {
-            REQUIRE(result.at(x).at(y) == 4);
+            REQUIRE(result.at(x)[y] == 4);
         }
     }
 }
@@ -34,7 +34,7 @@ TEST_CASE("Perlin generator")
         REQUIRE(result.at(0).size() == expected_size.y);
         for(int y = 0; y<expected_size.y; y++)
         {
-            auto val = result.at(x).at(y);
+            auto val = result.at(x)[y];
             REQUIRE(val >= -1);
             REQUIRE(val <= 1);
         }

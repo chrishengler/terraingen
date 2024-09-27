@@ -1,8 +1,10 @@
 #pragma once
+#include <algorithm>
 #include <cmath>
+#include <valarray>
 #include <vector>
 
-typedef std::vector<std::vector<double>> Heightmap;
+typedef std::vector<std::valarray<double>> Heightmap;
 
 template<typename T>
 struct Vector2{
@@ -11,6 +13,10 @@ struct Vector2{
 
     Vector2(T x, T y) : x(x), y(y)
     {
+    }
+
+    bool operator==(const Vector2 &other) const{
+        return x == other.x && y == other.y;
     }
 };
 
