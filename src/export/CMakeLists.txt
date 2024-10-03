@@ -1,10 +1,9 @@
 add_library(exportlib imageExporter.cpp)
-if (WIN32)
-    # On Windows, manually specify libpng paths or use vcpkg for dependency management
-    find_package(PNG REQUIRED)
-else ()
+if (APPLE)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(PNG libpng16 REQUIRED)
+else ()
+    find_package(PNG REQUIRED)
 endif()
 find_package(Boost CONFIG REQUIRED)
 target_include_directories(exportlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PARENT_DIRECTORY}../ ${PNG_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
