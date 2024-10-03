@@ -7,6 +7,7 @@
 To build from source you will need:
 
 * CMake and your build system of choice (e.g. Ninja, make)
-* PkgConfig
-* LibPNG
+* LibPNG v1.6
 * Catch2
+
+If running MacOS, you will also need PkgConfig
