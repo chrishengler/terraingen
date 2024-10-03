@@ -46,3 +46,4 @@ DartConfiguration.tcl
 Testing
 .DS_Store
 debug
+.cache
