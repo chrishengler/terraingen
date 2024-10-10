@@ -1,7 +1,5 @@
 #include "terrain.h"
 
-#include <iostream>
-
 Terrain::Terrain(int x, int y)
     : size_x(x), size_y(y)
 {

@@ -1,6 +1,4 @@
 #pragma once
-#include <vector>
-
 #include "data_types.h"
 #include "generatorTypes.h"
 
