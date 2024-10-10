@@ -4,5 +4,5 @@ class TerrainCombination{
     public:
         TerrainCombination() = default;
 
-        Terrain combineTerrains(std::vector<Terrain> terrains, std::vector<float> weights);
+        static Terrain combineTerrains(std::vector<Terrain> terrains, std::vector<float> weights);
 };
