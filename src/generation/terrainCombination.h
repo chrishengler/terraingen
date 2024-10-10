@@ -1,4 +1,3 @@
-#include "data_types.h"
 #include "terrain/terrain.h"
 
 class TerrainCombination{

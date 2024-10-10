@@ -1,6 +1,3 @@
-#include <fstream>
-
-#include "boost/gil.hpp"
 #include <boost/gil/extension/io/png.hpp>
 
 #include "imageExporter.h"
