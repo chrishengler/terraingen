@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "generator.h"
 #include "generatorFactory.h"
 #include "generatorTypes.h"
