@@ -35,9 +35,36 @@ The Perlin noise generator accepts a seed value that determines the random numbe
 - Generating consistent terrain across different runs
 - Sharing specific terrain configurations with others
 
+## Diamond-Square Algorithm
+
+The Diamond-Square algorithm (also known as the Midpoint-Displacement Algorithm) is a fractal-based method for generating heightmaps that creates realistic-looking terrain with both rough and smooth features.
+
+### How Diamond-Square Works
+
+The algorithm works by repeatedly subdividing a grid and calculating new height values:
+
+1. Start with a grid where only the corner values are set
+2. Diamond step: For each square in the grid, set the midpoint height to the average of the four corners plus a random value
+3. Square step: For each diamond in the grid, set the midpoint height to the average of the four adjacent points plus a random value
+4. Reduce the random variation amount and the step size by half
+5. Repeat steps 2-4 until the entire grid is filled
+
+### Characteristics
+
+- **Fractal Nature**: Creates self-similar patterns at different scales
+- **Natural Variation**: Produces terrain with both smooth gradients and rough features
+- **Edge Continuity**: Creates continuous terrain without sharp discontinuities
+
+### Parameters
+
+The Diamond-Square generator accepts:
+- A seed value for reproducible terrain generation
+- Cell sizes that influence the scale of the terrain features
+
+Like other generators in TerrainGen, the output is normalized to ensure height values fall between -1 and 1.
+
 ## Future Developments
 
-Additional terrain generation techniques are planned for future releases, including
+Additional terrain generation techniques are planned for future releases, including:
 
-- Diamond-Square algorithm
 - Erosion simulation

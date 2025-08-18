@@ -27,7 +27,7 @@ exporter.saveToFile(heightmap, "terrain.png");
 
 ## Generator Types
 
-Currently, TerrainGen supports two types of generators:
+Currently, TerrainGen supports three types of generators:
 
 1. **Flat Terrain** (`GeneratorType::FLAT`)
    - Creates a uniform height terrain
@@ -36,7 +36,14 @@ Currently, TerrainGen supports two types of generators:
 2. **Perlin Noise** (`GeneratorType::PERLIN`)
    - Generates natural-looking terrain using Perlin noise
    - Creates smooth, continuous height variations
-   - Seed parameter allows for reproducible results
+
+3. **Diamond Square** (`GeneratorType::DIAMOND_SQUARE`)
+   - Generates natural-looking terrain using the Diamond-Square algorithm
+   - Creates smooth, continuous height variations
+
+## Combination
+
+TerrainGen supports weighted addition of multiple terrains.
 
 ## Output Format
 
@@ -45,3 +52,6 @@ TerrainGen exports heightmaps as grayscale PNG images where:
 - White (255) represents the highest elevation
 
 These heightmaps can be used as input for 3D modeling software or further processed for game development.
+
+Other output types are planned for future, including specific output formats targetting games 
+which allow for importing custom maps.

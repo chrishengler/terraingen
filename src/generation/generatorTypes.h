@@ -2,5 +2,6 @@
 
 enum GeneratorType{
     FLAT,
-    PERLIN
+    PERLIN,
+    DIAMOND_SQUARE
 };
