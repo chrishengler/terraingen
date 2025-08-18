@@ -5,10 +5,16 @@
 
 namespace fs = std::filesystem;
 
-inline fs::path get_temp_filepath(const std::string &extension)
+inline fs::path get_temp_filepath(const std::string &extension, const std::string &label = "")
 {
         std::stringstream filename("");
-        filename << "terraingen-test-export-" << std::rand() << "." << extension;
+        filename << "terraingen-test-export-";
+        if(!label.empty())
+        {
+            filename << label << "-";
+        }
+        std::srand(std::time({}));
+        filename << std::rand() << "." << extension;
         auto filepath = fs::path(fs::temp_directory_path() / filename.str());
 
         return filepath;

@@ -8,7 +8,8 @@ class Generator{
         virtual Heightmap generate(Vector2<int> dimensions);
         GeneratorType getGeneratorType(){ return type; }
 
-    private:
+    protected:
         unsigned int seed;
+    private:
         GeneratorType type;
 };
