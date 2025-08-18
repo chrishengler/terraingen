@@ -75,8 +75,8 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
     Heightmap final_heightmap;
     final_heightmap.reserve(dimensions.x);
     
-    double min_val;
-    double max_val;
+    double min_val = std::numeric_limits<double>::max();
+    double max_val = std::numeric_limits<double>::lowest();
     
     // Normalize to range [-1, 1] as the random variations can push high/low values
     // outside expected range
