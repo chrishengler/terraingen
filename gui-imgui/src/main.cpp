@@ -1,6 +1,3 @@
-// --------------------------
-// Silence OpenGL deprecation warnings on macOS
-// --------------------------
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #endif
@@ -12,20 +9,48 @@
 #include "generator.h"
 
 #include <GLFW/glfw3.h>
-#include <iostream>
 #include <vector>
 #include <valarray>
 #include <cstdint>
+#include <iostream>
 
+// --------------------------
+// GUI state
+// --------------------------
 struct GuiState {
     GeneratorType selectedType = GeneratorType::PERLIN;
     Vector2<int> gridSize{64, 64};
     unsigned int seed = 0;
     bool generateRequested = false;
-    GLuint heightmapTexture = 0;
 };
 
-// Flatten Heightmap to contiguous float array for OpenGL
+// --------------------------
+// OpenGL texture helper
+// --------------------------
+class GLTexture {
+public:
+    GLuint id = 0;
+
+    ~GLTexture() {
+        if (id) glDeleteTextures(1, &id);
+    }
+
+    void upload(const std::vector<float>& pixels, int width, int height) {
+        if (id) glDeleteTextures(1, &id);
+        glGenTextures(1, &id);
+        glBindTexture(GL_TEXTURE_2D, id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, pixels.data());
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    operator bool() const { return id != 0; }
+};
+
+// --------------------------
+// Utility to flatten Heightmap
+// --------------------------
 std::vector<float> flattenHeightmap(const Heightmap& hm) {
     std::vector<float> pixels;
     size_t rows = hm.size();
@@ -37,14 +62,70 @@ std::vector<float> flattenHeightmap(const Heightmap& hm) {
     return pixels;
 }
 
+// --------------------------
+// Terrain controls window
+// --------------------------
+class TerrainControlsWindow {
+public:
+    void render(GuiState& state) {
+        ImGui::Begin("Terrain Generator");
+
+        const char* generatorNames[] = { "Flat", "Perlin", "Diamond-Square" };
+        int typeIndex = static_cast<int>(state.selectedType);
+        if (ImGui::Combo("Generator Type", &typeIndex, generatorNames, IM_ARRAYSIZE(generatorNames)))
+            state.selectedType = static_cast<GeneratorType>(typeIndex);
+
+        ImGui::InputInt("Width", &state.gridSize.x);
+        ImGui::InputInt("Height", &state.gridSize.y);
+        ImGui::InputInt("Seed", reinterpret_cast<int*>(&state.seed));
+
+        if (ImGui::Button("Generate"))
+            state.generateRequested = true;
+
+        ImGui::End();
+    }
+};
+
+// --------------------------
+// Heightmap preview window
+// --------------------------
+class HeightmapPreviewWindow {
+public:
+    void render(const GuiState& state, const GLTexture& tex) {
+        if (!tex) return;
+
+        ImGui::Begin("Heightmap Preview");
+
+        // Get available content region size (space inside the window)
+        ImVec2 availSize = ImGui::GetContentRegionAvail();
+
+        // Compute aspect ratio based on terrain grid
+        float aspect = static_cast<float>(state.gridSize.x) / static_cast<float>(state.gridSize.y);
+
+        ImVec2 imageSize;
+        if (availSize.x / availSize.y > aspect) {
+            // Window is wider than terrain; fit to height
+            imageSize.y = availSize.y;
+            imageSize.x = imageSize.y * aspect;
+        } else {
+            // Window is taller than terrain; fit to width
+            imageSize.x = availSize.x;
+            imageSize.y = imageSize.x / aspect;
+        }
+
+        ImGui::Text("Generated Heightmap:");
+        ImGui::Image((void*)(intptr_t)tex.id, imageSize);
+
+        ImGui::End();
+    }
+};
+
+// --------------------------
+// Main
+// --------------------------
 int main() {
-    GuiState guiState;
-
-    // --------------------------
     // Initialize GLFW
-    // --------------------------
     if (!glfwInit()) return 1;
-
 #if defined(__APPLE__)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
@@ -56,13 +137,11 @@ int main() {
 #endif
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "Terrain Generator", nullptr, nullptr);
-    if (!window) { std::cerr << "Failed to create GLFW window\n"; glfwTerminate(); return 1; }
+    if (!window) { std::cerr << "Failed to create window\n"; glfwTerminate(); return 1; }
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
-    // --------------------------
-    // Setup Dear ImGui context
-    // --------------------------
+    // Setup ImGui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -74,38 +153,28 @@ int main() {
     const char* glsl_version = "#version 130";
 #endif
 
-    if (!ImGui_ImplGlfw_InitForOpenGL(window, true)) { std::cerr << "Failed to init ImGui GLFW\n"; return 1; }
-    if (!ImGui_ImplOpenGL3_Init(glsl_version)) { std::cerr << "Failed to init ImGui OpenGL3\n"; return 1; }
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
 
-    // --------------------------
+    // GUI modules and state
+    GuiState guiState;
+    GLTexture heightmapTexture;
+    TerrainControlsWindow controlsWindow;
+    HeightmapPreviewWindow previewWindow;
+
     // Main loop
-    // --------------------------
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
 
-        // ----- Start a new ImGui frame -----
+        // Start new ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // ----- Terrain Generator controls -----
-        ImGui::Begin("Terrain Generator");
+        // Render GUI windows
+        controlsWindow.render(guiState);
 
-        const char* generatorNames[] = { "Flat", "Perlin", "Diamond-Square" };
-        int typeIndex = static_cast<int>(guiState.selectedType);
-        if (ImGui::Combo("Generator Type", &typeIndex, generatorNames, IM_ARRAYSIZE(generatorNames)))
-            guiState.selectedType = static_cast<GeneratorType>(typeIndex);
-
-        ImGui::InputInt("Width", &guiState.gridSize.x);
-        ImGui::InputInt("Height", &guiState.gridSize.y);
-        ImGui::InputInt("Seed", reinterpret_cast<int*>(&guiState.seed));
-
-        if (ImGui::Button("Generate"))
-            guiState.generateRequested = true;
-
-        ImGui::End();
-
-        // ----- Run generator if requested -----
+        // Run terrain generator if requested
         if (guiState.generateRequested) {
             guiState.generateRequested = false;
 
@@ -115,29 +184,12 @@ int main() {
 
             Heightmap hm = generator->generate(guiState.gridSize);
             auto pixels = flattenHeightmap(hm);
-
-            if (guiState.heightmapTexture != 0)
-                glDeleteTextures(1, &guiState.heightmapTexture);
-
-            glGenTextures(1, &guiState.heightmapTexture);
-            glBindTexture(GL_TEXTURE_2D, guiState.heightmapTexture);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, guiState.gridSize.x, guiState.gridSize.y,
-                         0, GL_RED, GL_FLOAT, pixels.data());
-            glBindTexture(GL_TEXTURE_2D, 0);
+            heightmapTexture.upload(pixels, guiState.gridSize.x, guiState.gridSize.y);
         }
 
-        // ----- Heightmap preview -----
-        if (guiState.heightmapTexture != 0) {
-            ImGui::Begin("Heightmap Preview");
-            ImGui::Text("Generated Heightmap:");
-            ImGui::Image((void*)(intptr_t)guiState.heightmapTexture,
-                         ImVec2(guiState.gridSize.x, guiState.gridSize.y));
-            ImGui::End();
-        }
+        previewWindow.render(guiState, heightmapTexture);
 
-        // ----- Render -----
+        // Render
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
@@ -146,21 +198,14 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
         glfwSwapBuffers(window);
     }
 
-    // --------------------------
     // Cleanup
-    // --------------------------
-    if (guiState.heightmapTexture != 0)
-        glDeleteTextures(1, &guiState.heightmapTexture);
-
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     glfwDestroyWindow(window);
     glfwTerminate();
-
     return 0;
 }
