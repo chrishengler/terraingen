@@ -1,4 +1,4 @@
 add_subdirectory(generation)
 add_subdirectory(export)
-add_library(terrainlib terrain/terrain.cpp)
-target_include_directories(terrainlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(lib-terraingen terrain/terrain.cpp)
+target_include_directories(lib-terraingen PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
