@@ -10,19 +10,19 @@ TEST_CASE("Generator Factory creates correct generator type")
 
     SECTION("Flat terrain")
     {
-        Generator createdGenerator = GeneratorFactory::createGenerator(seed, GeneratorType::FLAT, cell_sizes);
-        REQUIRE(createdGenerator.getGeneratorType() == GeneratorType::FLAT);
+        auto createdGenerator = GeneratorFactory::createGenerator(seed, GeneratorType::FLAT, cell_sizes);
+        REQUIRE(createdGenerator->getGeneratorType() == GeneratorType::FLAT);
     }
 
     SECTION("Perlin")
     {
-        Generator createdGenerator = GeneratorFactory::createGenerator(seed, GeneratorType::PERLIN, cell_sizes);
-        REQUIRE(createdGenerator.getGeneratorType() == GeneratorType::PERLIN);
+        auto createdGenerator = GeneratorFactory::createGenerator(seed, GeneratorType::PERLIN, cell_sizes);
+        REQUIRE(createdGenerator->getGeneratorType() == GeneratorType::PERLIN);
     }
 
     SECTION("Diamond Square")
     {
-        Generator createdGenerator = GeneratorFactory::createGenerator(seed, GeneratorType::DIAMOND_SQUARE, cell_sizes);
-        REQUIRE(createdGenerator.getGeneratorType() == GeneratorType::DIAMOND_SQUARE);
+        auto createdGenerator = GeneratorFactory::createGenerator(seed, GeneratorType::DIAMOND_SQUARE, cell_sizes);
+        REQUIRE(createdGenerator->getGeneratorType() == GeneratorType::DIAMOND_SQUARE);
     }
 }

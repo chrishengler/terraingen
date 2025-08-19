@@ -8,14 +8,14 @@
 #include "flat/flatTerrainGenerator.h"
 #include "perlin/perlinTerrainGenerator.h"
 
-Generator GeneratorFactory::createGenerator(unsigned int seed, GeneratorType type, Vector2<int> cell_sizes){
+std::unique_ptr<Generator> GeneratorFactory::createGenerator(unsigned int seed, GeneratorType type, Vector2<int> cell_sizes){
     switch(type){
         case GeneratorType::FLAT:
-            return FlatTerrainGenerator(seed);
+            return std::make_unique<FlatTerrainGenerator>(FlatTerrainGenerator(seed));
         case GeneratorType::PERLIN:
-            return PerlinTerrainGenerator(seed, cell_sizes);
+            return std::make_unique<PerlinTerrainGenerator>(PerlinTerrainGenerator(seed, cell_sizes));
         case GeneratorType::DIAMOND_SQUARE:
-            return DiamondSquareGenerator(seed, cell_sizes);
+            return std::make_unique<DiamondSquareGenerator>(DiamondSquareGenerator(seed, cell_sizes));
         default:
             throw std::runtime_error("Unknown generator type");
     }

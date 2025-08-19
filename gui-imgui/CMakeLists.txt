@@ -39,11 +39,16 @@ add_executable(gui-imgui
     src/main.cpp
 )
 
+target_include_directories(gui-imgui PUBLIC
+    lib-terraingen
+)
 target_link_libraries(gui-imgui
     PRIVATE
         imgui
         glfw
-        lib-terraingen        # link against your terrain lib
+        lib-terraingen
+        generationlib
+        exportlib
         OpenGL::GL
 )
 
