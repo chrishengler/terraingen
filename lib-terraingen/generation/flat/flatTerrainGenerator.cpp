@@ -7,12 +7,12 @@ FlatTerrainGenerator::FlatTerrainGenerator(unsigned int seed)
 Heightmap FlatTerrainGenerator::generate(Vector2<int> dimensions){
     Heightmap heightmap;   
     int height = 4; //standard random number
-    for(int x=0; x<dimensions.x; x++){
-        std::valarray<double> row(dimensions.y);
-        for(int y=0; y<dimensions.y; y++){
-            row[y] = height;
+    for(int col=0; col<dimensions.x; col++){
+        std::valarray<double> column(dimensions.y);
+        for(int row=0; row<dimensions.y; row++){
+            column[row] = height;
         }
-        heightmap.push_back(row);
+        heightmap.push_back(column);
     }
     return heightmap;
 }

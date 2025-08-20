@@ -25,10 +25,10 @@ Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
     Heightmap heightmap;   
     double max=0;
     double min=1;
-    for(int x=0; x<dimensions.x; x++){
-        std::valarray<double> row(dimensions.y);
-        for(int y=0; y<dimensions.y; y++){
-            auto result = perlin(Vector2<int>(x,y));
+    for(int col=0; col<dimensions.x; col++){
+        std::valarray<double> column(dimensions.y);
+        for(int row=0; row<dimensions.y; row++){
+            auto result = perlin(Vector2<int>(col,row));
             if(result > max)
             {
                 max = result;
@@ -37,9 +37,9 @@ Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
             {
                 min = result;
             }
-            row[y] = perlin(Vector2<int>(x,y));
+            column[row] = perlin(Vector2<int>(col,row));
         }
-        heightmap.push_back(row);
+        heightmap.push_back(column);
     }
     std::cout << "max: " << max << "\nmin: " << min << std::endl;
     return heightmap;

@@ -16,9 +16,9 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
     
     Heightmap heightmap;
     heightmap.reserve(grid_size);
-    for(int x = 0; x < grid_size; x++) {
-        std::valarray<double> row(0.0, grid_size);
-        heightmap.push_back(row);
+    for(int col = 0; col < grid_size; col++) {
+        std::valarray<double> column(0.0, grid_size);
+        heightmap.push_back(column);
     }
 
     std::mt19937 rng(seed);
@@ -80,21 +80,21 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
     
     // Normalize to range [-1, 1] as the random variations can push high/low values
     // outside expected range
-    for(int x = 0; x < dimensions.x; x++) {
-        for(int y = 0; y < dimensions.y; y++) {
-            min_val = std::min(min_val, heightmap[x][y]);
-            max_val = std::max(max_val, heightmap[x][y]);
+    for(int col = 0; col < dimensions.x; col++) {
+        for(int row = 0; row < dimensions.y; row++) {
+            min_val = std::min(min_val, heightmap[col][row]);
+            max_val = std::max(max_val, heightmap[col][row]);
         }
     }
     
     double range = max_val - min_val;
     
-    for(int x = 0; x < dimensions.x; x++) {
-        std::valarray<double> row(dimensions.y);
-        for(int y = 0; y < dimensions.y; y++) {
-            row[y] = 2.0 * ((heightmap[x][y] - min_val) / range) - 1.0;
+    for(int col = 0; col < dimensions.x; col++) {
+        std::valarray<double> column(dimensions.y);
+        for(int row = 0; row < dimensions.y; row++) {
+            column[row] = 2.0 * ((heightmap[col][row] - min_val) / range) - 1.0;
         }
-        final_heightmap.push_back(row);
+        final_heightmap.push_back(column);
     }
 
     return final_heightmap;

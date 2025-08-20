@@ -10,13 +10,13 @@ TEST_CASE("Flat terrain generator")
     FlatTerrainGenerator ftg(0);
     Heightmap result = ftg.generate(Vector2<int>(2, 3));
 
-    REQUIRE(result.size() == 2);
-    for (int x = 0; x < 2; x++)
+    REQUIRE(result.size() == 2);  // Number of columns
+    for (int col = 0; col < 2; col++)
     {
-        REQUIRE(result.at(0).size() == 3);
-        for (int y = 0; y < 3; y++)
+        REQUIRE(result.at(0).size() == 3);  // Number of rows
+        for (int row = 0; row < 3; row++)
         {
-            REQUIRE(result.at(x)[y] == 4);
+            REQUIRE(result.at(col)[row] == 4);
         }
     }
 }
@@ -30,11 +30,11 @@ TEST_CASE("Perlin generator")
         PerlinTerrainGenerator ptg(0, cell_sizes);
         Heightmap result = ptg.generate(expected_size);
 
-        REQUIRE(result.size() == expected_size.x);
-        for (int x=0; x<expected_size.x; x++) {
-            REQUIRE(result.at(0).size() == expected_size.y);
-            for(int y = 0; y<expected_size.y; y++) {
-                auto val = result.at(x)[y];
+        REQUIRE(result.size() == expected_size.x);  // Number of columns
+        for (int col = 0; col < expected_size.x; col++) {
+            REQUIRE(result.at(0).size() == expected_size.y);  // Number of rows
+            for(int row = 0; row < expected_size.y; row++) {
+                auto val = result.at(col)[row];
                 REQUIRE(val >= -1);
                 REQUIRE(val <= 1);
             }
@@ -49,9 +49,9 @@ TEST_CASE("Perlin generator")
         Heightmap result2 = ptg2.generate(expected_size);
 
         bool found_different = false;
-        for (int x = 0; x < expected_size.x && !found_different; x++) {
-            for (int y = 0; y < expected_size.y && !found_different; y++) {
-                if (result1[x][y] != result2[x][y]) {
+        for (int col = 0; col < expected_size.x && !found_different; col++) {
+            for (int row = 0; row < expected_size.y && !found_different; row++) {
+                if (result1[col][row] != result2[col][row]) {
                     found_different = true;
                 }
             }
