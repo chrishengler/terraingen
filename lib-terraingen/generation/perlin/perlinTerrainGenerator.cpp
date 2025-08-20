@@ -21,8 +21,8 @@ PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<
 
 Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
     Heightmap heightmap;   
-    double max=0.5;
-    double min=0.5;
+    double max=0;
+    double min=1;
     for(int x=0; x<dimensions.x; x++){
         std::valarray<double> row(dimensions.y);
         for(int y=0; y<dimensions.y; y++){
