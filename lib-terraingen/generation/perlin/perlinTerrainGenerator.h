@@ -4,7 +4,7 @@
 
 class PerlinTerrainGenerator : public Generator{
     public:
-        PerlinTerrainGenerator(unsigned int seed, const Vector2<int> &cell_sizes=Vector2<int>(32,32), double scale=1.0);
+        PerlinTerrainGenerator(unsigned int seed, const Vector2<int> &cell_sizes=Vector2<int>(8,8), double scale=1.0);
         Heightmap generate(Vector2<int> dimensions) override;
         void setScale(double scale) { this->scale = scale; }
         double getScale() const { return scale; }

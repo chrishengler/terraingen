@@ -14,13 +14,21 @@
 #include <iostream>
 
 // --------------------------
+// Perlin parameters
+// --------------------------
+struct PerlinParameters {
+    float scale = 1.0f;
+    int cellSize = 32;
+};
+
+// --------------------------
 // GUI state
 // --------------------------
 struct GuiState {
     GeneratorType selectedType = GeneratorType::PERLIN;
     Vector2<int> gridSize{64, 64};
     unsigned int seed = 0;
-    float perlinScale = 1.0;
+    PerlinParameters perlinParams;
     bool generateRequested = false;
 };
 
@@ -79,9 +87,12 @@ public:
         ImGui::InputInt("Height", &state.gridSize.y);
         ImGui::InputInt("Seed", reinterpret_cast<int*>(&state.seed));
 
-        // Show scale slider only for Perlin noise
+        // Show Perlin noise parameters
         if (state.selectedType == GeneratorType::PERLIN) {
-            ImGui::SliderFloat("Scale", &state.perlinScale, 0.1f, 10.0f, "%.2f");
+            ImGui::SliderFloat("Scale", &state.perlinParams.scale, 0.1f, 10.0f, "%.2f");
+            ImGui::InputInt("Cell Size", &state.perlinParams.cellSize);
+            // Clamp cell size to reasonable values
+            state.perlinParams.cellSize = std::max(1, std::min(256, state.perlinParams.cellSize));
         }
 
         if (ImGui::Button("Generate"))
@@ -183,8 +194,15 @@ int main() {
         if (guiState.generateRequested) {
             guiState.generateRequested = false;
 
+            Vector2<int> cellSizes(
+                guiState.perlinParams.cellSize,
+                guiState.perlinParams.cellSize
+            );
             auto generator = GeneratorFactory::createGenerator(
-                guiState.seed, guiState.selectedType, guiState.gridSize, guiState.perlinScale
+                guiState.seed,
+                guiState.selectedType,
+                cellSizes,
+                guiState.perlinParams.scale
             );
 
             Heightmap hm = generator->generate(guiState.gridSize);
