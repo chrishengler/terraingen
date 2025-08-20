@@ -7,7 +7,6 @@ class PerlinTerrainGenerator : public Generator {
     public:
         PerlinTerrainGenerator(unsigned int seed);
         Heightmap generate(Vector2<int> dimensions) override;
-        void setParameters(const GeneratorParameters& params) override;
         void setParameters(const PerlinParameters& params);
         const PerlinParameters& getParameters() const { return params; }
 

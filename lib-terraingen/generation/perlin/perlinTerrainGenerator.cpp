@@ -19,12 +19,6 @@ PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed)
     std::shuffle(permutations.begin(), permutations.end(), std::mt19937(seed));
 }
 
-void PerlinTerrainGenerator::setParameters(const GeneratorParameters& params) {
-    if (auto perlinParams = dynamic_cast<const PerlinParameters*>(&params)) {
-        setParameters(*perlinParams);
-    }
-}
-
 void PerlinTerrainGenerator::setParameters(const PerlinParameters& params) {
     this->params = params;
 }

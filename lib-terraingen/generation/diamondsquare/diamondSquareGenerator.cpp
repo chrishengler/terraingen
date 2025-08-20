@@ -1,5 +1,6 @@
 #include "diamondSquareGenerator.h"
 #include "data_types.h"
+#include "generatorParameters.h"
 #include <algorithm>
 #include <cmath>
 #include <random>
@@ -10,7 +11,7 @@ DiamondSquareGenerator::DiamondSquareGenerator(unsigned int seed)
 {
 }
 
-void DiamondSquareGenerator::setParameters(const GeneratorParameters& params)
+void DiamondSquareGenerator::setParameters(const DiamondSquareParameters& params)
 {
     this->params = params;
 }

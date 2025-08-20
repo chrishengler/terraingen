@@ -1,3 +1,4 @@
+#include <random>
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #endif
@@ -20,7 +21,7 @@
 // --------------------------
 struct GuiState {
     GeneratorType selectedType = GeneratorType::PERLIN;
-    Vector2<int> gridSize{64, 64};
+    Vector2<int> gridSize = {256, 256};
     unsigned int seed = 0;
     PerlinParameters perlinParams;
     FlatParameters flatParams;
@@ -81,6 +82,12 @@ public:
         ImGui::InputInt("Width", &state.gridSize.x);
         ImGui::InputInt("Height", &state.gridSize.y);
         ImGui::InputInt("Seed", reinterpret_cast<int*>(&state.seed));
+        if (ImGui::Button("Random Seed")) {
+          std::random_device rd;
+          std::mt19937 gen(rd());
+          std::uniform_int_distribution<int> dist(0, 0x7fffffff);
+          state.seed = dist(gen);
+        }
 
         // Show generator-specific parameters
         if (state.selectedType == GeneratorType::PERLIN) {

@@ -1,14 +1,9 @@
 #include "flatTerrainGenerator.h"
+#include "generatorParameters.h"
 
 FlatTerrainGenerator::FlatTerrainGenerator(unsigned int seed)
     : Generator(seed, GeneratorType::FLAT)
 {}
-
-void FlatTerrainGenerator::setParameters(const GeneratorParameters& params) {
-    if (auto flatParams = dynamic_cast<const FlatParameters*>(&params)) {
-        setParameters(*flatParams);
-    }
-}
 
 void FlatTerrainGenerator::setParameters(const FlatParameters& params) {
     this->params = params;

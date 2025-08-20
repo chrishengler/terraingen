@@ -11,7 +11,6 @@
 TEST_CASE("Perlin export")
 {
     PerlinParameters pp{
-        {256, 256},
         1.0f, 
         32
     };
@@ -29,7 +28,7 @@ TEST_CASE("Perlin export")
 TEST_CASE("Diamond Square export")
 {
     Vector2<int> cell_sizes(256,256);
-    DiamondSquareParameters dsp{cell_sizes, 1.0};
+    DiamondSquareParameters dsp{1.0};
     DiamondSquareGenerator dsg(0);
     dsg.setParameters(dsp);
     Vector2<int> expected_size(2048,2048);
