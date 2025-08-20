@@ -98,7 +98,7 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
     for(int col = 0; col < dimensions.x; col++) {
         std::valarray<double> column(dimensions.y);
         for(int row = 0; row < dimensions.y; row++) {
-            column[row] = 2.0 * ((heightmap[col][row] - min_val) / range) - 1.0;
+            column[row] = (heightmap[col][row] - min_val) / range;
         }
         final_heightmap.push_back(column);
     }

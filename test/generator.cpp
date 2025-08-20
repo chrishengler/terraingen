@@ -71,7 +71,7 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
             REQUIRE(result.at(0).size() == expected_size.y);  // Number of rows
             for(int row = 0; row < expected_size.y; row++) {
                 auto val = result.at(col)[row];
-                REQUIRE(val >= -1);
+                REQUIRE(val >= 0);
                 REQUIRE(val <= 1);
             }
         }
@@ -152,7 +152,7 @@ TEST_CASE("Diamond Square generator", "[diamond-square]")
             REQUIRE(result.at(0).size() == expected_size.y);
             for(int y = 0; y < expected_size.y; y++) {
                 auto val = result.at(x)[y];
-                REQUIRE(val >= -1);
+                REQUIRE(val >= 0);
                 REQUIRE(val <= 1);
             }
         }
