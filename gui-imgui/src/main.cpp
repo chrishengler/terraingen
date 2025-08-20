@@ -10,7 +10,6 @@
 
 #include <GLFW/glfw3.h>
 #include <vector>
-#include <valarray>
 #include <cstdint>
 #include <iostream>
 
@@ -21,6 +20,7 @@ struct GuiState {
     GeneratorType selectedType = GeneratorType::PERLIN;
     Vector2<int> gridSize{64, 64};
     unsigned int seed = 0;
+    float perlinScale = 1.0;
     bool generateRequested = false;
 };
 
@@ -78,6 +78,11 @@ public:
         ImGui::InputInt("Width", &state.gridSize.x);
         ImGui::InputInt("Height", &state.gridSize.y);
         ImGui::InputInt("Seed", reinterpret_cast<int*>(&state.seed));
+
+        // Show scale slider only for Perlin noise
+        if (state.selectedType == GeneratorType::PERLIN) {
+            ImGui::SliderFloat("Scale", &state.perlinScale, 0.1f, 10.0f, "%.2f");
+        }
 
         if (ImGui::Button("Generate"))
             state.generateRequested = true;
@@ -179,7 +184,7 @@ int main() {
             guiState.generateRequested = false;
 
             auto generator = GeneratorFactory::createGenerator(
-                guiState.seed, guiState.selectedType, guiState.gridSize
+                guiState.seed, guiState.selectedType, guiState.gridSize, guiState.perlinScale
             );
 
             Heightmap hm = generator->generate(guiState.gridSize);
