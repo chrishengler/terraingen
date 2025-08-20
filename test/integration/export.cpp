@@ -2,6 +2,7 @@
 #include "catch2/catch_test_macros.hpp"
 
 #include "diamondsquare/diamondSquareGenerator.h"
+#include "generatorParameters.h"
 #include "perlin/perlinTerrainGenerator.h"
 #include "imageExporter.h"
 
@@ -9,8 +10,13 @@
 
 TEST_CASE("Perlin export")
 {
-    Vector2<int> cell_sizes(256,256);
-    PerlinTerrainGenerator ptg(0, cell_sizes);
+    PerlinParameters pp{
+        {256, 256},
+        1.0f, 
+        32
+    };
+    PerlinTerrainGenerator ptg(0);
+    ptg.setParameters(pp);
     Vector2<int> expected_size(2048,2048);
     Heightmap result = ptg.generate(expected_size);
 
@@ -23,7 +29,9 @@ TEST_CASE("Perlin export")
 TEST_CASE("Diamond Square export")
 {
     Vector2<int> cell_sizes(256,256);
-    DiamondSquareGenerator dsg(0, cell_sizes);
+    DiamondSquareParameters dsp{cell_sizes, 1.0};
+    DiamondSquareGenerator dsg(0);
+    dsg.setParameters(dsp);
     Vector2<int> expected_size(2048,2048);
     Heightmap result = dsg.generate(expected_size);
 

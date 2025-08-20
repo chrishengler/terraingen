@@ -5,9 +5,14 @@
 #include <random>
 #include <limits>
 
-DiamondSquareGenerator::DiamondSquareGenerator(unsigned int seed, const Vector2<int> &cell_sizes)
-    : Generator(seed, GeneratorType::DIAMOND_SQUARE), cell_sizes(cell_sizes)
+DiamondSquareGenerator::DiamondSquareGenerator(unsigned int seed)
+    : Generator(seed, GeneratorType::DIAMOND_SQUARE)
 {
+}
+
+void DiamondSquareGenerator::setParameters(const GeneratorParameters& params)
+{
+    this->params = params;
 }
 
 Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)

@@ -2,7 +2,7 @@
 #include "generator.h"
 #include "generatorTypes.h"
 
-class GeneratorFactory{
+class GeneratorFactory {
     public:
-        static std::unique_ptr<Generator> createGenerator(unsigned int seed, GeneratorType type, Vector2<int> cell_sizes = Vector2<int>(16,16), double perlinScale = 1.0);
+        static std::unique_ptr<Generator> createGenerator(unsigned int seed, GeneratorType type);
 };

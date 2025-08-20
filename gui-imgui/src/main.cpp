@@ -6,20 +6,14 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "generatorFactory.h"
-#include "generator.h"
+#include "generation/generatorParameters.h"
+#include "generation/perlin/perlinTerrainGenerator.h"
+#include "generation/flat/flatTerrainGenerator.h"
 
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <cstdint>
 #include <iostream>
-
-// --------------------------
-// Perlin parameters
-// --------------------------
-struct PerlinParameters {
-    float scale = 1.0f;
-    int cellSize = 32;
-};
 
 // --------------------------
 // GUI state
@@ -29,6 +23,7 @@ struct GuiState {
     Vector2<int> gridSize{64, 64};
     unsigned int seed = 0;
     PerlinParameters perlinParams;
+    FlatParameters flatParams;
     bool generateRequested = false;
 };
 
@@ -87,12 +82,15 @@ public:
         ImGui::InputInt("Height", &state.gridSize.y);
         ImGui::InputInt("Seed", reinterpret_cast<int*>(&state.seed));
 
-        // Show Perlin noise parameters
+        // Show generator-specific parameters
         if (state.selectedType == GeneratorType::PERLIN) {
             ImGui::SliderFloat("Scale", &state.perlinParams.scale, 0.1f, 10.0f, "%.2f");
             ImGui::InputInt("Cell Size", &state.perlinParams.cellSize);
             // Clamp cell size to reasonable values
             state.perlinParams.cellSize = std::max(1, std::min(256, state.perlinParams.cellSize));
+        }
+        else if (state.selectedType == GeneratorType::FLAT) {
+            ImGui::InputFloat("Terrain Height", &state.flatParams.height, 0.1, 1.0, "%.1f");
         }
 
         if (ImGui::Button("Generate"))
@@ -194,16 +192,15 @@ int main() {
         if (guiState.generateRequested) {
             guiState.generateRequested = false;
 
-            Vector2<int> cellSizes(
-                guiState.perlinParams.cellSize,
-                guiState.perlinParams.cellSize
-            );
-            auto generator = GeneratorFactory::createGenerator(
-                guiState.seed,
-                guiState.selectedType,
-                cellSizes,
-                guiState.perlinParams.scale
-            );
+            auto generator = GeneratorFactory::createGenerator(guiState.seed, guiState.selectedType);
+            
+            // Configure generator-specific parameters
+            if (auto perlinGen = dynamic_cast<PerlinTerrainGenerator*>(generator.get())) {
+                perlinGen->setParameters(guiState.perlinParams);
+            }
+            else if (auto flatGen = dynamic_cast<FlatTerrainGenerator*>(generator.get())) {
+                flatGen->setParameters(guiState.flatParams);
+            }
 
             Heightmap hm = generator->generate(guiState.gridSize);
             auto pixels = flattenHeightmap(hm);
