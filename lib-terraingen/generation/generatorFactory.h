@@ -1,4 +1,6 @@
 #pragma once
+#include <memory> 
+
 #include "generator.h"
 #include "generatorTypes.h"
 
