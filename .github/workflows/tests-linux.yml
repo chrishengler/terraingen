@@ -25,12 +25,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Install libpng on Ubuntu
-    - name: Install libpng on Ubuntu
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libpng-dev
-
     - name: install Boost
       uses: MarkusJx/install-boost@v2.4.5
       id: install-boost
@@ -39,6 +33,19 @@ jobs:
           # A list of supported versions can be found here:
           # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
           boost_version: 1.86.0
+
+    - name: install OpenGL
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libgl1-mesa-dev \
+          libx11-dev \
+          libxrandr-dev \
+          libxinerama-dev \
+          libxcursor-dev \
+          libxi-dev \
+          libpng-dev \
+          zlib1g-dev
 
     - name: install Catch2
       id: install-catch
