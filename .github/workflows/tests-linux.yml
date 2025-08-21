@@ -34,7 +34,7 @@ jobs:
           # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
           boost_version: 1.86.0
 
-    - name: install OpenGL
+    - name: install OpenGL and deps
       run: |
         sudo apt-get update
         sudo apt-get install -y \
@@ -45,11 +45,12 @@ jobs:
           libxcursor-dev \
           libxi-dev \
           libpng-dev \
-          libwayland-dev \
-          wayland-protocols \
-          extra-cmake-modules \
           zlib1g-dev
 
+    - name: Wayland deps
+      run: |
+        sudo apt-get install -y libglfw3-dev libx11-dev libxrandr-dev libxinerama-dev \
+        libxcursor-dev libxi-dev libwayland-dev libxkbcommon-dev
 
     - name: install Catch2
       id: install-catch
