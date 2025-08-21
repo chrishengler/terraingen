@@ -2,9 +2,10 @@
 #include "data_types.h"
 #include "generatorTypes.h"
 
-class Generator{
+class Generator {
     public:
         Generator(unsigned int seed, GeneratorType type);
+        virtual ~Generator() = default;
         virtual Heightmap generate(Vector2<int> dimensions);
         GeneratorType getGeneratorType(){ return type; }
 

@@ -1,8 +1,8 @@
 find_package(Catch2 3 REQUIRED)
 # These tests can use the Catch2-provided main
 add_executable(tests export.cpp generator.cpp generatorFactory.cpp terrain.cpp terrainCombination.cpp integration/export.cpp)
-target_include_directories(tests PUBLIC src ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain terrainlib generationlib exportlib)
+target_include_directories(tests PUBLIC lib-terraingen ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain lib-terraingen generationlib exportlib)
 include(Catch)
 include(CTest)
 catch_discover_tests(tests)

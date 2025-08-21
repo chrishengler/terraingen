@@ -8,8 +8,8 @@
 const double OFFSET = 1;
 const double SCALE = 0.5;
 
-PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<int> &cell_sizes)
-    : Generator(seed, GeneratorType::PERLIN), cell_sizes(cell_sizes)
+PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed)
+    : Generator(seed, GeneratorType::PERLIN)
 {
     permutations.reserve(256);
     for(int i=0; i<256; i++)
@@ -19,14 +19,20 @@ PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed, const Vector2<
     std::shuffle(permutations.begin(), permutations.end(), std::mt19937(seed));
 }
 
+void PerlinTerrainGenerator::setParameters(const PerlinParameters& params) {
+    this->params = params;
+}
+
 Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
+    std::cout << "Generating Perlin terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
+    std::cout << "Using scale: " << params.scale << std::endl;
     Heightmap heightmap;   
-    double max=0.5;
-    double min=0.5;
-    for(int x=0; x<dimensions.x; x++){
-        std::valarray<double> row(dimensions.y);
-        for(int y=0; y<dimensions.y; y++){
-            auto result = perlin(Vector2<int>(x,y));
+    double max=0;
+    double min=1;
+    for(int col=0; col<dimensions.x; col++){
+        std::valarray<double> column(dimensions.y);
+        for(int row=0; row<dimensions.y; row++){
+            auto result = perlin(Vector2<int>(col,row));
             if(result > max)
             {
                 max = result;
@@ -35,9 +41,9 @@ Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
             {
                 min = result;
             }
-            row[y] = perlin(Vector2<int>(x,y));
+            column[row] = perlin(Vector2<int>(col,row));
         }
-        heightmap.push_back(row);
+        heightmap.push_back(column);
     }
     std::cout << "max: " << max << "\nmin: " << min << std::endl;
     return heightmap;
@@ -45,8 +51,10 @@ Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
 
 double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates)
 {
-    double reduced_x = (double)(coordinates.x) / cell_sizes.x;
-    double reduced_y = (double)(coordinates.y) / cell_sizes.y;
+    double scaled_x = (double)(coordinates.x) * params.scale;
+    double scaled_y = (double)(coordinates.y) * params.scale;
+    double reduced_x = scaled_x / params.cellSize;
+    double reduced_y = scaled_y / params.cellSize;;
     int const floor_x = std::floor(reduced_x);
     int const floor_y = std::floor(reduced_y);
 
