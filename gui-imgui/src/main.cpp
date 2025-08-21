@@ -45,7 +45,7 @@ public:
         glBindTexture(GL_TEXTURE_2D, id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_FLOAT, pixels.data());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, pixels.data());
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
@@ -61,8 +61,12 @@ std::vector<float> flattenHeightmap(const Heightmap& hm) {
     size_t cols = hm.empty() ? 0 : hm[0].size();
     pixels.reserve(rows * cols);
     for (const auto& row : hm)
-        for (double v : row)
-            pixels.push_back(static_cast<float>(v));
+      for (double v : row) {
+        float f = static_cast<float>(v);
+        pixels.push_back(f);
+        pixels.push_back(f);
+        pixels.push_back(f);
+      }
     return pixels;
 }
 
