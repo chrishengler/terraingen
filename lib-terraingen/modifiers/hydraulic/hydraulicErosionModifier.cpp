@@ -30,7 +30,6 @@ Vector2<double> HydraulicErosionModifier::calculateGradient(const Vector2<double
         }
     }
     
-    // Normalize gradient
     double length = std::sqrt(gradient.x * gradient.x + gradient.y * gradient.y);
     if(length > 0) {
         gradient.x /= length;
@@ -51,7 +50,6 @@ double HydraulicErosionModifier::getInterpolatedHeight(const Vector2<double>& po
     double fx = pos.x - x0;
     double fy = pos.y - y0;
     
-    // Bilinear interpolation
     double h00 = heightmap[x0][y0];
     double h10 = heightmap[x0 + 1][y0];
     double h01 = heightmap[x0][y0 + 1];
@@ -69,7 +67,6 @@ void HydraulicErosionModifier::deposit(const Vector2<double>& pos, double amount
     double fx = pos.x - x0;
     double fy = pos.y - y0;
     
-    // Distribute sediment using bilinear interpolation weights
     heightmap[x0][y0] += amount * (1 - fx) * (1 - fy);
     heightmap[x0 + 1][y0] += amount * fx * (1 - fy);
     heightmap[x0][y0 + 1] += amount * (1 - fx) * fy;
@@ -96,13 +93,11 @@ void HydraulicErosionModifier::simulateParticle(Particle& particle) {
         Vector2<double> newPos = particle.position + normalisedVelocity;       
         if(!isInBounds(newPos)) break;
         
-        // Calculate height difference
         double oldHeight = getInterpolatedHeight(particle.position);
         double newHeight = getInterpolatedHeight(newPos);
         double heightDiff = newHeight - oldHeight;
         
         if(heightDiff > 0) {
-            // Moving uphill - deposit sediment
             double deposit = std::min(heightDiff, particle.sediment);
             particle.sediment -= deposit;
             this->deposit(particle.position, deposit);
@@ -126,7 +121,6 @@ void HydraulicErosionModifier::operate() {
     std::uniform_real_distribution<double> distX(0, heightmap.size() - 1);
     std::uniform_real_distribution<double> distY(0, heightmap[0].size() - 1);
     
-    // Simulate particles
     for(int i = 0; i < params.numParticles; i++) {
         Vector2<double> startPos{distX(rng), distY(rng)};
         Particle particle(startPos, params.numSteps);
