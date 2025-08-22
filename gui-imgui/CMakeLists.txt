@@ -49,7 +49,6 @@ target_link_libraries(gui-imgui
     PRIVATE
         imgui
         glfw
-        modifierslib
         lib-terraingen
         generationlib
         exportlib

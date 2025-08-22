@@ -21,6 +21,14 @@ void TerrainControlsWindow::render(GuiState &state) {
     std::uniform_int_distribution<int> dist(0, 0x7fffffff);
     state.seed = dist(gen);
   }
+  ImGui::SameLine();
+  if (ImGui::Button("New Seed and autogenerate")) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(0, 0x7fffffff);
+    state.seed = dist(gen);
+    state.generateRequested = true;
+  }
 
   // Show generator-specific parameters
   if (state.selectedType == GeneratorType::PERLIN) {

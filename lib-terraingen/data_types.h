@@ -17,6 +17,20 @@ struct Vector2{
     bool operator==(const Vector2 &other) const{
         return x == other.x && y == other.y;
     }
+
+    double magnitude() const {
+        return std::sqrt(x * x + y * y);
+    }
+
+    Vector2<T> normalised() const {
+        double mag = magnitude();
+        if (mag == 0) return {0, 0};
+        return {x / mag, y / mag};
+    }
+
+    Vector2<T> operator+(const Vector2<T> &other) const {
+        return {x + other.x, y + other.y};
+    }
 };
 
 template<typename T>
