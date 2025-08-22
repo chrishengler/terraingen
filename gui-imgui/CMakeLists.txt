@@ -37,6 +37,8 @@ target_link_libraries(imgui PUBLIC glfw)
 
 add_executable(gui-imgui
     src/main.cpp
+    src/terrainControls.cpp
+    src/heightmapPreview.cpp
 )
 
 target_include_directories(gui-imgui PUBLIC

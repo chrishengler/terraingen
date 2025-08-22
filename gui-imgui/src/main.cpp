@@ -1,4 +1,3 @@
-#include <random>
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #endif
@@ -6,51 +5,17 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "flat/flatTerrainGenerator.h"
 #include "generatorFactory.h"
-#include "generation/generatorParameters.h"
-#include "generation/perlin/perlinTerrainGenerator.h"
-#include "generation/flat/flatTerrainGenerator.h"
+#include "glTexture.h"
+#include "guiState.h"
+#include "heightmapPreview.h"
+#include "perlin/perlinTerrainGenerator.h"
+#include "terrainControls.h"
 
 #include <GLFW/glfw3.h>
 #include <vector>
-#include <cstdint>
 #include <iostream>
-
-// --------------------------
-// GUI state
-// --------------------------
-struct GuiState {
-    GeneratorType selectedType = GeneratorType::PERLIN;
-    Vector2<int> gridSize = {256, 256};
-    unsigned int seed = 0;
-    PerlinParameters perlinParams;
-    FlatParameters flatParams;
-    bool generateRequested = false;
-};
-
-// --------------------------
-// OpenGL texture helper
-// --------------------------
-class GLTexture {
-public:
-    GLuint id = 0;
-
-    ~GLTexture() {
-        if (id) glDeleteTextures(1, &id);
-    }
-
-    void upload(const std::vector<float>& pixels, int width, int height) {
-        if (id) glDeleteTextures(1, &id);
-        glGenTextures(1, &id);
-        glBindTexture(GL_TEXTURE_2D, id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, pixels.data());
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    operator bool() const { return id != 0; }
-};
 
 // --------------------------
 // Utility to flatten Heightmap
@@ -70,80 +35,7 @@ std::vector<float> flattenHeightmap(const Heightmap& hm) {
     return pixels;
 }
 
-// --------------------------
-// Terrain controls window
-// --------------------------
-class TerrainControlsWindow {
-public:
-    void render(GuiState& state) {
-        ImGui::Begin("Terrain Generator");
 
-        const char* generatorNames[] = { "Flat", "Perlin", "Diamond-Square" };
-        int typeIndex = static_cast<int>(state.selectedType);
-        if (ImGui::Combo("Generator Type", &typeIndex, generatorNames, IM_ARRAYSIZE(generatorNames)))
-            state.selectedType = static_cast<GeneratorType>(typeIndex);
-
-        ImGui::InputInt("Width", &state.gridSize.x);
-        ImGui::InputInt("Height", &state.gridSize.y);
-        ImGui::InputInt("Seed", reinterpret_cast<int*>(&state.seed));
-        if (ImGui::Button("Random Seed")) {
-          std::random_device rd;
-          std::mt19937 gen(rd());
-          std::uniform_int_distribution<int> dist(0, 0x7fffffff);
-          state.seed = dist(gen);
-        }
-
-        // Show generator-specific parameters
-        if (state.selectedType == GeneratorType::PERLIN) {
-            ImGui::SliderFloat("Scale", &state.perlinParams.scale, 0.1f, 10.0f, "%.2f");
-            ImGui::InputInt("Cell Size", &state.perlinParams.cellSize);
-            // Clamp cell size to reasonable values
-            state.perlinParams.cellSize = std::max(1, std::min(256, state.perlinParams.cellSize));
-        }
-        else if (state.selectedType == GeneratorType::FLAT) {
-            ImGui::InputFloat("Terrain Height", &state.flatParams.height, 0.1, 1.0, "%.1f");
-        }
-
-        if (ImGui::Button("Generate"))
-            state.generateRequested = true;
-
-        ImGui::End();
-    }
-};
-
-// --------------------------
-// Heightmap preview window
-// --------------------------
-class HeightmapPreviewWindow {
-public:
-    void render(const GuiState& state, const GLTexture& tex) {
-        if (!tex) return;
-
-        ImGui::Begin("Heightmap Preview");
-
-        // Get available content region size (space inside the window)
-        ImVec2 availSize = ImGui::GetContentRegionAvail();
-
-        // Compute aspect ratio based on terrain grid
-        float aspect = static_cast<float>(state.gridSize.x) / static_cast<float>(state.gridSize.y);
-
-        ImVec2 imageSize;
-        if (availSize.x / availSize.y > aspect) {
-            // Window is wider than terrain; fit to height
-            imageSize.y = availSize.y;
-            imageSize.x = imageSize.y * aspect;
-        } else {
-            // Window is taller than terrain; fit to width
-            imageSize.x = availSize.x;
-            imageSize.y = imageSize.x / aspect;
-        }
-
-        ImGui::Text("Generated Heightmap:");
-        ImGui::Image((void*)(intptr_t)tex.id, imageSize);
-
-        ImGui::End();
-    }
-};
 
 // --------------------------
 // Main
