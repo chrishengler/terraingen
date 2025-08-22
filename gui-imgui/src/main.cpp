@@ -1,4 +1,3 @@
-#include <random>
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #endif
@@ -6,27 +5,18 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "flat/flatTerrainGenerator.h"
 #include "generatorFactory.h"
-#include "generation/generatorParameters.h"
-#include "generation/perlin/perlinTerrainGenerator.h"
-#include "generation/flat/flatTerrainGenerator.h"
+#include "guiState.h"
+#include "perlin/perlinTerrainGenerator.h"
+#include "terrainControls.h"
 
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <cstdint>
 #include <iostream>
 
-// --------------------------
-// GUI state
-// --------------------------
-struct GuiState {
-    GeneratorType selectedType = GeneratorType::PERLIN;
-    Vector2<int> gridSize = {256, 256};
-    unsigned int seed = 0;
-    PerlinParameters perlinParams;
-    FlatParameters flatParams;
-    bool generateRequested = false;
-};
+
 
 // --------------------------
 // OpenGL texture helper
@@ -70,46 +60,6 @@ std::vector<float> flattenHeightmap(const Heightmap& hm) {
     return pixels;
 }
 
-// --------------------------
-// Terrain controls window
-// --------------------------
-class TerrainControlsWindow {
-public:
-    void render(GuiState& state) {
-        ImGui::Begin("Terrain Generator");
-
-        const char* generatorNames[] = { "Flat", "Perlin", "Diamond-Square" };
-        int typeIndex = static_cast<int>(state.selectedType);
-        if (ImGui::Combo("Generator Type", &typeIndex, generatorNames, IM_ARRAYSIZE(generatorNames)))
-            state.selectedType = static_cast<GeneratorType>(typeIndex);
-
-        ImGui::InputInt("Width", &state.gridSize.x);
-        ImGui::InputInt("Height", &state.gridSize.y);
-        ImGui::InputInt("Seed", reinterpret_cast<int*>(&state.seed));
-        if (ImGui::Button("Random Seed")) {
-          std::random_device rd;
-          std::mt19937 gen(rd());
-          std::uniform_int_distribution<int> dist(0, 0x7fffffff);
-          state.seed = dist(gen);
-        }
-
-        // Show generator-specific parameters
-        if (state.selectedType == GeneratorType::PERLIN) {
-            ImGui::SliderFloat("Scale", &state.perlinParams.scale, 0.1f, 10.0f, "%.2f");
-            ImGui::InputInt("Cell Size", &state.perlinParams.cellSize);
-            // Clamp cell size to reasonable values
-            state.perlinParams.cellSize = std::max(1, std::min(256, state.perlinParams.cellSize));
-        }
-        else if (state.selectedType == GeneratorType::FLAT) {
-            ImGui::InputFloat("Terrain Height", &state.flatParams.height, 0.1, 1.0, "%.1f");
-        }
-
-        if (ImGui::Button("Generate"))
-            state.generateRequested = true;
-
-        ImGui::End();
-    }
-};
 
 // --------------------------
 // Heightmap preview window
