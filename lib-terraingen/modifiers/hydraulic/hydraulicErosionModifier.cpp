@@ -1,6 +1,8 @@
-#include "hydraulicErosionModifier.h"
-#include <random>
 #include <algorithm>
+#include <ctime>
+#include <random>
+
+#include "hydraulicErosionModifier.h"
 
 HydraulicErosionModifier::HydraulicErosionModifier(Heightmap& heightmap)
     : Modifier(heightmap), rng(std::mt19937())
@@ -80,22 +82,17 @@ void HydraulicErosionModifier::erode(const Vector2<double>& pos, double amount) 
 
 void HydraulicErosionModifier::simulateParticle(Particle& particle) {
     while(particle.lifetime > 0 && isInBounds(particle.position)) {
-        // Calculate gradient at current position
         Vector2<double> gradient = calculateGradient(particle.position);
-        
-        // Update velocity with inertia and gradient influence
         particle.velocity.x = particle.velocity.x * params.inertia + gradient.x * params.gravity * (1 - params.inertia);
         particle.velocity.y = particle.velocity.y * params.inertia + gradient.y * params.gravity * (1 - params.inertia);
         
-        // Add small random variation to velocity
         std::uniform_real_distribution<double> dist(-0.1, 0.1);
         particle.velocity.x += dist(rng);
         particle.velocity.y += dist(rng);
 
-        // Move one square per step to avoid 'ghosting'
+        // Moving by velocity leads to weird artifacts from skipping squares,
+        // Normalize to ensure no squares skipped
         auto normalisedVelocity = particle.velocity.normalised();
-
-        // Move particle
         Vector2<double> newPos = particle.position + normalisedVelocity;       
         if(!isInBounds(newPos)) break;
         
@@ -103,11 +100,6 @@ void HydraulicErosionModifier::simulateParticle(Particle& particle) {
         double oldHeight = getInterpolatedHeight(particle.position);
         double newHeight = getInterpolatedHeight(newPos);
         double heightDiff = newHeight - oldHeight;
-       
-        // Calculate sediment capacity based on velocity
-        double speed = std::sqrt(particle.velocity.x * particle.velocity.x + 
-                               particle.velocity.y * particle.velocity.y);
-        double capacity = std::max(speed * params.sedimentCapacity, 0.01);
         
         if(heightDiff > 0) {
             // Moving uphill - deposit sediment
@@ -115,7 +107,9 @@ void HydraulicErosionModifier::simulateParticle(Particle& particle) {
             particle.sediment -= deposit;
             this->deposit(particle.position, deposit);
         } else {
-            // Moving downhill - erode and pick up sediment
+            double speed = particle.velocity.magnitude();
+            double capacity = std::max(speed * params.sedimentCapacity, 0.01);
+
             double erosion = std::min(capacity - particle.sediment, -heightDiff * params.erosionRate);
             if(erosion > 0) {
                 this->erode(particle.position, erosion);
@@ -123,9 +117,7 @@ void HydraulicErosionModifier::simulateParticle(Particle& particle) {
             }
         }
 
-        // Update particle position
         particle.position = newPos;
-        
         particle.lifetime--;
     }
 }
