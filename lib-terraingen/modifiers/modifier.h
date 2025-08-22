@@ -1,5 +1,5 @@
 #pragma once
-#include "terrain/terrain.h"
+#include "data_types.h"
 
 class Modifier {
 public:

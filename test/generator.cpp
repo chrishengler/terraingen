@@ -2,7 +2,6 @@
 
 #include "data_types.h"
 #include "generatorParameters.h"
-#include "terrain/terrain.h"
 #include "flat/flatTerrainGenerator.h"
 #include "perlin/perlinTerrainGenerator.h"
 #include "diamondsquare/diamondSquareGenerator.h"

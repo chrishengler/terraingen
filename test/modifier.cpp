@@ -1,7 +1,6 @@
 #include "catch2/catch_test_macros.hpp"
 #include "modifiers/modifier.h"
 #include "modifiers/hydraulic/hydraulicErosionModifier.h"
-#include "terrain/terrain.h"
 
 // Test helper class since Modifier is abstract
 class TestModifier : public Modifier {
