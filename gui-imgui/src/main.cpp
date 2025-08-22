@@ -10,7 +10,9 @@
 #include "glTexture.h"
 #include "guiState.h"
 #include "heightmapPreview.h"
+#include "modifierControls.h"
 #include "perlin/perlinTerrainGenerator.h"
+#include "modifiers/hydraulic/hydraulicErosionModifier.h"
 #include "terrainControls.h"
 
 #include <GLFW/glfw3.h>
@@ -77,6 +79,7 @@ int main() {
     GuiState guiState;
     GLTexture heightmapTexture;
     TerrainControlsWindow controlsWindow;
+    ModifierControlsWindow modifierWindow;
     HeightmapPreviewWindow previewWindow;
 
     // Main loop
@@ -90,6 +93,7 @@ int main() {
 
         // Render GUI windows
         controlsWindow.render(guiState);
+        modifierWindow.render(guiState);
 
         // Run terrain generator if requested
         if (guiState.generateRequested) {
@@ -105,9 +109,23 @@ int main() {
                 flatGen->setParameters(guiState.flatParams);
             }
 
-            Heightmap hm = generator->generate(guiState.gridSize);
-            auto pixels = flattenHeightmap(hm);
+            guiState.currentHeightmap = generator->generate(guiState.gridSize);
+            auto pixels = flattenHeightmap(guiState.currentHeightmap);
             heightmapTexture.upload(pixels, guiState.gridSize.x, guiState.gridSize.y);
+        }
+
+        // Apply modifiers if requested
+        if (guiState.modifyRequested) {
+            guiState.modifyRequested = false;
+
+            if (!guiState.currentHeightmap.empty()) {
+                HydraulicErosionModifier erosion(guiState.currentHeightmap);
+                erosion.operate();
+                
+                // Update the display
+                auto pixels = flattenHeightmap(guiState.currentHeightmap);
+                heightmapTexture.upload(pixels, guiState.gridSize.x, guiState.gridSize.y);
+            }
         }
 
         previewWindow.render(guiState, heightmapTexture);

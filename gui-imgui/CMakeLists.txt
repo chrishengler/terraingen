@@ -39,6 +39,7 @@ add_executable(gui-imgui
     src/main.cpp
     src/terrainControls.cpp
     src/heightmapPreview.cpp
+    src/modifierControls.cpp
 )
 
 target_include_directories(gui-imgui PUBLIC
@@ -48,6 +49,7 @@ target_link_libraries(gui-imgui
     PRIVATE
         imgui
         glfw
+        modifierslib
         lib-terraingen
         generationlib
         exportlib

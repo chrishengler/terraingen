@@ -3,9 +3,6 @@
 #include "imgui.h"
 #include "terrainControls.h"
 
-// --------------------------
-// Terrain controls window
-// --------------------------
 void TerrainControlsWindow::render(GuiState &state) {
   ImGui::Begin("Terrain Generator");
 

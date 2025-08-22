@@ -10,4 +10,6 @@ struct GuiState {
     PerlinParameters perlinParams;
     FlatParameters flatParams;
     bool generateRequested = false;
+    bool modifyRequested = false;
+    Heightmap currentHeightmap;
 };
