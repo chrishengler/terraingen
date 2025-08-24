@@ -6,9 +6,10 @@
 class DiamondSquareGenerator : public Generator{
     public:
         DiamondSquareGenerator(unsigned int seed);
-        Heightmap generate(Vector2<int> dimensions) override;
+        Heightmap generate(const Vec2i &dimensions) override;
         void setParameters(const DiamondSquareParameters& params);
 
+        std::unique_ptr<Heightmap> generate_as_unique_ptr(const Vec2i &dimensions) override;
     private:
         int get_required_grid_size(const Vector2<int> &dimensions) const;
         DiamondSquareParameters params;

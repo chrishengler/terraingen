@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <memory>
 #include <random>
 #include <vector>
 #include "perlinTerrainGenerator.h"
+#include "data_types.h"
 
 const double OFFSET = 1;
 const double SCALE = 0.5;
@@ -23,7 +25,7 @@ void PerlinTerrainGenerator::setParameters(const PerlinParameters& params) {
     this->params = params;
 }
 
-Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
+Heightmap PerlinTerrainGenerator::generate(const Vec2i &dimensions){
     std::cout << "Generating Perlin terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
     std::cout << "Using scale: " << params.scale << std::endl;
     Heightmap heightmap;   
@@ -47,6 +49,11 @@ Heightmap PerlinTerrainGenerator::generate(Vector2<int> dimensions){
     }
     std::cout << "max: " << max << "\nmin: " << min << std::endl;
     return heightmap;
+}
+
+std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate_as_unique_ptr(const Vec2i &dimensions) {
+    auto hm = std::make_unique<Heightmap>(generate(dimensions));
+    return hm;
 }
 
 double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates)

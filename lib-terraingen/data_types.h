@@ -33,6 +33,9 @@ struct Vector2{
     }
 };
 
+using Vec2i = Vector2<int>;
+
+
 template<typename T>
 Vector2<T> lerp(Vector2<T> a, Vector2<T> b, double t)
 {

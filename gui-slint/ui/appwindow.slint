@@ -1,0 +1,25 @@
+import { Button, ComboBox } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    width: 400px;
+    height: 300px;
+    title: "Terrain Generator";
+    property <string> selected_algorithm: "Diamond-Square";
+    callback invoke_generate(algorithm: string);
+
+    VerticalLayout {
+        Text {
+            text: "Select algorithm:";
+        }
+        ComboBox {
+            model: ["Diamond-Square", "Perlin Noise", "Simplex"];
+            selected(value) => { root.selected_algorithm = value; }
+        }
+        Button {
+            text: "Generate Terrain";
+            clicked => {
+                root.invoke_generate(root.selected_algorithm);
+            }
+        }
+    }
+}
