@@ -16,7 +16,7 @@ TEST_CASE("Perlin export")
     };
     PerlinTerrainGenerator ptg(0);
     ptg.setParameters(pp);
-    Vector2<int> expected_size(2048,2048);
+    Vector2<uint> expected_size(2048,2048);
     Heightmap result = ptg.generate(expected_size);
 
     ImageExporter imgExporter;
@@ -31,7 +31,7 @@ TEST_CASE("Diamond Square export")
     DiamondSquareParameters dsp{1.0};
     DiamondSquareGenerator dsg(0);
     dsg.setParameters(dsp);
-    Vector2<int> expected_size(2048,2048);
+    Vector2<uint> expected_size(2048,2048);
     Heightmap result = dsg.generate(expected_size);
 
     ImageExporter imgExporter;

@@ -2,15 +2,16 @@
 #include "generator.h"
 #include "data_types.h"
 #include "generation/generatorParameters.h"
+#include <sys/types.h>
 
 class PerlinTerrainGenerator : public Generator {
     public:
         PerlinTerrainGenerator(unsigned int seed);
-        Heightmap generate(const Vec2i &dimensions) override;
+        Heightmap generate(const Vector2<uint> &dimensions) override;
         void setParameters(const PerlinParameters& params);
         const PerlinParameters& getParameters() const { return params; }
 
-        std::unique_ptr<Heightmap> generate_as_unique_ptr(const Vec2i &dimensions) override;
+        std::unique_ptr<Heightmap> generate_as_unique_ptr(const uint &x, const uint &y) override;
     private:
         double perlin(const Vector2<int> &coordinates);
         double fade(double t);
@@ -19,3 +20,5 @@ class PerlinTerrainGenerator : public Generator {
         std::vector<int> permutations;
         PerlinParameters params;
 };
+
+std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator(unsigned int seed);

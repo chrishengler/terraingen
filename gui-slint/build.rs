@@ -1,6 +1,7 @@
 fn main() {
     slint_build::compile("ui/appwindow.slint").unwrap();
     cxx_build::bridge("src/lib_ffi.rs")
+        .file("../lib-terraingen/generation/generator.cpp")
         .file("../lib-terraingen/generation/diamondsquare/diamondSquareGenerator.cpp")
         .file("../lib-terraingen/generation/flat/flatTerrainGenerator.cpp")
         .file("../lib-terraingen/generation/perlin/perlinTerrainGenerator.cpp")

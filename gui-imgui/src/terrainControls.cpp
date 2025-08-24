@@ -12,8 +12,22 @@ void TerrainControlsWindow::render(GuiState &state) {
                    IM_ARRAYSIZE(generatorNames)))
     state.selectedType = static_cast<GeneratorType>(typeIndex);
 
-  ImGui::InputInt("Width", &state.gridSize.x);
-  ImGui::InputInt("Height", &state.gridSize.y);
+  int tmp_x = static_cast<int>(state.gridSize.x);
+  int tmp_y = static_cast<int>(state.gridSize.y);
+  if(ImGui::InputInt("Width", &tmp_x))
+  {
+    if(tmp_x < 0){
+      tmp_x = 0;
+    }
+    state.gridSize.x = static_cast<uint>(tmp_x);
+  }
+  ImGui::InputInt("Height", &tmp_y);
+  {
+    if(tmp_y < 0){
+      tmp_y = 0;
+    }
+    state.gridSize.y = static_cast<uint>(tmp_y);
+  }
   ImGui::InputInt("Seed", reinterpret_cast<int *>(&state.seed));
   if (ImGui::Button("Random Seed")) {
     std::random_device rd;

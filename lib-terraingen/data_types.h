@@ -35,6 +35,11 @@ struct Vector2{
 
 using Vec2i = Vector2<int>;
 
+inline Vec2i make_vec2i(int x, int y)
+{
+    return Vec2i(x, y);
+}
+
 
 template<typename T>
 Vector2<T> lerp(Vector2<T> a, Vector2<T> b, double t)

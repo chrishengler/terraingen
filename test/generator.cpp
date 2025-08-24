@@ -11,7 +11,7 @@ TEST_CASE("Generator Tests", "[generator]")
     SECTION("Flat terrain generator produces correct output")
     {
         FlatTerrainGenerator ftg(0);
-        Vector2<int> gridSize(10, 10);
+        Vector2<uint> gridSize(10, 10);
         FlatParameters params;
         params.height = 4.0;
         ftg.setParameters(params);
@@ -35,7 +35,7 @@ TEST_CASE("Generator Tests", "[generator]")
         pp.scale = 2.0f;
         pp.cellSize = 32;
 
-        Vector2<int> gridSize(10, 10);
+        Vector2<uint> gridSize(10, 10);
 
         PerlinTerrainGenerator ptg1(4);
         ptg1.setParameters(pp);
@@ -57,7 +57,7 @@ TEST_CASE("Generator Tests", "[generator]")
 TEST_CASE("Perlin generator parameters", "[perlin]")
 {
     SECTION("Default scale produces output within range") {
-        Vector2<int> expected_size(512, 512);
+        Vector2<uint> expected_size(512, 512);
         
         PerlinParameters params;
 
@@ -77,7 +77,7 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
     }
 
     SECTION("Different scales produce different results") {
-        Vector2<int> expected_size(512, 512);
+        Vector2<uint> expected_size(512, 512);
 
         PerlinParameters params1;
         params1.scale = 1.0f;
@@ -107,7 +107,7 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
     }
 
     SECTION("Parameters maintain seed independence") {
-        Vector2<int> expected_size(512, 512);
+        Vector2<uint> expected_size(512, 512);
 
         PerlinParameters params;
         params.scale = 1.0f;
@@ -138,7 +138,7 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
 TEST_CASE("Diamond Square generator", "[diamond-square]")
 {
     SECTION("Produces correct output within range") {
-        Vector2<int> expected_size(512, 512);
+        Vector2<uint> expected_size(512, 512);
         DiamondSquareParameters params;
         params.roughness = 1.0;
 
@@ -158,7 +158,7 @@ TEST_CASE("Diamond Square generator", "[diamond-square]")
     }
 
     SECTION("Different seeds produce different results") {
-        Vector2<int> expected_size(64, 64);
+        Vector2<uint> expected_size(64, 64);
         DiamondSquareParameters params;
         auto gridSize = expected_size;
         params.roughness = 1.0;

@@ -10,6 +10,10 @@
 const double OFFSET = 1;
 const double SCALE = 0.5;
 
+std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator(unsigned int seed) {
+    return std::make_unique<PerlinTerrainGenerator>(seed);
+}
+
 PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed)
     : Generator(seed, GeneratorType::PERLIN)
 {
@@ -25,15 +29,15 @@ void PerlinTerrainGenerator::setParameters(const PerlinParameters& params) {
     this->params = params;
 }
 
-Heightmap PerlinTerrainGenerator::generate(const Vec2i &dimensions){
+Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions){
     std::cout << "Generating Perlin terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
     std::cout << "Using scale: " << params.scale << std::endl;
     Heightmap heightmap;   
     double max=0;
     double min=1;
-    for(int col=0; col<dimensions.x; col++){
+    for(uint col=0; col<dimensions.x; col++){
         std::valarray<double> column(dimensions.y);
-        for(int row=0; row<dimensions.y; row++){
+        for(uint row=0; row<dimensions.y; row++){
             auto result = perlin(Vector2<int>(col,row));
             if(result > max)
             {
@@ -51,8 +55,8 @@ Heightmap PerlinTerrainGenerator::generate(const Vec2i &dimensions){
     return heightmap;
 }
 
-std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate_as_unique_ptr(const Vec2i &dimensions) {
-    auto hm = std::make_unique<Heightmap>(generate(dimensions));
+std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate_as_unique_ptr(const uint &x, const uint &y) {
+    auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}));
     return hm;
 }
 
