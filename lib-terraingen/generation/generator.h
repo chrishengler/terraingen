@@ -12,7 +12,7 @@ class Generator {
         GeneratorType getGeneratorType(){ return type; }
 
         // for rust interface
-        virtual std::unique_ptr<Heightmap> generate_as_unique_ptr(const uint &x, const uint &y, const uint &seed);
+        virtual std::unique_ptr<Heightmap> generate(const uint &x, const uint &y, const uint &seed);
     protected:
         unsigned int seed;
     private:

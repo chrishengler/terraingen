@@ -9,7 +9,7 @@ class FlatTerrainGenerator : public Generator {
         void setParameters(const FlatParameters& params);
         const FlatParameters& getParameters() const { return params; }
     
-        std::unique_ptr<Heightmap> generate_as_unique_ptr(const uint &x, const uint &y, const uint &seed) override;
+        std::unique_ptr<Heightmap> generate(const uint &x, const uint &y, const uint &seed) override;
     private:
         FlatParameters params;
 };

@@ -107,7 +107,7 @@ Heightmap DiamondSquareGenerator::generate(const Vector2<uint> &dimensions, cons
     return final_heightmap;
 }
 
-std::unique_ptr<Heightmap> DiamondSquareGenerator::generate_as_unique_ptr(const uint &x, const uint &y, const uint &seed) {
+std::unique_ptr<Heightmap> DiamondSquareGenerator::generate(const uint &x, const uint &y, const uint &seed) {
     auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}, seed));
     return hm;
 }

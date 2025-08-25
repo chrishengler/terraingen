@@ -56,7 +56,7 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, cons
     return heightmap;
 }
 
-std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate_as_unique_ptr(const uint &x, const uint &y, const uint &seed) {
+std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate(const uint &x, const uint &y, const uint &seed) {
     auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}, seed));
     return hm;
 }

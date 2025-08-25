@@ -26,7 +26,7 @@ fn main() {
         println!("Generating terrain using algorithm: {}", algorithm);
         match algorithm.as_str() {
             "Perlin Noise" => {
-                let _heightmap = perlin_gen.pin_mut().generate_as_unique_ptr(&x, &y, &seed);
+                let _heightmap = perlin_gen.pin_mut().generate(&x, &y, &seed);
                 println!("Generated Perlin heightmap of size");
             }
             // "Diamond-Square" => {

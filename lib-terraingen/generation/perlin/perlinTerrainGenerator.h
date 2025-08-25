@@ -11,7 +11,7 @@ class PerlinTerrainGenerator : public Generator {
         void setParameters(const PerlinParameters& params);
         const PerlinParameters& getParameters() const { return params; }
 
-        std::unique_ptr<Heightmap> generate_as_unique_ptr(const uint &x, const uint &y, const uint &seed) override;
+        std::unique_ptr<Heightmap> generate(const uint &x, const uint &y, const uint &seed) override;
     private:
         double perlin(const Vector2<int> &coordinates);
         double fade(double t);
