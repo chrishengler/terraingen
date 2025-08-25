@@ -4,8 +4,12 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
-#include <limits>
+#include <iostream>
 #include <sys/types.h>
+
+std::unique_ptr<DiamondSquareGenerator> new_diamond_square_generator() {
+    return std::make_unique<DiamondSquareGenerator>();
+}
 
 DiamondSquareGenerator::DiamondSquareGenerator()
     : Generator(GeneratorType::DIAMOND_SQUARE)
@@ -19,6 +23,8 @@ void DiamondSquareGenerator::setParameters(const DiamondSquareParameters& params
 
 Heightmap DiamondSquareGenerator::generate(const Vector2<uint> &dimensions, const uint &seed)
 {
+    std::cout << "Generating Diamond-Square terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
+    std::cout << "Using roughness: " << params.roughness << std::endl;
     uint grid_size = std::pow(2, get_required_grid_size(dimensions)) + 1;
     
     Heightmap heightmap;

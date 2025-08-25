@@ -6,10 +6,10 @@ pub mod ffi {
         cellSize: i32,
     }
 
-    // #[derive(Debug)]
-    // struct DiamondSquareParameters {
-    //     roughness: f32,
-    // }
+    #[derive(Debug)]
+    struct DiamondSquareParameters {
+        roughness: f32,
+    }
 
     unsafe extern "C++" {
         include!("perlinTerrainGenerator.h");
@@ -17,6 +17,7 @@ pub mod ffi {
 
 
         type PerlinTerrainGenerator;
+        type PerlinParameters;
         type Heightmap;
         type Vec2i;
 
@@ -25,9 +26,20 @@ pub mod ffi {
 
         // call the new wrapper method returning a UniquePtr
         fn generate(self: Pin<&mut PerlinTerrainGenerator>, x: &u32, y: &u32, seed: &u32) -> UniquePtr<Heightmap>;
-
-        type PerlinParameters;
     }
+
+    unsafe extern "C++" {
+        include!("diamondSquareGenerator.h");
+        include!("memory");
+
+        type DiamondSquareGenerator;
+        type DiamondSquareParameters;
+
+        fn new_diamond_square_generator() -> UniquePtr<DiamondSquareGenerator>;
+        fn setParameters(self: Pin<&mut DiamondSquareGenerator>, params: &DiamondSquareParameters);
+
+        fn generate(self: Pin<&mut DiamondSquareGenerator>, x: &u32, y: &u32, seed: &u32) -> UniquePtr<Heightmap>;
+    }   
 
 }
 

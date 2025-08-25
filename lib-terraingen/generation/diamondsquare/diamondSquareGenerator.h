@@ -14,3 +14,5 @@ class DiamondSquareGenerator : public Generator{
         int get_required_grid_size(const Vector2<uint> &dimensions) const;
         DiamondSquareParameters params;
 };
+
+std::unique_ptr<DiamondSquareGenerator> new_diamond_square_generator();

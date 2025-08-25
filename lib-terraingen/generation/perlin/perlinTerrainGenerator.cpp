@@ -32,7 +32,7 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, cons
     }
     std::shuffle(permutations.begin(), permutations.end(), std::mt19937(seed));
     std::cout << "Generating Perlin terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
-    std::cout << "Using scale: " << params.scale << std::endl;
+    std::cout << "Using scale: " << params.scale << " and cell size: " << params.cellSize << std::endl;
     Heightmap heightmap;   
     double max=0;
     double min=1;
