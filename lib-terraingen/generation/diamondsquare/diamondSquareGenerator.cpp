@@ -7,8 +7,8 @@
 #include <limits>
 #include <sys/types.h>
 
-DiamondSquareGenerator::DiamondSquareGenerator(unsigned int seed)
-    : Generator(seed, GeneratorType::DIAMOND_SQUARE)
+DiamondSquareGenerator::DiamondSquareGenerator()
+    : Generator(GeneratorType::DIAMOND_SQUARE)
 {
 }
 
@@ -17,7 +17,7 @@ void DiamondSquareGenerator::setParameters(const DiamondSquareParameters& params
     this->params = params;
 }
 
-Heightmap DiamondSquareGenerator::generate(const Vector2<uint> &dimensions)
+Heightmap DiamondSquareGenerator::generate(const Vector2<uint> &dimensions, const uint &seed)
 {
     uint grid_size = std::pow(2, get_required_grid_size(dimensions)) + 1;
     
@@ -107,8 +107,8 @@ Heightmap DiamondSquareGenerator::generate(const Vector2<uint> &dimensions)
     return final_heightmap;
 }
 
-std::unique_ptr<Heightmap> DiamondSquareGenerator::generate_as_unique_ptr(const uint &x, const uint &y) {
-    auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}));
+std::unique_ptr<Heightmap> DiamondSquareGenerator::generate_as_unique_ptr(const uint &x, const uint &y, const uint &seed) {
+    auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}, seed));
     return hm;
 }
 

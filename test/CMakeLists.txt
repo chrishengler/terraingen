@@ -3,7 +3,6 @@ find_package(Catch2 3 REQUIRED)
 add_executable(tests 
     export.cpp 
     generator.cpp 
-    generatorFactory.cpp 
     terrain.cpp 
     terrainCombination.cpp 
     modifier.cpp 

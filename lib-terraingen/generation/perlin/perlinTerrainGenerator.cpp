@@ -10,26 +10,27 @@
 const double OFFSET = 1;
 const double SCALE = 0.5;
 
-std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator(unsigned int seed) {
-    return std::make_unique<PerlinTerrainGenerator>(seed);
+std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator() {
+    return std::make_unique<PerlinTerrainGenerator>();
 }
 
-PerlinTerrainGenerator::PerlinTerrainGenerator(unsigned int seed)
-    : Generator(seed, GeneratorType::PERLIN)
+PerlinTerrainGenerator::PerlinTerrainGenerator()
+    : Generator(GeneratorType::PERLIN)
 {
-    permutations.reserve(256);
-    for(int i=0; i<256; i++)
-    {
-        permutations.push_back(i);
-    }
-    std::shuffle(permutations.begin(), permutations.end(), std::mt19937(seed));
 }
 
 void PerlinTerrainGenerator::setParameters(const PerlinParameters& params) {
     this->params = params;
 }
 
-Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions){
+Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, const uint &seed){
+    permutations.clear();
+    permutations.reserve(256);
+    for(int i=0; i<256; i++)
+    {
+        permutations.push_back(i);
+    }
+    std::shuffle(permutations.begin(), permutations.end(), std::mt19937(seed));
     std::cout << "Generating Perlin terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
     std::cout << "Using scale: " << params.scale << std::endl;
     Heightmap heightmap;   
@@ -55,8 +56,8 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions){
     return heightmap;
 }
 
-std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate_as_unique_ptr(const uint &x, const uint &y) {
-    auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}));
+std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate_as_unique_ptr(const uint &x, const uint &y, const uint &seed) {
+    auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}, seed));
     return hm;
 }
 

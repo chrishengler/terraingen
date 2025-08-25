@@ -10,13 +10,13 @@ TEST_CASE("Generator Tests", "[generator]")
 {
     SECTION("Flat terrain generator produces correct output")
     {
-        FlatTerrainGenerator ftg(0);
+        FlatTerrainGenerator ftg;
         Vector2<uint> gridSize(10, 10);
         FlatParameters params;
         params.height = 4.0;
         ftg.setParameters(params);
 
-        Heightmap result = ftg.generate(gridSize);
+        Heightmap result = ftg.generate(gridSize, 0);
 
         REQUIRE(result.size() == gridSize.x);  // Number of columns
         for (int col = 0; col < gridSize.x; col++)
@@ -37,18 +37,18 @@ TEST_CASE("Generator Tests", "[generator]")
 
         Vector2<uint> gridSize(10, 10);
 
-        PerlinTerrainGenerator ptg1(4);
+        PerlinTerrainGenerator ptg1;
         ptg1.setParameters(pp);
 
         // Verify parameters by generating terrain and checking scale and grid size
-        Heightmap result = ptg1.generate(gridSize);
+        Heightmap result = ptg1.generate(gridSize, 4);
         REQUIRE(result.size() == gridSize.x);
         REQUIRE(result[0].size() == gridSize.y);
 
         // Create a second generator to verify independent parameter handling
-        PerlinTerrainGenerator ptg2(8);
+        PerlinTerrainGenerator ptg2;
         ptg2.setParameters(pp);
-        result = ptg2.generate(gridSize);
+        result = ptg2.generate(gridSize, 8);
         REQUIRE(result.size() == gridSize.x);
         REQUIRE(result[0].size() == gridSize.y);
     }
@@ -61,9 +61,9 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
         
         PerlinParameters params;
 
-        PerlinTerrainGenerator ptg(0);
+        PerlinTerrainGenerator ptg;
         ptg.setParameters(params);
-        Heightmap result = ptg.generate(expected_size);
+        Heightmap result = ptg.generate(expected_size, 0);
 
         REQUIRE(result.size() == expected_size.x);  // Number of columns
         for (int col = 0; col < expected_size.x; col++) {
@@ -87,13 +87,13 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
         params2.scale = 2.0f;
         params2.cellSize = 32;
 
-        PerlinTerrainGenerator ptg1(4);
+        PerlinTerrainGenerator ptg1;
         ptg1.setParameters(params1);
-        PerlinTerrainGenerator ptg2(4);
+        PerlinTerrainGenerator ptg2;
         ptg2.setParameters(params2);
         
-        Heightmap result1 = ptg1.generate(expected_size);
-        Heightmap result2 = ptg2.generate(expected_size);
+        Heightmap result1 = ptg1.generate(expected_size, 4);
+        Heightmap result2 = ptg2.generate(expected_size, 4);
 
         bool found_different = false;
         for (int col = 0; col < expected_size.x && !found_different; col++) {
@@ -114,14 +114,14 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
         params.cellSize = 32;
 
         // Use different seeds to verify seed independence
-        PerlinTerrainGenerator ptg1(4);
+        PerlinTerrainGenerator ptg1;
         ptg1.setParameters(params);
         
-        PerlinTerrainGenerator ptg2(8);
+        PerlinTerrainGenerator ptg2;
         ptg2.setParameters(params);
 
-        Heightmap result1 = ptg1.generate(expected_size);
-        Heightmap result2 = ptg2.generate(expected_size);
+        Heightmap result1 = ptg1.generate(expected_size, 4);
+        Heightmap result2 = ptg2.generate(expected_size, 8);
 
         bool found_different = false;
         for (int x = 0; x < expected_size.x && !found_different; x++) {
@@ -142,9 +142,9 @@ TEST_CASE("Diamond Square generator", "[diamond-square]")
         DiamondSquareParameters params;
         params.roughness = 1.0;
 
-        DiamondSquareGenerator dsg(42);
+        DiamondSquareGenerator dsg;
         dsg.setParameters(params);
-        Heightmap result = dsg.generate(expected_size);
+        Heightmap result = dsg.generate(expected_size, 42);
 
         REQUIRE(result.size() == expected_size.x);
         for (int x = 0; x < expected_size.x; x++) {
@@ -163,13 +163,13 @@ TEST_CASE("Diamond Square generator", "[diamond-square]")
         auto gridSize = expected_size;
         params.roughness = 1.0;
 
-        DiamondSquareGenerator dsg1(42);
+        DiamondSquareGenerator dsg1;
         dsg1.setParameters(params);
-        DiamondSquareGenerator dsg2(84);
+        DiamondSquareGenerator dsg2;
         dsg2.setParameters(params);
 
-        Heightmap result1 = dsg1.generate(expected_size);
-        Heightmap result2 = dsg2.generate(expected_size);
+        Heightmap result1 = dsg1.generate(expected_size, 42);
+        Heightmap result2 = dsg2.generate(expected_size, 84);
 
         bool found_different = false;
         for (int x = 0; x < expected_size.x && !found_different; x++) {

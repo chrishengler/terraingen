@@ -45,16 +45,26 @@ void TerrainControlsWindow::render(GuiState &state) {
   }
 
   // Show generator-specific parameters
-  if (state.selectedType == GeneratorType::PERLIN) {
-    ImGui::SliderFloat("Scale", &state.perlinParams.scale, 0.1f, 10.0f, "%.2f");
-    ImGui::InputInt("Cell Size", &state.perlinParams.cellSize);
-    // Clamp cell size to reasonable values
-    state.perlinParams.cellSize =
-        std::max(1, std::min(256, state.perlinParams.cellSize));
-  } else if (state.selectedType == GeneratorType::FLAT) {
-    ImGui::InputFloat("Terrain Height", &state.flatParams.height, 0.1, 1.0,
-                      "%.1f");
-  }
+  switch (state.selectedType) {
+    case GeneratorType::DIAMOND_SQUARE: {
+      ImGui::SliderFloat("Roughness", &state.diamondSquareParams.roughness, 0.1f,
+                        2.0f, "%.2f");
+    } break;
+    case GeneratorType::PERLIN: {
+      ImGui::SliderFloat("Scale", &state.perlinParams.scale, 0.1f, 10.0f,
+                         "%.2f");
+      ImGui::InputInt("Cell Size", &state.perlinParams.cellSize);
+      // Clamp cell size to reasonable values
+      state.perlinParams.cellSize =
+          std::max(1, std::min(256, state.perlinParams.cellSize));
+    } break;
+    case GeneratorType::FLAT: {
+      ImGui::InputFloat("Terrain Height", &state.flatParams.height, 0.1, 1.0,
+                        "%.1f");
+    } break;
+    default:
+      break;
+    }
 
   if (ImGui::Button("Generate"))
     state.generateRequested = true;

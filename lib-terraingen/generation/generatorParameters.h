@@ -10,5 +10,5 @@ struct FlatParameters{
 };
 
 struct DiamondSquareParameters{
-    double roughness = 1.0;
+    float roughness = 1.0;
 };

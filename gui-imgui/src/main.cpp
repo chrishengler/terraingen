@@ -1,3 +1,5 @@
+#include "diamondsquare/diamondSquareGenerator.h"
+#include "generatorTypes.h"
 #ifdef __APPLE__
 #define GL_SILENCE_DEPRECATION
 #endif
@@ -6,7 +8,6 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "flat/flatTerrainGenerator.h"
-#include "generatorFactory.h"
 #include "glTexture.h"
 #include "guiState.h"
 #include "heightmapPreview.h"
@@ -99,17 +100,26 @@ int main() {
         if (guiState.generateRequested) {
             guiState.generateRequested = false;
 
-            auto generator = GeneratorFactory::createGenerator(guiState.seed, guiState.selectedType);
-            
+            std::unique_ptr<Generator> generator;
             // Configure generator-specific parameters
-            if (auto perlinGen = dynamic_cast<PerlinTerrainGenerator*>(generator.get())) {
-                perlinGen->setParameters(guiState.perlinParams);
+            switch(guiState.selectedType) {
+                case GeneratorType::DIAMOND_SQUARE:
+                    generator = std::make_unique<DiamondSquareGenerator>();
+                    static_cast<DiamondSquareGenerator*>(generator.get())->setParameters(guiState.diamondSquareParams);
+                    break;
+                case GeneratorType::FLAT:
+                    generator = std::make_unique<FlatTerrainGenerator>();
+                    static_cast<FlatTerrainGenerator*>(generator.get())->setParameters(guiState.flatParams);
+                    break;
+                case GeneratorType::PERLIN:
+                    generator = std::make_unique<PerlinTerrainGenerator>();
+                    static_cast<PerlinTerrainGenerator*>(generator.get())->setParameters(guiState.perlinParams);
+                    break;
+                default:
+                    std::cerr << "Unsupported generator type selected.\n";
+                    continue;
             }
-            else if (auto flatGen = dynamic_cast<FlatTerrainGenerator*>(generator.get())) {
-                flatGen->setParameters(guiState.flatParams);
-            }
-
-            guiState.currentHeightmap = generator->generate(guiState.gridSize);
+            guiState.currentHeightmap = generator->generate(guiState.gridSize, guiState.seed);
             auto pixels = flattenHeightmap(guiState.currentHeightmap);
             heightmapTexture.upload(pixels, guiState.gridSize.x, guiState.gridSize.y);
         }
