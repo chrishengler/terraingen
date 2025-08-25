@@ -16,17 +16,17 @@ fn main() {
 
     // We'll hold the currently selected generator
     // You could also instantiate on-demand in the closure
-    let mut perlin_gen = lib_ffi::ffi::new_perlin_generator(0);
+    let mut perlin_gen = lib_ffi::ffi::new_perlin_generator();
     // let mut ds_gen = Pin::new(Box::new(new_diamond_square));
 
     app.on_invoke_generate(move |algorithm| {
         let x: u32 = 64;
         let y: u32 = 64;
+        let seed: u32 = 4;
         println!("Generating terrain using algorithm: {}", algorithm);
         match algorithm.as_str() {
             "Perlin Noise" => {
-
-                let _heightmap = perlin_gen.pin_mut().generate_as_unique_ptr(&x, &y);
+                let _heightmap = perlin_gen.pin_mut().generate_as_unique_ptr(&x, &y, &seed);
                 println!("Generated Perlin heightmap of size");
             }
             // "Diamond-Square" => {

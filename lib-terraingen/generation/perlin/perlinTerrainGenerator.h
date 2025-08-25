@@ -21,4 +21,4 @@ class PerlinTerrainGenerator : public Generator {
         PerlinParameters params;
 };
 
-std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator(unsigned int seed);
+std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator();

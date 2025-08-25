@@ -1,8 +1,9 @@
 #pragma once
+#include <cstdint>
 
 struct PerlinParameters{
     float scale = 1.0f;
-    int cellSize = 32;
+    int32_t cellSize = 32;
 };
 
 struct FlatParameters{
