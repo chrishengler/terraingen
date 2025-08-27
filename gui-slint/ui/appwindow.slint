@@ -16,71 +16,80 @@ export component AppWindow inherits Window {
     in-out property <PerlinParams> perlin_params: { scale: 1.0, cell_size: 16 };
     in-out property <DiamondSquareParams> ds_params: { roughness: 1 };
     property <string> selected_algorithm: "Diamond-Square";
+    property <image> heightmap_image;
     callback invoke_generate(algorithm: string);
 
-    VerticalLayout {
-        Text {
-            text: "Select algorithm:";
-        }
-        ComboBox {
-            model: ["Diamond-Square", "Perlin Noise", "Simplex"];
-            selected(value) => { root.selected_algorithm = value; }
-        }
+    GridLayout{
+        VerticalLayout {
+            Text {
+                text: "Select algorithm:";
+            }
+            ComboBox {
+                model: ["Diamond-Square", "Perlin Noise", "Simplex"];
+                selected(value) => { root.selected_algorithm = value; }
+            }
 
-        GridLayout {
-            VerticalLayout{
-                Text { 
-                    text: "Perlin Scale";
-                }
-                Slider { 
-                    minimum: 0.1; 
-                    maximum: 10.0;
-                    value: root.perlin_params.scale;
-                    changed => {
-                        root.perlin_params.scale = self.value;
+            GridLayout {
+                VerticalLayout{
+                    Text { 
+                        text: "Perlin Scale";
+                    }
+                    Slider { 
+                        minimum: 0.1; 
+                        maximum: 10.0;
+                        value: root.perlin_params.scale;
+                        changed => {
+                            root.perlin_params.scale = self.value;
+                        }
+                    }
+                    Text {
+                        text: root.perlin_params.scale;
                     }
                 }
-                Text {
-                    text: root.perlin_params.scale;
-                }
-            }
 
-            VerticalLayout{
-                Text {
-                    text: "Cell Size";
-                }
-                SpinBox {
-                    minimum: 1;
-                    maximum: 256;
-                    step-size: 1;
-                    value: root.perlin_params.cell_size;
-                    edited => {
-                        root.perlin_params.cell_size = self.value;
+                VerticalLayout{
+                    Text {
+                        text: "Cell Size";
+                    }
+                    SpinBox {
+                        minimum: 1;
+                        maximum: 256;
+                        step-size: 1;
+                        value: root.perlin_params.cell_size;
+                        edited => {
+                            root.perlin_params.cell_size = self.value;
+                        }
                     }
                 }
             }
-        }
 
-        Text {
-            text: "Diamond-Square Roughness";
-        }
-        Slider { 
-            minimum: 0.1; 
-            maximum: 10.0;
-            value: root.ds_params.roughness;
-            changed => {
-                root.ds_params.roughness = self.value;
+            Text {
+                text: "Diamond-Square Roughness";
+            }
+            Slider { 
+                minimum: 0.1; 
+                maximum: 10.0;
+                value: root.ds_params.roughness;
+                changed => {
+                    root.ds_params.roughness = self.value;
+                }
+            }
+            Text {
+                text: root.ds_params.roughness;
+            }
+
+            Button {
+                text: "Generate Terrain";
+                clicked => {
+                    root.invoke_generate(root.selected_algorithm);
+                }
             }
         }
-        Text {
-            text: root.ds_params.roughness;
-        }
 
-        Button {
-            text: "Generate Terrain";
-            clicked => {
-                root.invoke_generate(root.selected_algorithm);
-            }
+        Image {
+            source: root.heightmap_image;
+            width: 256px;
+            height: 256px;
         }
     }
 }

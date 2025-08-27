@@ -23,8 +23,8 @@ void PerlinTerrainGenerator::setParameters(const PerlinParameters& params) {
     this->params = params;
 }
 
-Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, const uint &seed){
-    permutations.clear();
+Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, const uint &seed) const{
+    std::vector<int> permutations;
     permutations.reserve(256);
     for(int i=0; i<256; i++)
     {
@@ -39,7 +39,7 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, cons
     for(uint col=0; col<dimensions.x; col++){
         std::valarray<double> column(dimensions.y);
         for(uint row=0; row<dimensions.y; row++){
-            auto result = perlin(Vector2<int>(col,row));
+            auto result = perlin(Vector2<int>(col,row), permutations);
             if(result > max)
             {
                 max = result;
@@ -48,7 +48,7 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, cons
             {
                 min = result;
             }
-            column[row] = perlin(Vector2<int>(col,row));
+            column[row] = perlin(Vector2<int>(col,row), permutations);
         }
         heightmap.push_back(column);
     }
@@ -56,12 +56,12 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, cons
     return heightmap;
 }
 
-std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate(const uint &x, const uint &y, const uint &seed) {
-    auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}, seed));
-    return hm;
+std::unique_ptr<std::vector<float>> PerlinTerrainGenerator::generate_flat(const uint &x, const uint &y, const uint &seed) const {
+    auto hm = generate(Vector2<uint>{x, y}, seed);
+    return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
 }
 
-double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates)
+double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates, const std::vector<int> &permutations) const
 {
     double scaled_x = (double)(coordinates.x) * params.scale;
     double scaled_y = (double)(coordinates.y) * params.scale;
@@ -76,6 +76,7 @@ double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates)
     double x_fraction = fade(x);
     double y_fraction = fade(y);
 
+    auto retrievePermutation = [&permutations](const int &index) -> int {return permutations[index % 256];};
     double const bottom_left = gradient(retrievePermutation(retrievePermutation(floor_x) + floor_y), {x, y});
     double const bottom_right = gradient(retrievePermutation(retrievePermutation((floor_x + 1)) + floor_y), {x-1, y});
     double const top_left = gradient(retrievePermutation(retrievePermutation(floor_x) + floor_y + 1), {x, y-1});
@@ -87,7 +88,7 @@ double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates)
     return (raw_result + OFFSET) * SCALE;
 }
 
-double PerlinTerrainGenerator::fade(double t)
+double PerlinTerrainGenerator::fade(double t) const
 {
     if(t<0 || t>1){
         std::cout << "t" << t <<std::endl;
@@ -95,7 +96,7 @@ double PerlinTerrainGenerator::fade(double t)
     return std::pow(t, 3) * (t * (t * 6 - 15) + 10);
 }
 
-double PerlinTerrainGenerator::gradient(int hash, const Vector2<double> &coordinates)
+double PerlinTerrainGenerator::gradient(int hash, const Vector2<double> &coordinates) const
 {
     switch (hash & 7)
     {
@@ -109,9 +110,4 @@ double PerlinTerrainGenerator::gradient(int hash, const Vector2<double> &coordin
         case 7: return -coordinates.y;                  // (0, -1)
         default: return 0;  // Should not reach here
     }
-}
-
-int PerlinTerrainGenerator::retrievePermutation(int permutationIndex)
-{
-    return permutations[permutationIndex % 256];
 }

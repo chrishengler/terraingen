@@ -1,4 +1,18 @@
 fn main() {
+        // Tell Cargo where to find headers
+    println!("cargo:include=../lib-terraingen/generation/perlin");
+    println!("cargo:include=../lib-terraingen/generation/diamondsquare");
+
+    // Tell Cargo where to find your compiled library
+    // println!("cargo:rustc-link-search=native=../lib-terraingen/build");
+
+    // // Link the library (adjust name to your actual built target)
+    // println!("cargo:rustc-link-lib=static=terraingen"); // or "dylib"
+
+    // Rebuild if these files change
+    println!("cargo:rerun-if-changed=cpp/perlin_adapter.h");
+
+
     slint_build::compile("ui/appwindow.slint").unwrap();
     cxx_build::bridge("src/lib_ffi.rs")
         .file("../lib-terraingen/generation/generator.cpp")
@@ -6,11 +20,14 @@ fn main() {
         .file("../lib-terraingen/generation/flat/flatTerrainGenerator.cpp")
         .file("../lib-terraingen/generation/perlin/perlinTerrainGenerator.cpp")
         .file("../lib-terraingen/generation/terrainCombination.cpp")
+        .file("../lib-terraingen/data_types.cpp")
         .include("../lib-terraingen")
         .include("../lib-terraingen/generation")
         .include("../lib-terraingen/generation/diamondSquare")
         .include("../lib-terraingen/generation/flat")
         .include("../lib-terraingen/generation/perlin")
+        .include("cpp")
+        .include("include")
         .flag_if_supported("-std=c++20")
         .compile("terraingen_cpp");
 

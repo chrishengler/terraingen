@@ -9,7 +9,7 @@ void FlatTerrainGenerator::setParameters(const FlatParameters& params) {
     this->params = params;
 }
 
-Heightmap FlatTerrainGenerator::generate(const Vector2<uint> &dimensions, const uint&){
+Heightmap FlatTerrainGenerator::generate(const Vector2<uint> &dimensions, const uint&) const {
     Heightmap heightmap;   
     for(uint col=0; col<dimensions.x; col++){
         std::valarray<double> column(dimensions.y);
@@ -21,7 +21,7 @@ Heightmap FlatTerrainGenerator::generate(const Vector2<uint> &dimensions, const 
     return heightmap;
 }
 
-std::unique_ptr<Heightmap> FlatTerrainGenerator::generate(const uint &x, const uint &y, const uint &seed) {
-    auto hm = std::make_unique<Heightmap>(generate(Vector2<uint>{x, y}, seed));
-    return hm;
+std::unique_ptr<std::vector<float>> FlatTerrainGenerator::generate_flat(const uint &x, const uint &y, const uint &seed) const {
+    auto hm = generate(Vector2<uint>{x, y}, seed);
+    return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
 }

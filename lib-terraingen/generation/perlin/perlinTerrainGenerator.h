@@ -7,17 +7,16 @@
 class PerlinTerrainGenerator : public Generator {
     public:
         PerlinTerrainGenerator();
-        Heightmap generate(const Vector2<uint> &dimensions, const uint &seed) override;
+        Heightmap generate(const Vector2<uint> &dimensions, const uint &seed) const override;
         void setParameters(const PerlinParameters& params);
         const PerlinParameters& getParameters() const { return params; }
 
-        std::unique_ptr<Heightmap> generate(const uint &x, const uint &y, const uint &seed) override;
+        std::unique_ptr<std::vector<float>> generate_flat(const uint &x, const uint &y, const uint &seed) const override;
     private:
-        double perlin(const Vector2<int> &coordinates);
-        double fade(double t);
-        double gradient(const int hash, const Vector2<double> &coordinates);
-        int retrievePermutation(int permutationIndex);
-        std::vector<int> permutations;
+        double perlin(const Vector2<int> &coordinates, const std::vector<int> &permutations) const;
+        double fade(double t) const;
+        double gradient(const int hash, const Vector2<double> &coordinates) const;
+        // TODO: this isn't going to be thread safe, refactor later
         PerlinParameters params;
 };
 

@@ -5,6 +5,8 @@
 
 typedef std::vector<std::valarray<double>> Heightmap;
 
+std::vector<float> flattenHeightmap(const Heightmap& hm);
+
 template<typename T>
 struct Vector2{
     T x;
