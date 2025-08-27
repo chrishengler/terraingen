@@ -1,4 +1,4 @@
-use crate::lib_ffi::ffi::new_perlin_generator;
+use crate::lib_ffi::ffi::{new_diamond_square_generator, new_perlin_generator};
 
 slint::include_modules!();
 mod lib_ffi;
@@ -30,15 +30,17 @@ fn main() {
                 }
 
                 "Diamond-Square" => {
-                    // let slint_params = app.get_ds_params();
+                    // let _slint_params = app.get_ds_params();
                     
-                    // let width = 64;
-                    // let height = 64;
-                    // let seed = 4;
+                    let width: u32 = 32;
+                    let height: u32 = 32;
+                    let seed: u32 = 4;
 
-                    // let hm = terraingen::rust_ds_generate(width, height, seed);
+                    let ds = new_diamond_square_generator();
+                    let ds_ref = ds.as_ref().expect("Failed to get reference to diamond-square generator");
+                    let hm = ds_ref.generate_flat(&width, &height, &seed);
 
-                    println!("dklajdsl");
+                    println!("generated Diamond-Square heightmap of length {}", hm.len());
                 }
                 _ => {}
             }
