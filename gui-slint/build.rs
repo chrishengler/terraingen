@@ -10,8 +10,6 @@ fn main() {
     // println!("cargo:rustc-link-lib=static=terraingen"); // or "dylib"
 
     // Rebuild if these files change
-    println!("cargo:rerun-if-changed=cpp/perlin_adapter.h");
-
 
     slint_build::compile("ui/appwindow.slint").unwrap();
     cxx_build::bridge("src/lib_ffi.rs")
