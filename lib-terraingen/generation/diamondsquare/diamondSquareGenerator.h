@@ -1,15 +1,12 @@
 #pragma once
-#include "generator.h"
 #include "data_types.h"
 #include "generatorParameters.h"
 
-class DiamondSquareGenerator : public Generator{
+class DiamondSquareGenerator{
     public:
-        DiamondSquareGenerator();
-        Heightmap generate(const Vector2<uint> &dimensions, const uint &seed) const override;
-        void setParameters(const DiamondSquareParameters& params);
+        Heightmap generate(const DiamondSquareParameters &params) const;
 
-        std::unique_ptr<std::vector<float>> generate_flat(const uint &x, const uint &y, const uint &seed) const override;
+        std::unique_ptr<std::vector<float>> generate_flat(const DiamondSquareParameters &params) const;
     private:
         int get_required_grid_size(const Vector2<uint> &dimensions) const;
         DiamondSquareParameters params;

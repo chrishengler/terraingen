@@ -83,6 +83,9 @@ int main() {
     ModifierControlsWindow modifierWindow;
     HeightmapPreviewWindow previewWindow;
 
+    auto ds_generator = DiamondSquareGenerator();
+    auto flat_generator = FlatTerrainGenerator();
+    auto perlin_generator = PerlinTerrainGenerator();
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -100,26 +103,21 @@ int main() {
         if (guiState.generateRequested) {
             guiState.generateRequested = false;
 
-            std::unique_ptr<Generator> generator;
             // Configure generator-specific parameters
             switch(guiState.selectedType) {
                 case GeneratorType::DIAMOND_SQUARE:
-                    generator = std::make_unique<DiamondSquareGenerator>();
-                    static_cast<DiamondSquareGenerator*>(generator.get())->setParameters(guiState.diamondSquareParams);
+                    guiState.currentHeightmap = ds_generator.generate(guiState.diamondSquareParams);
                     break;
                 case GeneratorType::FLAT:
-                    generator = std::make_unique<FlatTerrainGenerator>();
-                    static_cast<FlatTerrainGenerator*>(generator.get())->setParameters(guiState.flatParams);
+                    guiState.currentHeightmap = flat_generator.generate(guiState.flatParams);
                     break;
                 case GeneratorType::PERLIN:
-                    generator = std::make_unique<PerlinTerrainGenerator>();
-                    static_cast<PerlinTerrainGenerator*>(generator.get())->setParameters(guiState.perlinParams);
+                    guiState.currentHeightmap = perlin_generator.generate(guiState.perlinParams);
                     break;
                 default:
                     std::cerr << "Unsupported generator type selected.\n";
                     continue;
             }
-            guiState.currentHeightmap = generator->generate(guiState.gridSize, guiState.seed);
             auto pixels = flattenHeightmap(guiState.currentHeightmap);
             heightmapTexture.upload(pixels, guiState.gridSize.x, guiState.gridSize.y);
         }

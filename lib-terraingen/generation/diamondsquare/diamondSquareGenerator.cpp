@@ -11,18 +11,10 @@ std::unique_ptr<DiamondSquareGenerator> new_diamond_square_generator() {
     return std::make_unique<DiamondSquareGenerator>();
 }
 
-DiamondSquareGenerator::DiamondSquareGenerator()
-    : Generator(GeneratorType::DIAMOND_SQUARE)
-{
-}
 
-void DiamondSquareGenerator::setParameters(const DiamondSquareParameters& params)
+Heightmap DiamondSquareGenerator::generate(const DiamondSquareParameters &params) const
 {
-    this->params = params;
-}
-
-Heightmap DiamondSquareGenerator::generate(const Vector2<uint> &dimensions, const uint &seed) const
-{
+    Vector2<uint> dimensions{params.width, params.height};
     std::cout << "Generating Diamond-Square terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
     std::cout << "Using roughness: " << params.roughness << std::endl;
     uint grid_size = std::pow(2, get_required_grid_size(dimensions)) + 1;
@@ -34,7 +26,7 @@ Heightmap DiamondSquareGenerator::generate(const Vector2<uint> &dimensions, cons
         heightmap.push_back(column);
     }
 
-    std::mt19937 rng(seed);
+    std::mt19937 rng(params.seed);
     std::uniform_real_distribution<double> dist(-1.0, 1.0);
     
     heightmap[0][0] = dist(rng);
@@ -113,8 +105,8 @@ Heightmap DiamondSquareGenerator::generate(const Vector2<uint> &dimensions, cons
     return final_heightmap;
 }
 
-std::unique_ptr<std::vector<float>> DiamondSquareGenerator::generate_flat(const uint &x, const uint &y, const uint &seed) const {
-    auto hm = generate(Vector2<uint>{x, y}, seed);
+std::unique_ptr<std::vector<float>> DiamondSquareGenerator::generate_flat(const DiamondSquareParameters &params) const {
+    auto hm = generate(params);
     return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
 }
 

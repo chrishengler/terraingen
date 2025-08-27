@@ -1,15 +1,12 @@
 #pragma once
-#include "generator.h"
+#include "data_types.h"
 #include "generation/generatorParameters.h"
 
-class FlatTerrainGenerator : public Generator {
+class FlatTerrainGenerator{
     public:
-        FlatTerrainGenerator();
-        Heightmap generate(const Vector2<uint> &dimensions, const uint &seed) const override;
-        void setParameters(const FlatParameters& params);
-        const FlatParameters& getParameters() const { return params; }
+        Heightmap generate(const FlatParameters &params) const;
     
-        std::unique_ptr<std::vector<float>> generate_flat(const uint &x, const uint &y, const uint &seed) const override;
+        std::unique_ptr<std::vector<float>> generate_flat(const FlatParameters &params) const;
     private:
         FlatParameters params;
 };

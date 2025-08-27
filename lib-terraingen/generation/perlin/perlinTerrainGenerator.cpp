@@ -6,6 +6,7 @@
 #include <vector>
 #include "perlinTerrainGenerator.h"
 #include "data_types.h"
+#include "generatorParameters.h"
 
 const double OFFSET = 1;
 const double SCALE = 0.5;
@@ -14,23 +15,17 @@ std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator() {
     return std::make_unique<PerlinTerrainGenerator>();
 }
 
-PerlinTerrainGenerator::PerlinTerrainGenerator()
-    : Generator(GeneratorType::PERLIN)
-{
-}
-
-void PerlinTerrainGenerator::setParameters(const PerlinParameters& params) {
-    this->params = params;
-}
-
-Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, const uint &seed) const{
+// CURRENT TASK: static-ifying generators - cast params to perlinParameters
+// and pass through to other methods where appropriate
+Heightmap PerlinTerrainGenerator::generate(const PerlinParameters &params) const{
     std::vector<int> permutations;
+    Vector2<uint> dimensions{params.width, params.height};
     permutations.reserve(256);
     for(int i=0; i<256; i++)
     {
         permutations.push_back(i);
     }
-    std::shuffle(permutations.begin(), permutations.end(), std::mt19937(seed));
+    std::shuffle(permutations.begin(), permutations.end(), std::mt19937(params.seed));
     std::cout << "Generating Perlin terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
     std::cout << "Using scale: " << params.scale << " and cell size: " << params.cellSize << std::endl;
     Heightmap heightmap;   
@@ -39,7 +34,7 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, cons
     for(uint col=0; col<dimensions.x; col++){
         std::valarray<double> column(dimensions.y);
         for(uint row=0; row<dimensions.y; row++){
-            auto result = perlin(Vector2<int>(col,row), permutations);
+            auto result = perlin(Vector2<int>(col,row), permutations, params);
             if(result > max)
             {
                 max = result;
@@ -48,7 +43,7 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, cons
             {
                 min = result;
             }
-            column[row] = perlin(Vector2<int>(col,row), permutations);
+            column[row] = perlin(Vector2<int>(col,row), permutations, params);
         }
         heightmap.push_back(column);
     }
@@ -56,12 +51,12 @@ Heightmap PerlinTerrainGenerator::generate(const Vector2<uint> &dimensions, cons
     return heightmap;
 }
 
-std::unique_ptr<std::vector<float>> PerlinTerrainGenerator::generate_flat(const uint &x, const uint &y, const uint &seed) const {
-    auto hm = generate(Vector2<uint>{x, y}, seed);
+std::unique_ptr<std::vector<float>> PerlinTerrainGenerator::generate_flat(const PerlinParameters &params) const {
+    auto hm = generate(params);
     return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
 }
 
-double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates, const std::vector<int> &permutations) const
+double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates, const std::vector<int> &permutations, const PerlinParameters &params) const
 {
     double scaled_x = (double)(coordinates.x) * params.scale;
     double scaled_y = (double)(coordinates.y) * params.scale;

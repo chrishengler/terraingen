@@ -2,12 +2,13 @@
 
 #include "data_types.h"
 #include "generatorTypes.h"
+#include "generatorParameters.h"
 
 class Generator {
     public:
         Generator(GeneratorType type);
         virtual ~Generator() = default;
-        virtual Heightmap generate(const Vector2<uint> &dimensions, const uint &seed) const;
+        virtual Heightmap generate(const Vector2<uint> &dimensions, const uint &seed, std::unique_ptr<GeneratorParameters> &params) const;
         GeneratorType getGeneratorType(){ return type; }
 
         // for rust interface

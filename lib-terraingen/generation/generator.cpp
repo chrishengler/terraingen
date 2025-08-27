@@ -4,7 +4,7 @@
 
 Generator::Generator(GeneratorType type): type(type){};
 
-Heightmap Generator::generate(const Vector2<uint>&, const uint&) const{
+Heightmap Generator::generate(const Vector2<uint>&, const uint&, std::unique_ptr<GeneratorParameters>&) const{
     throw std::exception(); //not implemented. TODO: add specific exception
 }
 

@@ -11,13 +11,15 @@
 TEST_CASE("Perlin export")
 {
     PerlinParameters pp{
+        2048,
+        2048,
+        0,
         1.0f, 
         32
     };
     PerlinTerrainGenerator ptg;
-    ptg.setParameters(pp);
     Vector2<uint> expected_size(2048,2048);
-    Heightmap result = ptg.generate(expected_size, 0);
+    Heightmap result = ptg.generate(pp);
 
     ImageExporter imgExporter;
     auto filepath = get_temp_filepath("png", "perlin");
@@ -28,11 +30,9 @@ TEST_CASE("Perlin export")
 TEST_CASE("Diamond Square export")
 {
     Vector2<int> cell_sizes(256,256);
-    DiamondSquareParameters dsp{1.0};
+    DiamondSquareParameters dsp{2048, 2048, 0, 1.0};
     DiamondSquareGenerator dsg;
-    dsg.setParameters(dsp);
-    Vector2<uint> expected_size(2048,2048);
-    Heightmap result = dsg.generate(expected_size, 0);
+    Heightmap result = dsg.generate(dsp);
 
     ImageExporter imgExporter;
     auto filepath = get_temp_filepath("png", "diamond-square");
