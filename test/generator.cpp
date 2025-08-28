@@ -12,7 +12,7 @@ TEST_CASE("Generator Tests", "[generator]")
     {
         FlatTerrainGenerator ftg;
         Vector2<uint> gridSize(10, 10);
-        FlatParameters params{gridSize.x, gridSize.y, 0, 4.0};
+        FlatParameters params{gridSize.x, gridSize.y, 4.0};
 
         Heightmap result = ftg.generate(params);
 

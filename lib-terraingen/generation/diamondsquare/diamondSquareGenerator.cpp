@@ -14,7 +14,7 @@ std::unique_ptr<DiamondSquareGenerator> new_diamond_square_generator() {
 
 Heightmap DiamondSquareGenerator::generate(const DiamondSquareParameters &params) const
 {
-    Vector2<uint> dimensions{params.width, params.height};
+    Vector2<uint> dimensions{params.cols, params.rows};
     std::cout << "Generating Diamond-Square terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
     std::cout << "Using roughness: " << params.roughness << std::endl;
     uint grid_size = std::pow(2, get_required_grid_size(dimensions)) + 1;

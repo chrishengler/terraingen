@@ -3,7 +3,7 @@
 
 Heightmap FlatTerrainGenerator::generate(const FlatParameters &params) const {
     Heightmap heightmap;   
-    Vector2<uint> dimensions{params.width, params.height};
+    Vector2<uint> dimensions{params.cols, params.rows};
     for(uint col=0; col<dimensions.x; col++){
         std::valarray<double> column(dimensions.y);
         for(uint row=0; row<dimensions.y; row++){

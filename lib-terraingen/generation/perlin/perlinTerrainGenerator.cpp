@@ -19,7 +19,7 @@ std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator() {
 // and pass through to other methods where appropriate
 Heightmap PerlinTerrainGenerator::generate(const PerlinParameters &params) const{
     std::vector<int> permutations;
-    Vector2<uint> dimensions{params.width, params.height};
+    Vector2<uint> dimensions{params.cols, params.rows};
     permutations.reserve(256);
     for(int i=0; i<256; i++)
     {

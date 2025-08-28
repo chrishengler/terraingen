@@ -15,37 +15,35 @@ fn main() {
         if let Some(app) = app_weak.upgrade() {
             match algorithm.as_str() {
                 "Perlin Noise" => {
-                    let slint_params = app.get_perlin_params();
-                    let params = buildPerlinParameters(slint_params.scale, slint_params.cell_size);
-
                     let width: u32 = 64;
                     let height: u32 = 64;
-                    let seed: u32 = 4;
+                    let seed: i32 = 4;
 
-                    if let Some(mut perlin_ref) = perlin.as_mut() {
+                    let slint_params = app.get_perlin_params();
+                    let params = buildPerlinParameters( width, height, seed, slint_params.scale, slint_params.cell_size);
+
+                    if let Some(perlin_ref) = perlin.as_mut() {
                         if let Some(params_ref) = params.as_ref() {
-                            perlin_ref.as_mut().setParameters(params_ref);
+                            let hm = perlin_ref.generate_flat(params_ref);
+                            println!("Generated Perlin heightmap of length {}", hm.len());
                         }
-                        let hm = perlin_ref.generate_flat(&width, &height, &seed);
-                        println!("Generated Perlin heightmap of length {}", hm.len());
                     }
                 } 
 
                 "Diamond-Square" => {
-                    let slint_params = app.get_ds_params();
-                    let params = buildDiamondSquareParameters(slint_params.roughness);
-                    
                     let width: u32 = 32;
                     let height: u32 = 32;
-                    let seed: u32 = 4;
+                    let seed: i32 = 4;
 
-                    if let Some(mut ds_ref) = ds.as_mut() {
+                    let slint_params = app.get_ds_params();
+                    let params = buildDiamondSquareParameters(width, height, seed, slint_params.roughness);
+
+                    if let Some(ds_ref) = ds.as_mut() {
                         if let Some(params_ref) = params.as_ref() {
-                            ds_ref.as_mut().setParameters(params_ref);
+                            let hm = ds_ref.generate_flat(params_ref);
+                            println!("generated Diamond-Square heightmap of length {}", hm.len());
                         }
  
-                    let hm = ds_ref.generate_flat(&width, &height, &seed);
-                    println!("generated Diamond-Square heightmap of length {}", hm.len());
                     }
                 }
                 _ => {}
