@@ -1,7 +1,6 @@
 #pragma once
 #include "data_types.h"
 #include "generation/generatorParameters.h"
-#include <sys/types.h>
 
 class PerlinTerrainGenerator{
     public:

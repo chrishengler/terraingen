@@ -11,7 +11,7 @@ TEST_CASE("Generator Tests", "[generator]")
     SECTION("Flat terrain generator produces correct output")
     {
         FlatTerrainGenerator ftg;
-        Vector2<uint> gridSize(10, 10);
+        Vector2<uint32_t> gridSize(10, 10);
         FlatParameters params{gridSize.x, gridSize.y, 4.0};
 
         Heightmap result = ftg.generate(params);
@@ -29,7 +29,7 @@ TEST_CASE("Generator Tests", "[generator]")
 
     SECTION("Perlin noise generator can be created with seed and parameters")
     {
-        Vector2<uint> gridSize(10, 10);
+        Vector2<uint32_t> gridSize(10, 10);
         PerlinParameters pp{gridSize.x, gridSize.y, 4, 2.0, 32};
 
         PerlinTerrainGenerator ptg1;
@@ -44,7 +44,7 @@ TEST_CASE("Generator Tests", "[generator]")
 TEST_CASE("Perlin generator parameters", "[perlin]")
 {
     SECTION("Default scale produces output within range") {
-        Vector2<uint> expected_size(512, 512);
+        Vector2<uint32_t> expected_size(512, 512);
         
         PerlinParameters params{ expected_size.x, expected_size.y, 0};
 
@@ -63,7 +63,7 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
     }
 
     SECTION("Different scales produce different results") {
-        Vector2<uint> expected_size(512, 512);
+        Vector2<uint32_t> expected_size(512, 512);
 
         PerlinParameters params1{
             expected_size.x, expected_size.y, 4, 1.0, 32,
@@ -93,7 +93,7 @@ TEST_CASE("Perlin generator parameters", "[perlin]")
 TEST_CASE("Diamond Square generator", "[diamond-square]")
 {
     SECTION("Produces correct output within range") {
-        Vector2<uint> expected_size(512, 512);
+        Vector2<uint32_t> expected_size(512, 512);
         DiamondSquareParameters params{
             expected_size.x,
             expected_size.y,
@@ -116,7 +116,7 @@ TEST_CASE("Diamond Square generator", "[diamond-square]")
     }
 
     SECTION("Different seeds produce different results") {
-        Vector2<uint> expected_size(64, 64);
+        Vector2<uint32_t> expected_size(64, 64);
         DiamondSquareParameters params
         {
             expected_size.x,

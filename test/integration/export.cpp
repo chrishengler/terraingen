@@ -18,7 +18,7 @@ TEST_CASE("Perlin export")
         32
     };
     PerlinTerrainGenerator ptg;
-    Vector2<uint> expected_size(2048,2048);
+    Vector2<uint32_t> expected_size(2048,2048);
     Heightmap result = ptg.generate(pp);
 
     ImageExporter imgExporter;

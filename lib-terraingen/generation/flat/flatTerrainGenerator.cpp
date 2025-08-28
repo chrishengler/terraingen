@@ -1,12 +1,13 @@
+#include <cstdint>
 #include "flatTerrainGenerator.h"
 #include "generatorParameters.h"
 
 Heightmap FlatTerrainGenerator::generate(const FlatParameters &params) const {
     Heightmap heightmap;   
-    Vector2<uint> dimensions{params.cols, params.rows};
-    for(uint col=0; col<dimensions.x; col++){
+    Vector2<uint32_t> dimensions{params.cols, params.rows};
+    for(uint32_t col=0; col<dimensions.x; col++){
         std::valarray<double> column(dimensions.y);
-        for(uint row=0; row<dimensions.y; row++){
+        for(uint32_t row=0; row<dimensions.y; row++){
             column[row] = params.terrainHeight;
         }
         heightmap.push_back(column);

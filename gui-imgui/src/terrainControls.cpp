@@ -19,14 +19,14 @@ void TerrainControlsWindow::render(GuiState &state) {
     if(tmp_x < 0){
       tmp_x = 0;
     }
-    state.gridSize.x = static_cast<uint>(tmp_x);
+    state.gridSize.x = static_cast<uint32_t>(tmp_x);
   }
   ImGui::InputInt("Height", &tmp_y);
   {
     if(tmp_y < 0){
       tmp_y = 0;
     }
-    state.gridSize.y = static_cast<uint>(tmp_y);
+    state.gridSize.y = static_cast<uint32_t>(tmp_y);
   }
   ImGui::InputInt("Seed", reinterpret_cast<int *>(&state.seed));
   if (ImGui::Button("Random Seed")) {

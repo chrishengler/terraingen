@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <iostream>
 #include <memory>
 #include <random>
@@ -17,7 +18,7 @@ std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator() {
 
 Heightmap PerlinTerrainGenerator::generate(const PerlinParameters &params) const{
     std::vector<int> permutations;
-    Vector2<uint> dimensions{params.cols, params.rows};
+    Vector2<uint32_t> dimensions{params.cols, params.rows};
     permutations.reserve(256);
     for(int i=0; i<256; i++)
     {
@@ -29,9 +30,9 @@ Heightmap PerlinTerrainGenerator::generate(const PerlinParameters &params) const
     Heightmap heightmap;   
     double max=0;
     double min=1;
-    for(uint col=0; col<dimensions.x; col++){
+    for(uint32_t col=0; col<dimensions.x; col++){
         std::valarray<double> column(dimensions.y);
-        for(uint row=0; row<dimensions.y; row++){
+        for(uint32_t row=0; row<dimensions.y; row++){
             auto result = perlin(Vector2<int>(col,row), permutations, params);
             if(result > max)
             {

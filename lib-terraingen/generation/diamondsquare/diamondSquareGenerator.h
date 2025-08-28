@@ -8,7 +8,7 @@ class DiamondSquareGenerator{
 
         std::unique_ptr<std::vector<float>> generate_flat(const DiamondSquareParameters &params) const;
     private:
-        int get_required_grid_size(const Vector2<uint> &dimensions) const;
+        int get_required_grid_size(const Vector2<uint32_t> &dimensions) const;
         DiamondSquareParameters params;
 };
 
