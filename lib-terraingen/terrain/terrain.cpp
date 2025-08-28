@@ -1,6 +1,6 @@
 #include "terrain.h"
 
-Terrain::Terrain(int x, int y)
+Terrain::Terrain(uint x, uint y)
     : size_x(x), size_y(y)
 {
     if(size_x <= 0 || size_y <= 0)
