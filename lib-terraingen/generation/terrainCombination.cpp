@@ -33,7 +33,7 @@ Terrain TerrainCombination::combineTerrains(std::vector<Terrain> terrains, std::
     for(unsigned int i=0; i<numTerrains; i++)
     {
         Heightmap scaledHeightmap(terrains[i].getTerrain());
-        for(int j=0; j<dimensions.x; j++)
+        for(unsigned int j=0; j<dimensions.x; j++)
         {
             scaledHeightmap[j] *= weights[i];
         }
@@ -41,7 +41,7 @@ Terrain TerrainCombination::combineTerrains(std::vector<Terrain> terrains, std::
     }
 
     Heightmap combinedHeightmap(dimensions.x);
-    for (int i = 0; i < dimensions.x; i++)
+    for (unsigned int i = 0; i < dimensions.x; i++)
     {
         auto row = std::valarray<double>(dimensions.y);
         std::for_each(scaledHeightmaps.begin(), scaledHeightmaps.end(), [&row, i](auto &hm){row += hm.at(i);});
