@@ -1,5 +1,10 @@
-fn vec_to_image(data: &[f64], width: usize, height: usize) -> slint::Image {
+fn cxx_vec_to_f64_vec(cxx_vec: &cxx::CxxVector<f32>) -> Vec<f64> {
+    cxx_vec.iter().map(|&x| x as f64).collect()
+}
+
+pub fn vec_to_image(cxx_vec: &cxx::CxxVector<f32>, width: usize, height: usize) -> slint::Image {
     use slint::{Image, SharedPixelBuffer, Rgba8Pixel};
+    let data = cxx_vec_to_f64_vec(cxx_vec);
 
     let mut buffer = SharedPixelBuffer::<Rgba8Pixel>::new(width as u32, height as u32);
     let pixels = buffer.make_mut_bytes();

@@ -1,0 +1,43 @@
+import { Slider, SpinBox } from "std-widgets.slint";
+export struct DiamondSquareParams {
+    rows: int,
+    cols: int,
+    seed: int,
+    roughness: float,
+}
+
+export component DiamondSquarePanel {
+    in-out property <DiamondSquareParams> params;
+    
+    VerticalLayout{
+        VerticalLayout{
+            Text { 
+                text: "Seed";
+            }
+            SpinBox {
+                minimum: 1;
+                maximum: 10000000;
+                step-size: 1;
+                value: root.params.seed;
+                edited => {
+                    root.params.seed = self.value;
+                }
+            }
+        }
+
+        Text {
+            text: "Diamond-Square Roughness";
+        }
+        Slider { 
+            minimum: 0.1; 
+            maximum: 10.0;
+            value: root.params.roughness;
+            changed => {
+                root.params.roughness = self.value;
+            }
+        }
+        Text {
+            text: root.params.roughness;
+        }
+    }
+}
