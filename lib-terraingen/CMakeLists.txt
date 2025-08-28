@@ -1,6 +1,6 @@
 add_subdirectory(generation)
 add_subdirectory(export)
 add_subdirectory(modifiers)
-add_library(lib-terraingen data_types.cpp terrain/terrain.cpp)
+add_library(lib-terraingen terrain/terrain.cpp)
 target_include_directories(lib-terraingen PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(lib-terraingen PUBLIC modifierslib)

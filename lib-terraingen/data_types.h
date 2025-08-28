@@ -5,7 +5,20 @@
 
 typedef std::vector<std::valarray<double>> Heightmap;
 
-std::vector<float> flattenHeightmap(const Heightmap& hm);
+inline std::vector<float> flattenHeightmap(const Heightmap& hm) {
+    std::vector<float> pixels;
+    size_t rows = hm.size();
+    size_t cols = hm.empty() ? 0 : hm[0].size();
+    pixels.reserve(rows * cols);
+    for (const auto& row : hm)
+      for (double v : row) {
+        float f = static_cast<float>(v);
+        pixels.push_back(f);
+        pixels.push_back(f);
+        pixels.push_back(f);
+      }
+    return pixels;
+}
 
 template<typename T>
 struct Vector2{
