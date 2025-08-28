@@ -15,8 +15,6 @@ std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator() {
     return std::make_unique<PerlinTerrainGenerator>();
 }
 
-// CURRENT TASK: static-ifying generators - cast params to perlinParameters
-// and pass through to other methods where appropriate
 Heightmap PerlinTerrainGenerator::generate(const PerlinParameters &params) const{
     std::vector<int> permutations;
     Vector2<uint> dimensions{params.cols, params.rows};
