@@ -49,3 +49,4 @@ debug
 .cache
 imgui.ini
 gui-slint/target
+gui-slint/debug
