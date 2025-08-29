@@ -22,7 +22,8 @@ fn main() {
         .include("../lib-terraingen/generation/perlin")
         .include("cpp")
         .include("include")
-        .flag_if_supported("-std=c++20")
+        .flag_if_supported("/std:c++20") // windows
+        .flag_if_supported("-std=c++20") // linux & mac
         .compile("terraingen_cpp");
 
     println!("cargo:rerun-if-changed=../lib-terraingen");
