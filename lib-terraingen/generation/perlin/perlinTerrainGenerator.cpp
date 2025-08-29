@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
-#include <iostream>
 #include <memory>
 #include <random>
 #include <vector>
@@ -25,8 +24,6 @@ Heightmap PerlinTerrainGenerator::generate(const PerlinParameters &params) const
         permutations.push_back(i);
     }
     std::shuffle(permutations.begin(), permutations.end(), std::mt19937(params.seed));
-    std::cout << "Generating Perlin terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
-    std::cout << "Using scale: " << params.scale << " and cell size: " << params.cellSize << std::endl;
     Heightmap heightmap;   
     double max=0;
     double min=1;
@@ -46,7 +43,6 @@ Heightmap PerlinTerrainGenerator::generate(const PerlinParameters &params) const
         }
         heightmap.push_back(column);
     }
-    std::cout << "max: " << max << "\nmin: " << min << std::endl;
     return heightmap;
 }
 
@@ -84,9 +80,6 @@ double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates, const std
 
 double PerlinTerrainGenerator::fade(double t) const
 {
-    if(t<0 || t>1){
-        std::cout << "t" << t <<std::endl;
-    }
     return std::pow(t, 3) * (t * (t * 6 - 15) + 10);
 }
 

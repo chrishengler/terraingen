@@ -5,7 +5,6 @@
 #include <cmath>
 #include <cstdint>
 #include <random>
-#include <iostream>
 #include <sys/types.h>
 
 std::unique_ptr<DiamondSquareGenerator> new_diamond_square_generator() {
@@ -16,8 +15,6 @@ std::unique_ptr<DiamondSquareGenerator> new_diamond_square_generator() {
 Heightmap DiamondSquareGenerator::generate(const DiamondSquareParameters &params) const
 {
     Vector2<uint32_t> dimensions{params.cols, params.rows};
-    std::cout << "Generating Diamond-Square terrain with dimensions: " << dimensions.x << "x" << dimensions.y << std::endl;
-    std::cout << "Using roughness: " << params.roughness << std::endl;
     uint32_t grid_size = std::pow(2, get_required_grid_size(dimensions)) + 1;
     
     Heightmap heightmap;
