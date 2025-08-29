@@ -16,7 +16,6 @@ fn main() {
         .file("../lib-terraingen/generation/diamondsquare/diamondSquareGenerator.cpp")
         .file("../lib-terraingen/generation/perlin/perlinTerrainGenerator.cpp")
         .file("../lib-terraingen/generation/terrainCombination.cpp")
-        .file("../lib-terraingen/data_types.cpp")
         .include("../lib-terraingen")
         .include("../lib-terraingen/generation")
         .include("../lib-terraingen/generation/diamondSquare")
