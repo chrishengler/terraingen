@@ -18,7 +18,7 @@ fn main() {
         .file("../lib-terraingen/generation/terrainCombination.cpp")
         .include("../lib-terraingen")
         .include("../lib-terraingen/generation")
-        .include("../lib-terraingen/generation/diamondSquare")
+        .include("../lib-terraingen/generation/diamondsquare")
         .include("../lib-terraingen/generation/perlin")
         .include("cpp")
         .include("include")
