@@ -113,5 +113,5 @@ std::unique_ptr<std::vector<float>> DiamondSquareGenerator::generate_flat(const 
 
 int DiamondSquareGenerator::get_required_grid_size(const Vector2<uint32_t> &dimensions) const
 {
-    return std::ceil(std::log2(std::max(dimensions.x, dimensions.y)));
+    return (int)std::ceil(std::log2(std::max(dimensions.x, dimensions.y)));
 }

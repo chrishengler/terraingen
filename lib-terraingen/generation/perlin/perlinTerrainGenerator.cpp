@@ -61,8 +61,8 @@ double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates, const std
     double scaled_y = (double)(coordinates.y) * params.scale;
     double reduced_x = scaled_x / params.cellSize;
     double reduced_y = scaled_y / params.cellSize;;
-    int const floor_x = std::floor(reduced_x);
-    int const floor_y = std::floor(reduced_y);
+    int const floor_x = (int const)std::floor(reduced_x);
+    int const floor_y = (int const)std::floor(reduced_y);
 
     double x = reduced_x - floor_x;
     double y = reduced_y - floor_y;
