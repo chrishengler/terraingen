@@ -1,22 +1,21 @@
+#include <cstdint>
 #include "flatTerrainGenerator.h"
 #include "generatorParameters.h"
 
-FlatTerrainGenerator::FlatTerrainGenerator(unsigned int seed)
-    : Generator(seed, GeneratorType::FLAT)
-{}
-
-void FlatTerrainGenerator::setParameters(const FlatParameters& params) {
-    this->params = params;
-}
-
-Heightmap FlatTerrainGenerator::generate(Vector2<int> dimensions){
+Heightmap FlatTerrainGenerator::generate(const FlatParameters &params) const {
     Heightmap heightmap;   
-    for(int col=0; col<dimensions.x; col++){
+    Vector2<uint32_t> dimensions{params.cols, params.rows};
+    for(uint32_t col=0; col<dimensions.x; col++){
         std::valarray<double> column(dimensions.y);
-        for(int row=0; row<dimensions.y; row++){
-            column[row] = params.height;
+        for(uint32_t row=0; row<dimensions.y; row++){
+            column[row] = params.terrainHeight;
         }
         heightmap.push_back(column);
     }
     return heightmap;
+}
+
+std::unique_ptr<std::vector<float>> FlatTerrainGenerator::generate_flat(const FlatParameters &params) const {
+    auto hm = generate(params);
+    return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
 }

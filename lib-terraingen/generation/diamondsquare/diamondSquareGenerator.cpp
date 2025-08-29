@@ -3,31 +3,28 @@
 #include "generatorParameters.h"
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <random>
-#include <limits>
+#include <sys/types.h>
 
-DiamondSquareGenerator::DiamondSquareGenerator(unsigned int seed)
-    : Generator(seed, GeneratorType::DIAMOND_SQUARE)
-{
+std::unique_ptr<DiamondSquareGenerator> new_diamond_square_generator() {
+    return std::make_unique<DiamondSquareGenerator>();
 }
 
-void DiamondSquareGenerator::setParameters(const DiamondSquareParameters& params)
-{
-    this->params = params;
-}
 
-Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
+Heightmap DiamondSquareGenerator::generate(const DiamondSquareParameters &params) const
 {
-    int grid_size = std::pow(2, get_required_grid_size(dimensions)) + 1;
+    Vector2<uint32_t> dimensions{params.cols, params.rows};
+    uint32_t grid_size = std::pow(2, get_required_grid_size(dimensions)) + 1;
     
     Heightmap heightmap;
     heightmap.reserve(grid_size);
-    for(int col = 0; col < grid_size; col++) {
+    for(uint32_t col = 0; col < grid_size; col++) {
         std::valarray<double> column(0.0, grid_size);
         heightmap.push_back(column);
     }
 
-    std::mt19937 rng(seed);
+    std::mt19937 rng(params.seed);
     std::uniform_real_distribution<double> dist(-1.0, 1.0);
     
     heightmap[0][0] = dist(rng);
@@ -36,11 +33,11 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
     heightmap[grid_size-1][grid_size-1] = dist(rng);
 
     double roughness = 1.0;
-    for(int step = grid_size - 1; step > 1; step /= 2) {
-        int half_step = step / 2;
+    for(uint32_t step = grid_size - 1; step > 1; step /= 2) {
+        uint32_t half_step = step / 2;
 
-        for(int x = half_step; x < grid_size - half_step; x += step) {
-            for(int y = half_step; y < grid_size - half_step; y += step) {
+        for(uint32_t x = half_step; x < grid_size - half_step; x += step) {
+            for(uint32_t y = half_step; y < grid_size - half_step; y += step) {
                 double avg = (heightmap[x-half_step][y-half_step] +
                             heightmap[x-half_step][y+half_step] +
                             heightmap[x+half_step][y-half_step] +
@@ -49,8 +46,8 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
             }
         }
 
-        for(int x = 0; x < grid_size; x += half_step) {
-            for(int y = (x + half_step) % step; y < grid_size; y += step) {
+        for(uint32_t x = 0; x < grid_size; x += half_step) {
+            for(uint32_t y = (x + half_step) % step; y < grid_size; y += step) {
                 double sum = 0.0;
                 int count = 0;
 
@@ -86,8 +83,8 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
     
     // Normalize to range [-1, 1] as the random variations can push high/low values
     // outside expected range
-    for(int col = 0; col < dimensions.x; col++) {
-        for(int row = 0; row < dimensions.y; row++) {
+    for(uint32_t col = 0; col < dimensions.x; col++) {
+        for(uint32_t row = 0; row < dimensions.y; row++) {
             min_val = std::min(min_val, heightmap[col][row]);
             max_val = std::max(max_val, heightmap[col][row]);
         }
@@ -95,9 +92,9 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
     
     double range = max_val - min_val;
     
-    for(int col = 0; col < dimensions.x; col++) {
+    for(uint32_t col = 0; col < dimensions.x; col++) {
         std::valarray<double> column(dimensions.y);
-        for(int row = 0; row < dimensions.y; row++) {
+        for(uint32_t row = 0; row < dimensions.y; row++) {
             column[row] = (heightmap[col][row] - min_val) / range;
         }
         final_heightmap.push_back(column);
@@ -106,7 +103,12 @@ Heightmap DiamondSquareGenerator::generate(Vector2<int> dimensions)
     return final_heightmap;
 }
 
-int DiamondSquareGenerator::get_required_grid_size(const Vector2<int> &dimensions) const
+std::unique_ptr<std::vector<float>> DiamondSquareGenerator::generate_flat(const DiamondSquareParameters &params) const {
+    auto hm = generate(params);
+    return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
+}
+
+int DiamondSquareGenerator::get_required_grid_size(const Vector2<uint32_t> &dimensions) const
 {
-    return std::ceil(std::log2(std::max(dimensions.x, dimensions.y)));
+    return (int)std::ceil(std::log2(std::max(dimensions.x, dimensions.y)));
 }

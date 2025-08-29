@@ -1,0 +1,84 @@
+import { Button, ComboBox, Slider, SpinBox } from "std-widgets.slint";
+import { DiamondSquarePanel, DiamondSquareParams } from "ds_panel.slint";
+import { PerlinPanel, PerlinParams } from "perlin_panel.slint";
+
+export component AppWindow inherits Window {
+    width: 1000px;
+    height: 600px;
+    title: "Terrain Generator";
+    in-out property <int> rows: 512;
+    in-out property <int> cols: 512;
+    in-out property <PerlinParams> perlin_params: { rows: 512, cols: 512, seed: 0, scale: 1.0, cell_size: 16 };
+    in-out property <DiamondSquareParams> ds_params: { rows: 512, cols: 512, seed: 0, roughness: 1 };
+    property <string> selected_algorithm: "Diamond-Square";
+    in property <image> heightmap_image;
+    callback invoke_generate(algorithm: string);
+
+    GridLayout{
+        VerticalLayout {
+            
+            Text{
+                text: "Terrain size";
+            }
+            GridLayout{
+                Text{
+                    text: "width";
+                }
+                SpinBox {
+                    minimum: 1;
+                    maximum: 2049;
+                    step-size: 1;
+                    value: root.cols;
+                    edited => {
+                        root.cols = self.value;
+                        root.perlin_params.cols = self.value;
+                        root.ds_params.cols = self.value;
+                    }
+                }
+
+                Text{
+                    text: "height";
+                }
+                SpinBox {
+                    minimum: 1;
+                    maximum: 2049;
+                    step-size: 1;
+                    value: root.rows;
+                    edited => {
+                        root.rows = self.value;
+                        root.perlin_params.rows = self.value;
+                        root.ds_params.rows = self.value;
+                    }
+                }
+            }
+            Text {
+                text: "Select algorithm:";
+            }
+            ComboBox {
+                model: ["Diamond-Square", "Perlin Noise", "Simplex"];
+                selected(value) => { root.selected_algorithm = value; }
+            }
+
+            if root.selected_algorithm == "Perlin Noise" : PerlinPanel{
+                params <=> root.perlin_params;
+            }
+            if root.selected_algorithm == "Diamond-Square" : DiamondSquarePanel {
+                params <=> root.ds_params;
+            }
+
+
+            Button {
+                text: "Generate Terrain";
+                clicked => {
+                    root.invoke_generate(root.selected_algorithm);
+                }
+            }
+        }
+
+        Image {
+            source: root.heightmap_image;
+            width: 512px;
+            height: 512px;
+        }
+    }
+}

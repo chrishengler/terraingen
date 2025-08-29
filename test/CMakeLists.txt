@@ -2,8 +2,6 @@ find_package(Catch2 3 REQUIRED)
 # These tests can use the Catch2-provided main
 add_executable(tests 
     export.cpp 
-    generator.cpp 
-    generatorFactory.cpp 
     terrain.cpp 
     terrainCombination.cpp 
     modifier.cpp 

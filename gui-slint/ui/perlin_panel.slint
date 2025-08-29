@@ -1,0 +1,62 @@
+import { Slider, SpinBox } from "std-widgets.slint";
+
+export struct PerlinParams {
+    rows: int,
+    cols: int,
+    seed: int,
+    scale: float,
+    cell_size: int,
+}
+
+export component PerlinPanel {
+    in-out property <PerlinParams> params;
+    
+    VerticalLayout{
+        VerticalLayout{
+            Text { 
+                text: "Seed";
+            }
+            SpinBox {
+                minimum: 1;
+                maximum: 10000000;
+                step-size: 1;
+                value: root.params.seed;
+                edited => {
+                    root.params.seed = self.value;
+                }
+            }
+        }
+
+        VerticalLayout{
+            Text { 
+                text: "Perlin Scale";
+            }
+            Slider { 
+                minimum: 0.1; 
+                maximum: 10.0;
+                value: root.params.scale;
+                changed => {
+                    root.params.scale = self.value;
+                }
+            }
+            Text {
+                text: root.params.scale;
+            }
+        }
+
+        VerticalLayout{
+            Text {
+                text: "Cell Size";
+            }
+            SpinBox {
+                minimum: 1;
+                maximum: 256;
+                step-size: 1;
+                value: root.params.cell_size;
+                edited => {
+                    root.params.cell_size = self.value;
+                }
+            }
+        }
+    }
+}

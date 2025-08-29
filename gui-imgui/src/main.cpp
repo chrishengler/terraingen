@@ -5,38 +5,19 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "data_types.h"
 #include "flat/flatTerrainGenerator.h"
-#include "generatorFactory.h"
 #include "glTexture.h"
 #include "guiState.h"
 #include "heightmapPreview.h"
 #include "modifierControls.h"
+#include "diamondsquare/diamondSquareGenerator.h"
 #include "perlin/perlinTerrainGenerator.h"
 #include "modifiers/hydraulic/hydraulicErosionModifier.h"
 #include "terrainControls.h"
 
 #include <GLFW/glfw3.h>
-#include <vector>
 #include <iostream>
-
-// --------------------------
-// Utility to flatten Heightmap
-// --------------------------
-std::vector<float> flattenHeightmap(const Heightmap& hm) {
-    std::vector<float> pixels;
-    size_t rows = hm.size();
-    size_t cols = hm.empty() ? 0 : hm[0].size();
-    pixels.reserve(rows * cols);
-    for (const auto& row : hm)
-      for (double v : row) {
-        float f = static_cast<float>(v);
-        pixels.push_back(f);
-        pixels.push_back(f);
-        pixels.push_back(f);
-      }
-    return pixels;
-}
-
 
 
 // --------------------------
@@ -82,6 +63,9 @@ int main() {
     ModifierControlsWindow modifierWindow;
     HeightmapPreviewWindow previewWindow;
 
+    auto ds_generator = DiamondSquareGenerator();
+    auto flat_generator = FlatTerrainGenerator();
+    auto perlin_generator = PerlinTerrainGenerator();
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -99,17 +83,21 @@ int main() {
         if (guiState.generateRequested) {
             guiState.generateRequested = false;
 
-            auto generator = GeneratorFactory::createGenerator(guiState.seed, guiState.selectedType);
-            
             // Configure generator-specific parameters
-            if (auto perlinGen = dynamic_cast<PerlinTerrainGenerator*>(generator.get())) {
-                perlinGen->setParameters(guiState.perlinParams);
+            switch(guiState.selectedType) {
+                case GeneratorType::DIAMOND_SQUARE:
+                    guiState.currentHeightmap = ds_generator.generate(guiState.diamondSquareParams);
+                    break;
+                case GeneratorType::FLAT:
+                    guiState.currentHeightmap = flat_generator.generate(guiState.flatParams);
+                    break;
+                case GeneratorType::PERLIN:
+                    guiState.currentHeightmap = perlin_generator.generate(guiState.perlinParams);
+                    break;
+                default:
+                    std::cerr << "Unsupported generator type selected.\n";
+                    continue;
             }
-            else if (auto flatGen = dynamic_cast<FlatTerrainGenerator*>(generator.get())) {
-                flatGen->setParameters(guiState.flatParams);
-            }
-
-            guiState.currentHeightmap = generator->generate(guiState.gridSize);
             auto pixels = flattenHeightmap(guiState.currentHeightmap);
             heightmapTexture.upload(pixels, guiState.gridSize.x, guiState.gridSize.y);
         }

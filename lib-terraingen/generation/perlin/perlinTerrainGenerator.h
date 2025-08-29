@@ -1,20 +1,16 @@
 #pragma once
-#include "generator.h"
 #include "data_types.h"
 #include "generation/generatorParameters.h"
 
-class PerlinTerrainGenerator : public Generator {
+class PerlinTerrainGenerator{
     public:
-        PerlinTerrainGenerator(unsigned int seed);
-        Heightmap generate(Vector2<int> dimensions) override;
-        void setParameters(const PerlinParameters& params);
-        const PerlinParameters& getParameters() const { return params; }
+        Heightmap generate(const PerlinParameters &params) const;
 
+        std::unique_ptr<std::vector<float>> generate_flat(const PerlinParameters &params) const;
     private:
-        double perlin(const Vector2<int> &coordinates);
-        double fade(double t);
-        double gradient(const int hash, const Vector2<double> &coordinates);
-        int retrievePermutation(int permutationIndex);
-        std::vector<int> permutations;
-        PerlinParameters params;
+        double perlin(const Vector2<int> &coordinates, const std::vector<int> &permutations, const PerlinParameters &params) const;
+        double fade(double t) const;
+        double gradient(const int hash, const Vector2<double> &coordinates) const;
 };
+
+std::unique_ptr<PerlinTerrainGenerator> new_perlin_generator();
