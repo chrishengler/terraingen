@@ -1,0 +1,51 @@
+import { GeneratorType } from "generator_type.slint";
+import { ComboBox, Button, Slider } from "std-widgets.slint";
+import { DiamondSquareParams } from "ds_panel.slint";
+import { PerlinParams } from "perlin_panel.slint";
+
+export struct GeneratorLayerInfo {
+    selected_algorithm: GeneratorType,
+    ds_params: DiamondSquareParams,
+    perlin_params: PerlinParams,
+    weight: float
+}
+
+export component GeneratorLayer {
+    in-out property <GeneratorLayerInfo> layer_info;
+
+    function string_to_generator(gen: string) -> GeneratorType {
+        if gen == "Diamond-Square" {
+            return diamondsquare;
+        }
+        // perlin as 'safe' default, a
+        else { perlin }
+    }
+
+    Rectangle {
+        background: #ffffff;
+        border-width: 2px;
+        border-radius: 4px;
+        border-color: #c0c0c0;
+
+        VerticalLayout {
+            padding: 6px;
+            spacing: 4px;
+
+            ComboBox {
+                model: ["Perlin Noise", "Diamond-Square", "Simplex"];
+                selected(value) => { root.layer_info.selected_algorithm = string_to_generator(value); }
+            }
+            Slider {
+                minimum: 0.0;
+                maximum: 1.0;
+                step: 0.01;
+                value: root.layer_info.weight;
+
+                changed(value) => {root.layer_info.weight = value;}
+            }
+            Text {
+                text: "weight: " + root.layer_info.weight;
+            }
+        }
+    }
+}
