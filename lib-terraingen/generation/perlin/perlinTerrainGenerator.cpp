@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <random>
 #include <vector>
@@ -47,6 +48,8 @@ Heightmap PerlinTerrainGenerator::generate(const PerlinParameters &params) const
 }
 
 std::unique_ptr<std::vector<float>> PerlinTerrainGenerator::generate_flat(const PerlinParameters &params) const {
+    std::cout << "generating perlin with cols: " << params.cols << " and rows: " << params.rows;
+    std::cout << "length when flattened = " << params.cols * params.rows * 3 << std::endl;
     auto hm = generate(params);
     return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
 }

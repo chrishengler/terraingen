@@ -1,0 +1,15 @@
+import { GeneratorType } from "generator_type.slint";
+
+export component DebugHelper {
+    in property <GeneratorType> algo;
+
+    function algo_to_string(a: GeneratorType) -> string {
+        if a == GeneratorType.perlin { return "Perlin Noise"; }
+        if a == GeneratorType.diamondsquare { return "Diamond-Square"; }
+        return "Unknown";
+    }
+
+    Text {
+        text: algo_to_string(root.algo);
+    }
+}

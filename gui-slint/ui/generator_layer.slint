@@ -7,11 +7,14 @@ export struct GeneratorLayerInfo {
     selected_algorithm: GeneratorType,
     ds_params: DiamondSquareParams,
     perlin_params: PerlinParams,
-    weight: float
+    weight: float,
 }
 
 export component GeneratorLayer {
     in-out property <GeneratorLayerInfo> layer_info;
+    in-out property <bool> selected;
+    callback clicked;
+    callback updated;
 
     function string_to_generator(gen: string) -> GeneratorType {
         if gen == "Diamond-Square" {
@@ -22,29 +25,44 @@ export component GeneratorLayer {
     }
 
     Rectangle {
-        background: #ffffff;
+        background: selected ? #7070ff : #ffffff;
         border-width: 2px;
         border-radius: 4px;
         border-color: #c0c0c0;
 
-        VerticalLayout {
-            padding: 6px;
-            spacing: 4px;
+        GridLayout{
+            Button {
+                width: 20%;
+                text: "Pick";
 
-            ComboBox {
-                model: ["Perlin Noise", "Diamond-Square", "Simplex"];
-                selected(value) => { root.layer_info.selected_algorithm = string_to_generator(value); }
+                clicked => {root.clicked();}
             }
-            Slider {
-                minimum: 0.0;
-                maximum: 1.0;
-                step: 0.01;
-                value: root.layer_info.weight;
 
-                changed(value) => {root.layer_info.weight = value;}
-            }
-            Text {
-                text: "weight: " + root.layer_info.weight;
+            VerticalLayout {
+                padding: 6px;
+                spacing: 4px;
+
+                ComboBox {
+                    model: ["Perlin Noise", "Diamond-Square"];
+                    selected(value) => { 
+                        root.layer_info.selected_algorithm = string_to_generator(value); 
+                        root.updated();
+                    }
+                }
+                Slider {
+                    minimum: 0.0;
+                    maximum: 1.0;
+                    step: 0.01;
+                    value: root.layer_info.weight;
+
+                    changed(value) => {
+                        root.layer_info.weight = value;
+                        root.updated();
+                    }
+                }
+                Text {
+                    text: "weight: " + root.layer_info.weight;
+                }
             }
         }
     }

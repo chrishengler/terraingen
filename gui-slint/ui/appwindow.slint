@@ -3,26 +3,38 @@ import { DiamondSquarePanel, DiamondSquareParams } from "ds_panel.slint";
 import { PerlinPanel, PerlinParams } from "perlin_panel.slint";
 import { GeneratorType } from "generator_type.slint";
 import { GeneratorLayerInfo, GeneratorLayer } from "generator_layer.slint";
+import { DebugHelper } from "debug.slint";
 
 export component AppWindow inherits Window {
     width: 1000px;
     height: 600px;
     title: "Terrain Generator";
-    in-out property <[GeneratorLayerInfo]> layers;
     in-out property <int> rows: 512;
     in-out property <int> cols: 512;
-    in-out property <PerlinParams> perlin_params: { seed: 0, scale: 1.0, cell_size: 16 };
-    in-out property <DiamondSquareParams> ds_params: { seed: 0, roughness: 1 };
-    property <string> selected_algorithm: "Diamond-Square";
+    in-out property <[GeneratorLayerInfo]> layers;
+    in-out property <int> selected_layer_index: 0;
+    in-out property <string> raw_selected_algo;
+
+    in-out property <PerlinParams> current_perlin_params: { seed: 0, scale: 1.0, cell_size: 16 };
+    in-out property <DiamondSquareParams> current_ds_params: { seed: 0, roughness: 1 };
+    in-out property <GeneratorType> selected_algorithm;
+
     in property <image> heightmap_image;
     callback invoke_generate(algorithm: GeneratorType);
     callback add_layer();
+    callback select_layer(index: int);
+    callback update_layer(layer_info: GeneratorLayerInfo);
+    callback update_ds_params(params: DiamondSquareParams);
+    callback update_perlin_params(params: PerlinParams);
 
     GridLayout{
         VerticalLayout { 
             width: 25%;
 
-            Text { text: "Layers:"; }
+            Text { text: "Layers"; }
+            DebugHelper {
+                algo: root.selected_algorithm;
+            }
 
             Rectangle {
                 background: #c0c0c0;  
@@ -30,9 +42,16 @@ export component AppWindow inherits Window {
                 clip: true;            
 
                 ListView {
-                    
+                    for layer[i] in root.layers: GeneratorLayer { layer_info: layer;  
+                        selected: root.selected_layer_index == i;
+                        clicked => { 
+                            root.select_layer(i)
+                        }
 
-                    for layer[i] in root.layers: GeneratorLayer { layer_info: layer; } 
+                        updated => {
+                            root.update_layer(self.layer_info);
+                        }
+                    }
                 }
             }
            
@@ -76,6 +95,34 @@ export component AppWindow inherits Window {
                 }
             }
 
+            if root.selected_algorithm == GeneratorType.perlin : PerlinPanel { 
+                params <=> root.current_perlin_params;
+
+                params_changed => {
+                    if root.selected_layer_index >= 0 {
+                        root.update_perlin_params(self.params);
+                    }
+                }
+            }
+
+            if root.selected_algorithm == GeneratorType.diamondsquare : DiamondSquarePanel {
+                params <=> root.current_ds_params;
+
+                params_changed => {
+                    if root.selected_layer_index >= 0 {
+                        root.update_ds_params(self.params);
+                    }
+                }
+            }
+
+            if root.selected_layer_index >= 0 : Button {
+                text: "Generate";
+
+                clicked => {
+                    root.invoke_generate(root.selected_algorithm);
+                }
+            }
+            
         }
 
         Image {

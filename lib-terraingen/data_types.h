@@ -12,10 +12,11 @@ inline std::vector<float> flattenHeightmap(const Heightmap& hm) {
     pixels.reserve(rows * cols);
     for (const auto& row : hm)
       for (double v : row) {
-        float f = static_cast<float>(v);
-        pixels.push_back(f);
-        pixels.push_back(f);
-        pixels.push_back(f);
+        pixels.push_back(static_cast<float>(v));
+        // float f = static_cast<float>(v);
+        // pixels.push_back(f);
+        // pixels.push_back(f);
+        // pixels.push_back(f);
       }
     return pixels;
 }
