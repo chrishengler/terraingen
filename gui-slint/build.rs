@@ -27,5 +27,6 @@ fn main() {
         .compile("terraingen_cpp");
 
     println!("cargo:rerun-if-changed=../lib-terraingen");
+    println!("cargo:rerun-if-changed=../lib-terraingen/generation/data_types.h");
     println!("cargo:rerun-if-changed=src/lib_ffi.rs");
 }

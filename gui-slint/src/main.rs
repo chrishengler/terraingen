@@ -1,9 +1,14 @@
 use std::borrow::BorrowMut;
+use std::cell::RefCell;
 use std::rc::Rc;
+use cxx::UniquePtr;
+use slint::Image;
 use slint::Model;
 use slint::ModelRc;
 use slint::VecModel;
 
+use crate::lib_ffi::ffi::flattenHeightmap;
+use crate::lib_ffi::ffi::Heightmap;
 use crate::lib_ffi::ffi::{buildDiamondSquareParameters, buildPerlinParameters, new_diamond_square_generator, new_perlin_generator};
 
 mod convert_image; 
@@ -12,7 +17,20 @@ use crate::convert_image::vec_to_image;
 slint::include_modules!();
 mod lib_ffi;
 
-fn default_layer() -> GeneratorLayerInfo {
+pub struct LayerData {
+    pub heightmap: Option<UniquePtr<Heightmap>>,
+    pub image: Option<slint::Image>,
+    pub initialised: bool
+}
+
+fn default_layer_data() -> LayerData {
+    LayerData {
+        heightmap: None,
+        image: None,
+        initialised: false
+    }
+}
+fn default_layer_info() -> GeneratorLayerInfo {
     GeneratorLayerInfo {
         selected_algorithm: GeneratorType::Perlin,
         ds_params: DiamondSquareParams { seed: 0, roughness: 1.0 },
@@ -21,32 +39,50 @@ fn default_layer() -> GeneratorLayerInfo {
     }
 }
 
+pub fn set_image_in_layer_data(layer_data_vec: Rc::<RefCell::<Vec::<LayerData> > >, index: i32, image: Image) {
+    let mut layer_data_access = layer_data_vec.as_ref().borrow_mut();
+    if let Some(layer_data) = layer_data_access.get_mut(index as usize) {
+        layer_data.image = Some(image);
+    }
+}
+
 fn main() {
     let app = AppWindow::new().unwrap();
     let app_weak = app.as_weak();
 
-
-    
     let layers = Rc::new(VecModel::default());
-    layers.push(default_layer());
+    layers.push(default_layer_info());
+
+    let layer_data: Rc<RefCell<Vec<LayerData>>> = Rc::new(RefCell::new(Vec::new()));
+    layer_data.as_ref().borrow_mut().push(default_layer_data());
 
     app.set_layers(ModelRc::from(layers.clone()));
 
     let mut layers_for_add = layers.clone();
+    let layer_data_for_add = layer_data.clone();
     app.on_add_layer({
-        // let mut layers = layers.clone();
         move || {
-            layers_for_add.borrow_mut().push(default_layer());
+            layer_data_for_add.as_ref().borrow_mut().push(default_layer_data());
+            layers_for_add.borrow_mut().push(default_layer_info());
         }
     });
 
     let app_weak_for_select = app_weak.clone();
     let layers_for_select = layers.clone();
+    let layer_data_for_select = layer_data.clone();
     app.on_select_layer(move |index| {
         if let (Some(app), Some(row)) = (app_weak_for_select.upgrade(), layers_for_select.row_data(index as usize)) {
             app.set_selected_layer_index(index);
             app.set_selected_algorithm(row.selected_algorithm);
             app.set_current_perlin_params(row.perlin_params);
+
+            if let Some(layer) = layer_data_for_select.as_ref().borrow_mut().get(index as usize) {
+                if let Some(image) = &layer.image {
+                    app.set_heightmap_image(image.clone());
+                } else {
+                    println!("Layer {} not yet initialised", index);
+                }
+}
         }
     }); 
 
@@ -90,8 +126,10 @@ fn main() {
     let mut ds = new_diamond_square_generator();
 
     let app_weak_for_generate = app_weak.clone();
+    let layer_data_for_invoke = layer_data.clone();
     app.on_invoke_generate(move |algorithm| {
         if let Some(app) = app_weak_for_generate.upgrade() {
+            let selected_layer_index = app.get_selected_layer_index();
             match algorithm {
                 val if val == GeneratorType::Perlin => {
                     let cols = app.get_cols();
@@ -102,10 +140,12 @@ fn main() {
 
                     if let Some(perlin_ref) = perlin.as_mut() {
                         if let Some(params_ref) = params.as_ref() {
-                            let hm = perlin_ref.generate_flat(params_ref);
-                            println!("Generated Perlin heightmap of length {}", hm.len());
+                            let hm = perlin_ref.generate_unique(params_ref);
+                            let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
+                            println!("Generated Perlin heightmap of length {}", image.len());
                         
-                            let image = vec_to_image(&hm, cols as usize, rows as usize);
+                            let image = vec_to_image(&image, cols as usize, rows as usize);
+                            set_image_in_layer_data(layer_data_for_invoke.clone(), selected_layer_index, image.clone());
                             app.set_heightmap_image(image);
                         }
                     }
@@ -120,13 +160,14 @@ fn main() {
 
                     if let Some(ds_ref) = ds.as_mut() {
                         if let Some(params_ref) = params.as_ref() {
-                            let hm = ds_ref.generate_flat(params_ref);
-                            println!("generated Diamond-Square heightmap of length {}", hm.len());
+                            let hm = ds_ref.generate_unique(params_ref);
+                            let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
+                            println!("generated Diamond-Square heightmap of length {}", image.len());
 
-                            let image = vec_to_image(&hm, cols as usize, rows as usize);
+                            let image = vec_to_image(&image, cols as usize, rows as usize);
+                            set_image_in_layer_data(layer_data_for_invoke.clone(), selected_layer_index, image.clone());
                             app.set_heightmap_image(image);
                         }
- 
                     }
                 }
                 _ => {}
