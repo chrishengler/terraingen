@@ -72,33 +72,34 @@ fn main() {
     let layers_for_select = layers.clone();
     let layer_data_for_select = layer_data.clone();
     app.on_select_layer(move |index| {
-        if let (Some(app), Some(row)) = (app_weak_for_select.upgrade(), layers_for_select.row_data(index as usize)) {
+        if let Some(app) = app_weak_for_select.upgrade(){
             app.set_selected_layer_index(index);
-            app.set_selected_algorithm(row.selected_algorithm);
-            app.set_current_perlin_params(row.perlin_params);
+            if let (Some(app), Some(row)) = (app_weak_for_select.upgrade(), layers_for_select.row_data(index as usize)) {
+                println!("{}: {}", index, (if row.selected_algorithm == GeneratorType::Perlin { "Perlin" } else { "DS" }));
+                app.set_selected_algorithm(row.selected_algorithm);
+                app.set_current_perlin_params(row.perlin_params);
+                app.set_current_ds_params(row.ds_params);
 
-            if let Some(layer) = layer_data_for_select.as_ref().borrow_mut().get(index as usize) {
-                if let Some(image) = &layer.image {
-                    app.set_heightmap_image(image.clone());
-                } else {
-                    println!("Layer {} not yet initialised", index);
+                if let Some(layer) = layer_data_for_select.as_ref().borrow_mut().get(index as usize) {
+                    if let Some(image) = &layer.image {
+                        app.set_heightmap_image(image.clone());
+                    } else {
+                    }
                 }
-}
+            }
         }
     }); 
 
     app.on_update_layer({
         let layers = layers.clone();
         let app_weak = app_weak.clone();
-        move |layer_info| {
+        move |layer_info, idx| {
             if let Some(app) = app_weak.upgrade() {
-                let idx = app.get_selected_layer_index();
                 if idx >= 0 {
-                    let i = idx as usize;
-                    if let Some(mut row) = layers.row_data(i) {
+                    if let Some(mut row) = layers.row_data(idx as usize) {
                         row = layer_info.clone();
                         app.set_selected_algorithm(row.selected_algorithm);
-                        layers.set_row_data(i, row);
+                        layers.set_row_data(idx as usize, row);
                     }
                 }
             }

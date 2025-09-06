@@ -2,6 +2,7 @@ import { GeneratorType } from "generator_type.slint";
 
 export component DebugHelper {
     in property <GeneratorType> algo;
+    in property <int> layer;
 
     function algo_to_string(a: GeneratorType) -> string {
         if a == GeneratorType.perlin { return "Perlin Noise"; }
@@ -9,7 +10,14 @@ export component DebugHelper {
         return "Unknown";
     }
 
-    Text {
-        text: algo_to_string(root.algo);
+    VerticalLayout {
+        Text {
+            text: algo_to_string(root.algo);
+        }
+
+        Text {
+            text: root.layer;
+        }
     }
+
 }

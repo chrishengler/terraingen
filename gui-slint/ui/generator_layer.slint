@@ -44,6 +44,7 @@ export component GeneratorLayer {
 
                 ComboBox {
                     model: ["Perlin Noise", "Diamond-Square"];
+
                     selected(value) => { 
                         root.layer_info.selected_algorithm = string_to_generator(value); 
                         root.updated();

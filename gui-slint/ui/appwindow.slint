@@ -23,7 +23,7 @@ export component AppWindow inherits Window {
     callback invoke_generate(algorithm: GeneratorType);
     callback add_layer();
     callback select_layer(index: int);
-    callback update_layer(layer_info: GeneratorLayerInfo);
+    callback update_layer(layer_info: GeneratorLayerInfo, index: int);
     callback update_ds_params(params: DiamondSquareParams);
     callback update_perlin_params(params: PerlinParams);
 
@@ -66,6 +66,7 @@ export component AppWindow inherits Window {
             Text { text: "Layers"; }
             DebugHelper {
                 algo: root.selected_algorithm;
+                layer: root.selected_layer_index;
             }
 
             Rectangle {
@@ -77,11 +78,12 @@ export component AppWindow inherits Window {
                     for layer[i] in root.layers: GeneratorLayer { layer_info: layer;  
                         selected: root.selected_layer_index == i;
                         clicked => { 
-                            root.select_layer(i)
+                            root.select_layer(i);
                         }
 
                         updated => {
-                            root.update_layer(self.layer_info);
+                            root.update_layer(self.layer_info, i);
+                            self.clicked();
                         }
                     }
                 }
