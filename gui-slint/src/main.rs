@@ -39,10 +39,11 @@ fn default_layer_info() -> GeneratorLayerInfo {
     }
 }
 
-pub fn set_image_in_layer_data(layer_data_vec: Rc::<RefCell::<Vec::<LayerData> > >, index: i32, image: Image) {
+pub fn set_layer_data(layer_data_vec: Rc::<RefCell::<Vec::<LayerData>>>, index: i32, heightmap: Option<UniquePtr<Heightmap>>, image: Option<Image>) {
     let mut layer_data_access = layer_data_vec.as_ref().borrow_mut();
     if let Some(layer_data) = layer_data_access.get_mut(index as usize) {
-        layer_data.image = Some(image);
+        layer_data.heightmap = heightmap;
+        layer_data.image = image;
     }
 }
 
@@ -145,7 +146,7 @@ fn main() {
                             println!("Generated Perlin heightmap of length {}", image.len());
                         
                             let image = vec_to_image(&image, cols as usize, rows as usize);
-                            set_image_in_layer_data(layer_data_for_invoke.clone(), selected_layer_index, image.clone());
+                            set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
                             app.set_heightmap_image(image);
                         }
                     }
@@ -165,7 +166,7 @@ fn main() {
                             println!("generated Diamond-Square heightmap of length {}", image.len());
 
                             let image = vec_to_image(&image, cols as usize, rows as usize);
-                            set_image_in_layer_data(layer_data_for_invoke.clone(), selected_layer_index, image.clone());
+                            set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
                             app.set_heightmap_image(image);
                         }
                     }
