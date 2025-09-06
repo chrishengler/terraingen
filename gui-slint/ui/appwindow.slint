@@ -31,6 +31,38 @@ export component AppWindow inherits Window {
         VerticalLayout { 
             width: 25%;
 
+            Text{
+                text: "Terrain size";
+            }
+            GridLayout{
+                Text{
+                    text: "width";
+                }
+                SpinBox {
+                    minimum: 1;
+                    maximum: 2049;
+                    step-size: 1;
+                    value: root.cols;
+                    edited => {
+                        root.cols = self.value;
+                    }
+                }
+
+                Text{
+                    text: "height";
+                }
+                SpinBox {
+                    minimum: 1;
+                    maximum: 2049;
+                    step-size: 1;
+                    value: root.rows;
+                    edited => {
+                        root.rows = self.value;
+                    }
+                }
+            }
+
+
             Text { text: "Layers"; }
             DebugHelper {
                 algo: root.selected_algorithm;
@@ -64,37 +96,6 @@ export component AppWindow inherits Window {
         }
         VerticalLayout {
             
-            Text{
-                text: "Terrain size";
-            }
-            GridLayout{
-                Text{
-                    text: "width";
-                }
-                SpinBox {
-                    minimum: 1;
-                    maximum: 2049;
-                    step-size: 1;
-                    value: root.cols;
-                    edited => {
-                        root.cols = self.value;
-                    }
-                }
-
-                Text{
-                    text: "height";
-                }
-                SpinBox {
-                    minimum: 1;
-                    maximum: 2049;
-                    step-size: 1;
-                    value: root.rows;
-                    edited => {
-                        root.rows = self.value;
-                    }
-                }
-            }
-
             if root.selected_algorithm == GeneratorType.perlin : PerlinPanel { 
                 params <=> root.current_perlin_params;
 
