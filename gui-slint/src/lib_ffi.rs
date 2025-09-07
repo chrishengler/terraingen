@@ -9,6 +9,12 @@ pub mod ffi {
     }
 
     unsafe extern "C++" {
+        include!("terrainCombination.h");
+
+        fn combine(hms: UniquePtr<CxxVector<Heightmap>>, weights: UniquePtr<CxxVector<f32>>) -> UniquePtr<Heightmap>;
+    }
+
+    unsafe extern "C++" {
         include!("generatorParameters.h");
 
         type DiamondSquareParameters;

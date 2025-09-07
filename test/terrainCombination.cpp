@@ -23,7 +23,7 @@ TEST_CASE("Terrain combination")
 
     SECTION("wrong total weights fails")
     {
-        REQUIRE_THROWS_AS(terrainCombination.combineTerrains({heightmap1, heightmap2}, {0.1, 0.1}), std::invalid_argument);
+        REQUIRE_THROWS_AS(terrainCombination.combineTerrains({heightmap1, heightmap2}, {0.1, -0.3}), std::invalid_argument);
     }
 
     SECTION("adding two terrains with equal weight")
