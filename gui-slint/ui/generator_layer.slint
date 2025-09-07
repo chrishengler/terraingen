@@ -33,7 +33,7 @@ export component GeneratorLayer {
         GridLayout{
             Button {
                 width: 20%;
-                text: "Pick";
+                text: root.selected ? "Deselect" : "Select";
 
                 clicked => {root.clicked();}
             }

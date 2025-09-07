@@ -78,12 +78,17 @@ export component AppWindow inherits Window {
                     for layer[i] in root.layers: GeneratorLayer { layer_info: layer;  
                         selected: root.selected_layer_index == i;
                         clicked => { 
-                            root.select_layer(i);
+                            if self.selected { 
+                                root.select_layer(-1); 
+                            }
+                            else {
+                                root.select_layer(i);
+                            }
                         }
 
                         updated => {
                             root.update_layer(self.layer_info, i);
-                            self.clicked();
+                            root.select_layer(i);
                         }
                     }
                 }
@@ -97,29 +102,32 @@ export component AppWindow inherits Window {
             }
         }
         VerticalLayout {
-            
-            if root.selected_algorithm == GeneratorType.perlin : PerlinPanel { 
-                params <=> root.current_perlin_params;
+            if root.selected_layer_index >= 0 : Rectangle {
+                if root.selected_algorithm == GeneratorType.perlin : PerlinPanel { 
+                    params <=> root.current_perlin_params;
 
-                params_changed => {
-                    if root.selected_layer_index >= 0 {
-                        root.update_perlin_params(self.params);
+                    params_changed => {
+                        if root.selected_layer_index >= 0 {
+                            root.update_perlin_params(self.params);
+                        }
+                    }
+                }
+
+                if root.selected_algorithm == GeneratorType.diamondsquare : DiamondSquarePanel {
+                    params <=> root.current_ds_params;
+
+                    params_changed => {
+                        if root.selected_layer_index >= 0 {
+                            root.update_ds_params(self.params);
+                        }
                     }
                 }
             }
+            Rectangle {}
 
-            if root.selected_algorithm == GeneratorType.diamondsquare : DiamondSquarePanel {
-                params <=> root.current_ds_params;
-
-                params_changed => {
-                    if root.selected_layer_index >= 0 {
-                        root.update_ds_params(self.params);
-                    }
-                }
-            }
-
-            if root.selected_layer_index >= 0 : Button {
+            Button {
                 text: "Generate";
+                enabled: root.selected_layer_index >= 0;
 
                 clicked => {
                     root.invoke_generate(root.selected_algorithm);
