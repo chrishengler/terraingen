@@ -58,3 +58,11 @@ Vector2<T> lerp(Vector2<T> a, Vector2<T> b, double t)
 {
     return {std::lerp(a.x, b.x, t), std::lerp(a.y, b.y, t)};
 }
+
+inline Vector2<int> getDimensions(const Heightmap &hm){
+    if(hm.size() == 0)
+    {
+        return Vector2<int>(0,0);
+    }
+    return Vector2<int>(hm.size(), hm[0].size());
+}

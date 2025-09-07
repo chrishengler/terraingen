@@ -30,6 +30,7 @@ fn default_layer_data() -> LayerData {
         initialised: false
     }
 }
+
 fn default_layer_info() -> GeneratorLayerInfo {
     GeneratorLayerInfo {
         selected_algorithm: GeneratorType::Perlin,

@@ -4,21 +4,21 @@
 #include <stdexcept>
 #include "terrainCombination.h"
 
-Terrain TerrainCombination::combineTerrains(std::vector<Terrain> terrains, std::vector<float> weights)
+Heightmap TerrainCombination::combineTerrains(std::vector<Heightmap> terrains, std::vector<float> weights)
 {
     auto numTerrains = terrains.size();
     if(numTerrains < 2)
     {
         throw std::invalid_argument("Combining terrains requires at least two terrains");
     }
-    auto dimensions = terrains[0].getDimensions();
+    auto dimensions = getDimensions(terrains[0]);
 
     if(weights.size() != numTerrains)
     {
         throw std::invalid_argument("Combining terrains requires list of terrains and list of weights of the same length");
     }
     for(unsigned int i=1; i<numTerrains; i++){
-        if(terrains[i].getDimensions() != dimensions){
+        if(getDimensions(terrains[i]) != dimensions){
             throw std::invalid_argument("Combining terrians requires terrains with the same dimensions");
         }
     }
@@ -32,7 +32,7 @@ Terrain TerrainCombination::combineTerrains(std::vector<Terrain> terrains, std::
     std::vector<Heightmap> scaledHeightmaps(numTerrains);
     for(unsigned int i=0; i<numTerrains; i++)
     {
-        Heightmap scaledHeightmap(terrains[i].getTerrain());
+        Heightmap scaledHeightmap(terrains[i]);
         for(unsigned int j=0; j<dimensions.x; j++)
         {
             scaledHeightmap[j] *= weights[i];
@@ -48,5 +48,5 @@ Terrain TerrainCombination::combineTerrains(std::vector<Terrain> terrains, std::
         combinedHeightmap[i] = row;
     }
 
-    return Terrain(combinedHeightmap);
+    return combinedHeightmap;
 }
