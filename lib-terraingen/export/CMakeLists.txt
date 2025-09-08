@@ -2,6 +2,7 @@ add_library(exportlib imageExporter.cpp)
 if (APPLE)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(PNG libpng16 REQUIRED)
+    target_compile_options(exportlib PRIVATE -Wno-missing-template-arg-list-after-template-kw)  # template issue in Boost, hopefully removable in future
 else ()
     find_package(PNG REQUIRED)
 endif()
