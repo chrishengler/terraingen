@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include "terrainCombination.h"
 
-Heightmap TerrainCombination::combineTerrains(std::vector<Heightmap> terrains, std::vector<float> weights)
+Heightmap TerrainCombination::combineTerrains(const std::vector<Heightmap> terrains, const std::vector<float> weights)
 {
     auto numTerrains = terrains.size();
     if(numTerrains < 2)
@@ -23,12 +23,17 @@ Heightmap TerrainCombination::combineTerrains(std::vector<Heightmap> terrains, s
         }
     }
 
-    auto sumWeights = std::accumulate(weights.begin(), weights.end(), (float)0);
+    auto sumWeights = std::accumulate(weights.begin(), weights.end(), 0.0);
     if(sumWeights <= 0)
     {
         throw std::invalid_argument((std::stringstream() << "Sum of weights is " << sumWeights << " but must be > 0").str());
     }
-    std::for_each(weights.begin(), weights.end(), [&sumWeights](float &element){element /= sumWeights;});
+    std::vector<float> normalised_weights;
+    normalised_weights.reserve(weights.size());
+
+    for (float w : weights) {
+        normalised_weights.push_back(w / sumWeights);
+    }
 
     std::vector<Heightmap> scaledHeightmaps(numTerrains);
     for(unsigned int i=0; i<numTerrains; i++)
@@ -36,7 +41,7 @@ Heightmap TerrainCombination::combineTerrains(std::vector<Heightmap> terrains, s
         Heightmap scaledHeightmap(terrains[i]);
         for(int j=0; j<dimensions.x; j++)
         {
-            scaledHeightmap[j] *= weights[i];
+            scaledHeightmap[j] *= normalised_weights[i];
         }
         scaledHeightmaps[i] = (scaledHeightmap);
     }
@@ -52,7 +57,15 @@ Heightmap TerrainCombination::combineTerrains(std::vector<Heightmap> terrains, s
     return combinedHeightmap;
 }
         
+struct HeightmapHandle{
+    Heightmap* addr;
+};
 
-std::unique_ptr<Heightmap> combine(std::unique_ptr<std::vector<Heightmap>> heightmaps, std::unique_ptr<std::vector<float>> weights){
-    return std::make_unique<Heightmap>(TerrainCombination::combineTerrains(*heightmaps, *weights));
+std::unique_ptr<Heightmap> combine(const std::vector<HeightmapHandle>& heightmap_handles, const std::vector<float>& weights){
+    std::vector<Heightmap> heightmaps;
+    heightmaps.reserve(heightmap_handles.size());
+    for(auto handle: heightmap_handles){
+        heightmaps.push_back(*(handle.addr));
+    }
+    return std::make_unique<Heightmap>(TerrainCombination::combineTerrains(heightmaps, weights));
 }

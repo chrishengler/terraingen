@@ -1,6 +1,11 @@
 #[cxx::bridge]
 pub mod ffi {
 
+    #[derive(Debug)]
+    struct HeightmapHandle {
+        ptr: *const Heightmap,
+    }
+
     unsafe extern "C++" {
         include!("data_types.h");
 
@@ -10,8 +15,8 @@ pub mod ffi {
 
     unsafe extern "C++" {
         include!("terrainCombination.h");
-
-        fn combine(hms: UniquePtr<CxxVector<Heightmap>>, weights: UniquePtr<CxxVector<f32>>) -> UniquePtr<Heightmap>;
+        
+        fn combine(hms: &CxxVector<HeightmapHandle>, weights: &CxxVector<f32>) -> UniquePtr<Heightmap>;
     }
 
     unsafe extern "C++" {

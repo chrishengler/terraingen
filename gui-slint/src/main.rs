@@ -1,14 +1,17 @@
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
 use std::rc::Rc;
+use cxx::CxxVector;
 use cxx::UniquePtr;
 use slint::Image;
 use slint::Model;
 use slint::ModelRc;
 use slint::VecModel;
 
+use crate::lib_ffi::ffi::combine;
 use crate::lib_ffi::ffi::flattenHeightmap;
 use crate::lib_ffi::ffi::Heightmap;
+use crate::lib_ffi::ffi::HeightmapHandle;
 use crate::lib_ffi::ffi::{buildDiamondSquareParameters, buildPerlinParameters, new_diamond_square_generator, new_perlin_generator};
 
 mod convert_image; 
@@ -68,6 +71,43 @@ fn main() {
             layers_for_add.borrow_mut().push(default_layer_info());
         }
     });
+
+    let layers_for_combine = layers.clone();
+    let layer_data_for_combine = layer_data.clone();
+    app.on_combine_layers(move || {
+        let len = layers_for_combine.as_ref().row_count();
+
+        let mut heightmap_handles: UniquePtr<CxxVector<HeightmapHandle>> = CxxVector::new();
+        let mut weights= CxxVector::<f32>::new();
+
+        for idx in 0..len {
+            let layer_info_opt = layers_for_combine.row_data(idx);
+            if layer_info_opt.is_none() { continue; }
+            let layer_info = layer_info_opt.unwrap();
+
+            if let Some(ld) = layer_data_for_combine.borrow().get(idx) {
+                if let Some(hm_ptr) = &ld.heightmap {
+                    let handle = HeightmapHandle { ptr: hm_ptr.as_ptr() };
+                    heightmap_handles.pin_mut().push(handle);
+
+                    // push the weight
+                    weights.pin_mut().push(layer_info.weight as f32);
+                }
+            }
+        }
+
+        // Call C++ combine (consumes the two UniquePtr<CxxVector<...>>)
+        let combined_hm: UniquePtr<Heightmap> = combine(&heightmap_handles, &weights);
+
+        // if !combined_hm.is_null() {
+        //     // store result where you want, or flatten, etc.
+        //     // example: put combined into layer_data[0].heightmap
+        //     if let Some(dst) = layer_data_borrow.get_mut(0) {
+        //         dst.heightmap = Some(combined_hm);
+        //     }
+        // }
+    }
+    );
 
     let app_weak_for_select = app_weak.clone();
     let layers_for_select = layers.clone();

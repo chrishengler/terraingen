@@ -22,6 +22,7 @@ export component AppWindow inherits Window {
     in property <image> heightmap_image;
     callback invoke_generate(algorithm: GeneratorType);
     callback add_layer();
+    callback combine_layers();
     callback select_layer(index: int);
     callback update_layer(layer_info: GeneratorLayerInfo, index: int);
     callback update_ds_params(params: DiamondSquareParams);
@@ -98,6 +99,13 @@ export component AppWindow inherits Window {
                 text: "Add Layer";
                 clicked => {
                     root.add_layer();
+                }
+            }
+
+            Button {
+                text: "Perform combination";
+                clicked => {
+                    root.combine_layers();
                 }
             }
         }
