@@ -99,7 +99,7 @@ int main() {
                     continue;
             }
             auto pixels = flattenHeightmap(guiState.currentHeightmap);
-            heightmapTexture.upload(pixels, guiState.gridSize.x, guiState.gridSize.y);
+            heightmapTexture.upload(*pixels, guiState.gridSize.x, guiState.gridSize.y);
         }
 
         // Apply modifiers if requested
@@ -112,7 +112,7 @@ int main() {
                 
                 // Update the display
                 auto pixels = flattenHeightmap(guiState.currentHeightmap);
-                heightmapTexture.upload(pixels, guiState.gridSize.x, guiState.gridSize.y);
+                heightmapTexture.upload(*pixels, guiState.gridSize.x, guiState.gridSize.y);
             }
         }
 

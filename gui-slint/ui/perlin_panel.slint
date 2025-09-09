@@ -1,8 +1,6 @@
 import { Slider, SpinBox } from "std-widgets.slint";
 
 export struct PerlinParams {
-    rows: int,
-    cols: int,
     seed: int,
     scale: float,
     cell_size: int,
@@ -10,6 +8,7 @@ export struct PerlinParams {
 
 export component PerlinPanel {
     in-out property <PerlinParams> params;
+    callback params_changed;
     
     VerticalLayout{
         VerticalLayout{
@@ -23,6 +22,7 @@ export component PerlinPanel {
                 value: root.params.seed;
                 edited => {
                     root.params.seed = self.value;
+                    root.params_changed();
                 }
             }
         }
@@ -37,6 +37,7 @@ export component PerlinPanel {
                 value: root.params.scale;
                 changed => {
                     root.params.scale = self.value;
+                    root.params_changed();
                 }
             }
             Text {
@@ -55,6 +56,7 @@ export component PerlinPanel {
                 value: root.params.cell_size;
                 edited => {
                     root.params.cell_size = self.value;
+                    root.params_changed();
                 }
             }
         }

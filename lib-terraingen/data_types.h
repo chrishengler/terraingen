@@ -1,23 +1,21 @@
 #pragma once
 #include <cmath>
+#include <memory>
 #include <valarray>
 #include <vector>
 
 typedef std::vector<std::valarray<double>> Heightmap;
 
-inline std::vector<float> flattenHeightmap(const Heightmap& hm) {
+inline std::unique_ptr<std::vector<float>> flattenHeightmap(const Heightmap& hm) {
     std::vector<float> pixels;
     size_t rows = hm.size();
     size_t cols = hm.empty() ? 0 : hm[0].size();
     pixels.reserve(rows * cols);
     for (const auto& row : hm)
       for (double v : row) {
-        float f = static_cast<float>(v);
-        pixels.push_back(f);
-        pixels.push_back(f);
-        pixels.push_back(f);
+        pixels.push_back(static_cast<float>(v));
       }
-    return pixels;
+    return std::make_unique<std::vector<float>>(pixels);
 }
 
 template<typename T>
@@ -60,4 +58,12 @@ template<typename T>
 Vector2<T> lerp(Vector2<T> a, Vector2<T> b, double t)
 {
     return {std::lerp(a.x, b.x, t), std::lerp(a.y, b.y, t)};
+}
+
+inline Vector2<int> getDimensions(const Heightmap &hm){
+    if(hm.size() == 0)
+    {
+        return Vector2<int>(0,0);
+    }
+    return Vector2<int>(hm.size(), hm[0].size());
 }

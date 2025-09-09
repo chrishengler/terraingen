@@ -16,6 +16,6 @@ Heightmap FlatTerrainGenerator::generate(const FlatParameters &params) const {
 }
 
 std::unique_ptr<std::vector<float>> FlatTerrainGenerator::generate_flat(const FlatParameters &params) const {
-    auto hm = generate(params);
-    return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
+    auto hm = std::make_unique<Heightmap>(generate(params));
+    return flattenHeightmap(*hm);
 }

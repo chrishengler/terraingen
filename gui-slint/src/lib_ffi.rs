@@ -1,6 +1,24 @@
 #[cxx::bridge]
 pub mod ffi {
 
+    #[derive(Debug)]
+    struct HeightmapHandle {
+        ptr: *const Heightmap,
+    }
+
+    unsafe extern "C++" {
+        include!("data_types.h");
+
+        type Heightmap;
+        fn flattenHeightmap(hm: &Heightmap) -> UniquePtr<CxxVector<f32>>;
+    }
+
+    unsafe extern "C++" {
+        include!("terrainCombination.h");
+        
+        fn combine(hms: &CxxVector<HeightmapHandle>, weights: &CxxVector<f32>) -> UniquePtr<Heightmap>;
+    }
+
     unsafe extern "C++" {
         include!("generatorParameters.h");
 
@@ -17,8 +35,8 @@ pub mod ffi {
         type DiamondSquareGenerator;
 
         fn new_diamond_square_generator() -> UniquePtr<DiamondSquareGenerator>;
-        // fn setParameters(self: Pin<&mut DiamondSquareGenerator>, params: &DiamondSquareParameters);
         fn generate_flat(self: &DiamondSquareGenerator, params: &DiamondSquareParameters) -> UniquePtr<CxxVector<f32>>;
+        fn generate_unique(self: &DiamondSquareGenerator, params: &DiamondSquareParameters) -> UniquePtr<Heightmap>;
     }
 
     unsafe extern "C++" {
@@ -27,8 +45,8 @@ pub mod ffi {
         type PerlinTerrainGenerator;
 
         fn new_perlin_generator() -> UniquePtr<PerlinTerrainGenerator>;
-        // fn setParameters(self: Pin<&mut PerlinTerrainGenerator>, params: &PerlinParameters);
         fn generate_flat(self: &PerlinTerrainGenerator, params: &PerlinParameters) -> UniquePtr<CxxVector<f32>>;
+        fn generate_unique(self: &PerlinTerrainGenerator, params: &PerlinParameters) -> UniquePtr<Heightmap>;
     }
 
 }

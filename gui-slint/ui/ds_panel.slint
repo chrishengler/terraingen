@@ -1,13 +1,12 @@
 import { Slider, SpinBox } from "std-widgets.slint";
 export struct DiamondSquareParams {
-    rows: int,
-    cols: int,
     seed: int,
     roughness: float,
 }
 
 export component DiamondSquarePanel {
     in-out property <DiamondSquareParams> params;
+    callback params_changed;
     
     VerticalLayout{
         VerticalLayout{
@@ -21,6 +20,7 @@ export component DiamondSquarePanel {
                 value: root.params.seed;
                 edited => {
                     root.params.seed = self.value;
+                    root.params_changed();
                 }
             }
         }
@@ -34,6 +34,7 @@ export component DiamondSquarePanel {
             value: root.params.roughness;
             changed => {
                 root.params.roughness = self.value;
+                root.params_changed();
             }
         }
         Text {

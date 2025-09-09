@@ -103,9 +103,13 @@ Heightmap DiamondSquareGenerator::generate(const DiamondSquareParameters &params
     return final_heightmap;
 }
 
+std::unique_ptr<Heightmap> DiamondSquareGenerator::generate_unique(const DiamondSquareParameters &params) const {
+    return std::make_unique<Heightmap>(generate(params));
+}
+
 std::unique_ptr<std::vector<float>> DiamondSquareGenerator::generate_flat(const DiamondSquareParameters &params) const {
-    auto hm = generate(params);
-    return std::make_unique<std::vector<float>>(flattenHeightmap(hm));
+    auto hm = generate_unique(params);
+    return flattenHeightmap(*hm);
 }
 
 int DiamondSquareGenerator::get_required_grid_size(const Vector2<uint32_t> &dimensions) const

@@ -1,0 +1,70 @@
+import { GeneratorType } from "generator_type.slint";
+import { ComboBox, Button, Slider } from "std-widgets.slint";
+import { DiamondSquareParams } from "ds_panel.slint";
+import { PerlinParams } from "perlin_panel.slint";
+
+export struct GeneratorLayerInfo {
+    selected_algorithm: GeneratorType,
+    ds_params: DiamondSquareParams,
+    perlin_params: PerlinParams,
+    weight: float,
+}
+
+export component GeneratorLayer {
+    in-out property <GeneratorLayerInfo> layer_info;
+    in-out property <bool> selected;
+    callback clicked;
+    callback updated;
+
+    function string_to_generator(gen: string) -> GeneratorType {
+        if gen == "Diamond-Square" {
+            return diamondsquare;
+        }
+        // perlin as 'safe' default, a
+        else { perlin }
+    }
+
+    Rectangle {
+        background: selected ? #7070ff : #ffffff;
+        border-width: 2px;
+        border-radius: 4px;
+        border-color: #c0c0c0;
+
+        GridLayout{
+            Button {
+                width: 20%;
+                text: root.selected ? "Deselect" : "Select";
+
+                clicked => {root.clicked();}
+            }
+
+            VerticalLayout {
+                padding: 6px;
+                spacing: 4px;
+
+                ComboBox {
+                    model: ["Perlin Noise", "Diamond-Square"];
+
+                    selected(value) => { 
+                        root.layer_info.selected_algorithm = string_to_generator(value); 
+                        root.updated();
+                    }
+                }
+                Slider {
+                    minimum: 0.0;
+                    maximum: 1.0;
+                    step: 0.01;
+                    value: root.layer_info.weight;
+
+                    changed(value) => {
+                        root.layer_info.weight = value;
+                        root.updated();
+                    }
+                }
+                Text {
+                    text: "weight: " + root.layer_info.weight;
+                }
+            }
+        }
+    }
+}

@@ -1,6 +1,9 @@
-import { Button, ComboBox, Slider, SpinBox } from "std-widgets.slint";
+import { Button, ComboBox, Slider, SpinBox, ListView } from "std-widgets.slint";
 import { DiamondSquarePanel, DiamondSquareParams } from "ds_panel.slint";
 import { PerlinPanel, PerlinParams } from "perlin_panel.slint";
+import { GeneratorType } from "generator_type.slint";
+import { GeneratorLayerInfo, GeneratorLayer } from "generator_layer.slint";
+import { DebugHelper } from "debug.slint";
 
 export component AppWindow inherits Window {
     width: 1000px;
@@ -8,15 +11,27 @@ export component AppWindow inherits Window {
     title: "Terrain Generator";
     in-out property <int> rows: 512;
     in-out property <int> cols: 512;
-    in-out property <PerlinParams> perlin_params: { rows: 512, cols: 512, seed: 0, scale: 1.0, cell_size: 16 };
-    in-out property <DiamondSquareParams> ds_params: { rows: 512, cols: 512, seed: 0, roughness: 1 };
-    property <string> selected_algorithm: "Diamond-Square";
+    in-out property <[GeneratorLayerInfo]> layers;
+    in-out property <int> selected_layer_index: 0;
+    in-out property <string> raw_selected_algo;
+
+    in-out property <PerlinParams> current_perlin_params: { seed: 0, scale: 1.0, cell_size: 16 };
+    in-out property <DiamondSquareParams> current_ds_params: { seed: 0, roughness: 1 };
+    in-out property <GeneratorType> selected_algorithm;
+
     in property <image> heightmap_image;
-    callback invoke_generate(algorithm: string);
+    callback invoke_generate(algorithm: GeneratorType);
+    callback add_layer();
+    callback combine_layers();
+    callback select_layer(index: int);
+    callback update_layer(layer_info: GeneratorLayerInfo, index: int);
+    callback update_ds_params(params: DiamondSquareParams);
+    callback update_perlin_params(params: PerlinParams);
 
     GridLayout{
-        VerticalLayout {
-            
+        VerticalLayout { 
+            width: 25%;
+
             Text{
                 text: "Terrain size";
             }
@@ -31,8 +46,6 @@ export component AppWindow inherits Window {
                     value: root.cols;
                     edited => {
                         root.cols = self.value;
-                        root.perlin_params.cols = self.value;
-                        root.ds_params.cols = self.value;
                     }
                 }
 
@@ -46,33 +59,89 @@ export component AppWindow inherits Window {
                     value: root.rows;
                     edited => {
                         root.rows = self.value;
-                        root.perlin_params.rows = self.value;
-                        root.ds_params.rows = self.value;
                     }
                 }
             }
-            Text {
-                text: "Select algorithm:";
-            }
-            ComboBox {
-                model: ["Diamond-Square", "Perlin Noise", "Simplex"];
-                selected(value) => { root.selected_algorithm = value; }
+
+
+            Text { text: "Layers"; }
+            DebugHelper {
+                algo: root.selected_algorithm;
+                layer: root.selected_layer_index;
             }
 
-            if root.selected_algorithm == "Perlin Noise" : PerlinPanel{
-                params <=> root.perlin_params;
-            }
-            if root.selected_algorithm == "Diamond-Square" : DiamondSquarePanel {
-                params <=> root.ds_params;
-            }
+            Rectangle {
+                background: #c0c0c0;  
+                border-radius: 6px;
+                clip: true;            
 
+                ListView {
+                    for layer[i] in root.layers: GeneratorLayer { layer_info: layer;  
+                        selected: root.selected_layer_index == i;
+                        clicked => { 
+                            if self.selected { 
+                                root.select_layer(-1); 
+                            }
+                            else {
+                                root.select_layer(i);
+                            }
+                        }
+
+                        updated => {
+                            root.update_layer(self.layer_info, i);
+                            root.select_layer(i);
+                        }
+                    }
+                }
+            }
+           
+            Button {
+                text: "Add Layer";
+                clicked => {
+                    root.add_layer();
+                }
+            }
 
             Button {
-                text: "Generate Terrain";
+                text: "Perform combination";
+                clicked => {
+                    root.combine_layers();
+                }
+            }
+        }
+        VerticalLayout {
+            if root.selected_layer_index >= 0 : Rectangle {
+                if root.selected_algorithm == GeneratorType.perlin : PerlinPanel { 
+                    params <=> root.current_perlin_params;
+
+                    params_changed => {
+                        if root.selected_layer_index >= 0 {
+                            root.update_perlin_params(self.params);
+                        }
+                    }
+                }
+
+                if root.selected_algorithm == GeneratorType.diamondsquare : DiamondSquarePanel {
+                    params <=> root.current_ds_params;
+
+                    params_changed => {
+                        if root.selected_layer_index >= 0 {
+                            root.update_ds_params(self.params);
+                        }
+                    }
+                }
+            }
+            Rectangle {}
+
+            Button {
+                text: "Generate";
+                enabled: root.selected_layer_index >= 0;
+
                 clicked => {
                     root.invoke_generate(root.selected_algorithm);
                 }
             }
+            
         }
 
         Image {
