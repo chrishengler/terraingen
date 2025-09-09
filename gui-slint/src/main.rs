@@ -26,6 +26,11 @@ pub struct LayerData {
     pub initialised: bool
 }
 
+pub struct GeneratedData {
+    pub heightmap: Option<UniquePtr<Heightmap>>,
+    pub image: Option<slint::Image>
+}
+
 fn default_layer_data() -> LayerData {
     LayerData {
         heightmap: None,
@@ -55,6 +60,7 @@ fn main() {
     let app = AppWindow::new().unwrap();
     let app_weak = app.as_weak();
 
+    let mut generated_data: Rc<RefCell<GeneratedData>> = Rc::new(RefCell::new(GeneratedData { heightmap: None, image: None }));
     let layers = Rc::new(VecModel::default());
     layers.push(default_layer_info());
 
@@ -72,8 +78,10 @@ fn main() {
         }
     });
 
+    let app_weak_for_combine = app_weak.clone();
     let layers_for_combine = layers.clone();
     let layer_data_for_combine = layer_data.clone();
+    let generated_data_for_combine = generated_data.clone();
     app.on_combine_layers(move || {
         let len = layers_for_combine.as_ref().row_count();
 
@@ -99,13 +107,18 @@ fn main() {
         // Call C++ combine (consumes the two UniquePtr<CxxVector<...>>)
         let combined_hm: UniquePtr<Heightmap> = combine(&heightmap_handles, &weights);
 
-        // if !combined_hm.is_null() {
-        //     // store result where you want, or flatten, etc.
-        //     // example: put combined into layer_data[0].heightmap
-        //     if let Some(dst) = layer_data_borrow.get_mut(0) {
-        //         dst.heightmap = Some(combined_hm);
-        //     }
-        // }
+        if !combined_hm.is_null() {
+            if let Some(app) = app_weak_for_combine.upgrade() {
+                let cols = app.get_cols();
+                let rows = app.get_rows();
+                let mut generated_data = generated_data_for_combine.as_ref().borrow_mut();
+                let flattened_map = flattenHeightmap(combined_hm.as_ref().expect("failed to unwrap heightmap"));
+                let image = vec_to_image(&flattened_map, cols as usize, rows as usize); 
+                generated_data.heightmap = Some(combined_hm);
+                app.set_heightmap_image(image.clone());
+                generated_data.image = Some(image);
+            }
+        }
     }
     );
 
