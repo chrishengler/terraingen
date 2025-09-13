@@ -1,15 +1,30 @@
+
 #include "catch2/catch_test_macros.hpp"
 
 #include <filesystem>
+#define STB_IMAGE_IMPLEMENTATION
+#include "external/stb/stb_image.h"
 
-#include <boost/gil.hpp>
-#include <boost/gil/extension/io/png.hpp>
-#include <boost/gil/io/read_and_convert_image.hpp>
-
+#include "data_types.h"
 #include "imageExporter.h"
 #include "helpers/helpers.h"
 
-namespace bg = boost::gil;
+unsigned char* load_greyscale_png_file(const std::string &filename, int cols, int rows){
+    int channels_in_file = 1;
+    return stbi_load(filename.c_str(), &cols, &rows, &channels_in_file, 0);
+}
+
+bool data_equals_heightmap(unsigned char *data, const Heightmap &hm, const float epsilon = 1){
+    auto flattened_heightmap = flatten_heightmap_uint(hm, 255);
+    for(int i = 0; i < flattened_heightmap.size(); i++){
+        // assumes greyscale data, otherwise we'd have to account for number of channels
+        int diff = data[i] - flattened_heightmap[i];
+        if(std::abs(diff) > epsilon){
+            return false;
+        }
+    }
+    return true;
+}
 
 TEST_CASE("export png")
 {
@@ -43,11 +58,8 @@ TEST_CASE("export png")
             auto exampleFilepath = fs::current_path() / "data/black-10x10.png";
             REQUIRE(fs::exists(exampleFilepath));
 
-            bg::gray16_image_t exampleImage;
-            bg::read_and_convert_image(exampleFilepath.string(), exampleImage, bg::png_tag());
-            bg::gray16_image_t writtenImage;
-            bg::read_and_convert_image(filepath.string(), writtenImage, bg::png_tag());
-            REQUIRE(exampleImage == writtenImage);
+            auto loadedImageData = load_greyscale_png_file(exampleFilepath, 10, 10);
+            REQUIRE(data_equals_heightmap(loadedImageData, testHeightmap));
         }
 
         SECTION("all 1s")
@@ -71,11 +83,8 @@ TEST_CASE("export png")
             auto exampleFilepath = fs::current_path() / "data/white-10x10.png";
             REQUIRE(fs::exists(exampleFilepath));
 
-            bg::gray16_image_t exampleImage;
-            bg::read_and_convert_image(exampleFilepath.string(), exampleImage, bg::png_tag());
-            bg::gray16_image_t writtenImage;
-            bg::read_and_convert_image(filepath.string(), writtenImage, bg::png_tag());
-            REQUIRE(exampleImage == writtenImage);
+            auto loadedImageData = load_greyscale_png_file(exampleFilepath, 10, 10);
+            REQUIRE(data_equals_heightmap(loadedImageData, testHeightmap));
         }
     }
 }

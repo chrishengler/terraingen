@@ -18,6 +18,18 @@ inline std::unique_ptr<std::vector<float>> flattenHeightmap(const Heightmap& hm)
     return std::make_unique<std::vector<float>>(pixels);
 }
 
+inline std::vector<unsigned int> flatten_heightmap_uint(const Heightmap& hm, const unsigned int max){
+    std::vector<unsigned int> pixels;
+    size_t rows = hm.size();
+    size_t cols = hm.empty() ? 0 : hm[0].size();
+    pixels.reserve(rows * cols);
+    for (const auto& row : hm)
+      for (double v : row) {
+        pixels.push_back((unsigned int)(std::clamp((unsigned int)(v*max), (unsigned int)0, max)));
+      }
+    return pixels;
+}
+
 template<typename T>
 struct Vector2{
     T x;
