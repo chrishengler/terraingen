@@ -20,9 +20,11 @@ export component AppWindow inherits Window {
     in-out property <GeneratorType> selected_algorithm;
 
     in property <image> heightmap_image;
+    in-out property <bool> terrain_ready: false;
     callback invoke_generate(algorithm: GeneratorType);
     callback add_layer();
     callback combine_layers();
+    callback save_terrain();
     callback select_layer(index: int);
     callback update_layer(layer_info: GeneratorLayerInfo, index: int);
     callback update_ds_params(params: DiamondSquareParams);
@@ -144,10 +146,21 @@ export component AppWindow inherits Window {
             
         }
 
-        Image {
-            source: root.heightmap_image;
-            width: 512px;
-            height: 512px;
+        VerticalLayout{
+            Image {
+                source: root.heightmap_image;
+                width: 512px;
+                height: 512px;
+            }
+
+            Button {
+                text: "Export";
+                enabled: root.terrain_ready;
+
+                clicked => {
+                    root.save_terrain();
+                }
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 slint = "1.12"  # latest release
 cxx = "1.0.169"
+rfd = "0.15.4"
 
 [build-dependencies]
 slint-build = "1.12"  # for build-time compilation of .slint

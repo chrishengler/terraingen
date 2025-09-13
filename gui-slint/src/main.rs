@@ -117,10 +117,31 @@ fn main() {
                 generated_data.heightmap = Some(combined_hm);
                 app.set_heightmap_image(image.clone());
                 generated_data.image = Some(image);
+                app.set_terrain_ready(true);
             }
         }
     }
     );
+
+    let app_weak_for_save = app_weak.clone();
+    let data_for_save = generated_data.clone();
+    app.on_save_terrain(move || {
+        if let Some(app) = app_weak_for_save.upgrade(){
+            let default_path = std::env::current_dir().unwrap();
+
+            if let Some(res) = rfd::FileDialog::new()
+                .set_file_name("foo.txt")
+                .set_directory(&default_path)
+                .save_file(){
+
+                if let Some(path_string) = res.as_os_str().to_str(){
+                    println!("path = {}", path_string);
+                }
+            }
+        }
+    }
+    );
+
 
     let app_weak_for_select = app_weak.clone();
     let layers_for_select = layers.clone();
@@ -147,6 +168,7 @@ fn main() {
             }
         }
     }); 
+
 
     app.on_update_layer({
         let layers = layers.clone();

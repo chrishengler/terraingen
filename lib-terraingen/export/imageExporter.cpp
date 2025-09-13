@@ -28,3 +28,8 @@ void ImageExporter::saveToFile(const Heightmap &terrain, const std::string &file
 
     bg::write_view(filepath, image_view, bg::png_tag());
 }
+
+void saveToFile(const std::unique_ptr<Heightmap> &terrain, const std::string &filepath){
+    ImageExporter exporter;
+    exporter.saveToFile(*terrain, filepath);
+}
