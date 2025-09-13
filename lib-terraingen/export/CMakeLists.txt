@@ -1,6 +1,3 @@
 add_library(exportlib imageExporter.cpp)
-target_include_directories(exportlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PARENT_DIRECTORY}../ ${PNG_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_include_directories(exportlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PARENT_DIRECTORY}../)
 include(CMakePrintHelpers)
-cmake_print_variables(png_include_dirs=${PNG_INCLUDE_DIRS}, libraries=${PNG_LIBRARIES}, library_dirs=${PNG_LIBRARY_DIRS})
-target_link_directories(exportlib PUBLIC ${PNG_LIBRARY_DIRS})
-target_link_libraries(exportlib ${PNG_LIBRARIES})

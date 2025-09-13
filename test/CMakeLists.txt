@@ -6,9 +6,6 @@ add_executable(tests
     modifier.cpp 
     integration/export.cpp)
 target_include_directories(tests PUBLIC lib-terraingen ${CMAKE_CURRENT_SOURCE_DIR})
-if (APPLE)
-    target_compile_options(tests PRIVATE -Wno-missing-template-arg-list-after-template-kw)  # template issue in Boost, hopefully removable in future
-endif ()
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain lib-terraingen generationlib exportlib modifierslib)
 include(Catch)
 include(CTest)
