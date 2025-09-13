@@ -7,7 +7,7 @@
 HydraulicErosionModifier::HydraulicErosionModifier(Heightmap& heightmap)
     : Modifier(heightmap), rng(std::mt19937())
 {
-    rng.seed((unsigned int)std::time(0));
+    rng.seed(static_cast<unsigned int>(std::time(0)));
 }
 
 Vector2<double> HydraulicErosionModifier::calculateGradient(const Vector2<double>& pos) {

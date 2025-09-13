@@ -26,7 +26,7 @@ inline std::vector<unsigned int> flatten_heightmap_uint(const Heightmap& hm, con
     pixels.reserve(rows * cols);
     for (const auto& row : hm)
       for (double v : row) {
-        pixels.push_back((unsigned int)(std::clamp((unsigned int)(v*max), (unsigned int)0, max)));
+        pixels.push_back(std::clamp(static_cast<unsigned int>(v*max), 0u, max));
       }
     return pixels;
 }
@@ -78,5 +78,5 @@ inline Vector2<int> getDimensions(const Heightmap &hm){
     {
         return Vector2<int>(0,0);
     }
-    return Vector2<int>((int)hm.size(), (int)hm[0].size());
+    return Vector2<int>(static_cast<int>(hm.size()), static_cast<int>(hm[0].size()));
 }

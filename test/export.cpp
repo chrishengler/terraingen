@@ -17,7 +17,7 @@ bool data_equals_heightmap(unsigned char *data, const Heightmap &hm, const float
     auto flattened_heightmap = flatten_heightmap_uint(hm, 255);
     for(unsigned int i = 0; i < flattened_heightmap.size(); i++){
         // assumes greyscale data, otherwise we'd have to account for number of channels
-        int diff = (int)data[i] - (int)flattened_heightmap[i];
+        int diff = static_cast<int>(data[i]) - static_cast<int>(flattened_heightmap[i]);
         if(std::abs(diff) > epsilon){
             return false;
         }
