@@ -6,7 +6,7 @@ add_executable(tests
     modifier.cpp 
     integration/export.cpp)
 target_include_directories(tests PUBLIC lib-terraingen ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain lib-terraingen generationlib exportlib modifierslib)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain lib-terraingen generationlib exportlib modifierslib stb_image)
 include(Catch)
 include(CTest)
 catch_discover_tests(tests)

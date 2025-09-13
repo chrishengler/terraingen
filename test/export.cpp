@@ -2,7 +2,6 @@
 #include "catch2/catch_test_macros.hpp"
 
 #include <filesystem>
-#define STB_IMAGE_IMPLEMENTATION
 #include "external/stb/stb_image.h"
 
 #include "data_types.h"
@@ -16,9 +15,9 @@ unsigned char* load_greyscale_png_file(const std::string &filename, int cols, in
 
 bool data_equals_heightmap(unsigned char *data, const Heightmap &hm, const float epsilon = 1){
     auto flattened_heightmap = flatten_heightmap_uint(hm, 255);
-    for(int i = 0; i < flattened_heightmap.size(); i++){
+    for(unsigned int i = 0; i < flattened_heightmap.size(); i++){
         // assumes greyscale data, otherwise we'd have to account for number of channels
-        int diff = data[i] - flattened_heightmap[i];
+        int diff = (int)data[i] - (int)flattened_heightmap[i];
         if(std::abs(diff) > epsilon){
             return false;
         }
@@ -68,7 +67,7 @@ TEST_CASE("export png")
             for(int x=0; x<10; x++)
             {
                 auto row = std::valarray<double>(10);
-                for(int y=0; y<10; y++)
+                for(unsigned int y=0; y<10; y++)
                 {
                     row[y]=1;
                 }

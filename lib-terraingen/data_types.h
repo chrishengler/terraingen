@@ -77,5 +77,5 @@ inline Vector2<int> getDimensions(const Heightmap &hm){
     {
         return Vector2<int>(0,0);
     }
-    return Vector2<int>(hm.size(), hm[0].size());
+    return Vector2<int>((int)hm.size(), (int)hm[0].size());
 }
