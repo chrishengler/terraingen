@@ -2,13 +2,15 @@
 #include "catch2/catch_test_macros.hpp"
 
 #include <filesystem>
+#include <string>
 #include "external/stb/stb_image.h"
 
 #include "data_types.h"
 #include "imageExporter.h"
 #include "helpers/helpers.h"
 
-unsigned char* load_greyscale_png_file(const std::string &filename, int cols, int rows){
+unsigned char* load_greyscale_png_file(const std::filesystem::path &filepath, int cols, int rows){
+    std::string filename = filepath.string();
     int channels_in_file = 1;
     return stbi_load(filename.c_str(), &cols, &rows, &channels_in_file, 0);
 }
