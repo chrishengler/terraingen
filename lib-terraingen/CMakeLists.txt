@@ -1,3 +1,4 @@
+add_subdirectory(external)
 add_subdirectory(generation)
 add_subdirectory(export)
 add_subdirectory(modifiers)

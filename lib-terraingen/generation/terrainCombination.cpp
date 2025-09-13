@@ -23,7 +23,7 @@ Heightmap TerrainCombination::combineTerrains(const std::vector<Heightmap> terra
         }
     }
 
-    auto sumWeights = std::accumulate(weights.begin(), weights.end(), 0.0);
+    float sumWeights = std::accumulate(weights.begin(), weights.end(), 0.0f);
     if(sumWeights <= 0)
     {
         throw std::invalid_argument((std::stringstream() << "Sum of weights is " << sumWeights << " but must be > 0").str());

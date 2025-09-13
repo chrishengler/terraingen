@@ -15,7 +15,7 @@ std::unique_ptr<DiamondSquareGenerator> new_diamond_square_generator() {
 Heightmap DiamondSquareGenerator::generate(const DiamondSquareParameters &params) const
 {
     Vector2<uint32_t> dimensions{params.cols, params.rows};
-    uint32_t grid_size = std::pow(2, get_required_grid_size(dimensions)) + 1;
+    uint32_t grid_size = static_cast<unsigned int>(std::pow(2, get_required_grid_size(dimensions)) + 1);
     
     Heightmap heightmap;
     heightmap.reserve(grid_size);
@@ -114,5 +114,5 @@ std::unique_ptr<std::vector<float>> DiamondSquareGenerator::generate_flat(const 
 
 int DiamondSquareGenerator::get_required_grid_size(const Vector2<uint32_t> &dimensions) const
 {
-    return (int)std::ceil(std::log2(std::max(dimensions.x, dimensions.y)));
+    return static_cast<int>(std::ceil(std::log2(std::max(dimensions.x, dimensions.y))));
 }

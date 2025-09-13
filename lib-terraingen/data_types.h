@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <cmath>
 #include <memory>
 #include <valarray>
@@ -16,6 +17,18 @@ inline std::unique_ptr<std::vector<float>> flattenHeightmap(const Heightmap& hm)
         pixels.push_back(static_cast<float>(v));
       }
     return std::make_unique<std::vector<float>>(pixels);
+}
+
+inline std::vector<unsigned int> flatten_heightmap_uint(const Heightmap& hm, const unsigned int max){
+    std::vector<unsigned int> pixels;
+    size_t rows = hm.size();
+    size_t cols = hm.empty() ? 0 : hm[0].size();
+    pixels.reserve(rows * cols);
+    for (const auto& row : hm)
+      for (double v : row) {
+        pixels.push_back(std::clamp(static_cast<unsigned int>(v*max), 0u, max));
+      }
+    return pixels;
 }
 
 template<typename T>
@@ -65,5 +78,5 @@ inline Vector2<int> getDimensions(const Heightmap &hm){
     {
         return Vector2<int>(0,0);
     }
-    return Vector2<int>(hm.size(), hm[0].size());
+    return Vector2<int>(static_cast<int>(hm.size()), static_cast<int>(hm[0].size()));
 }
