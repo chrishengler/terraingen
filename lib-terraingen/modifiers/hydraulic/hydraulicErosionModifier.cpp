@@ -7,7 +7,7 @@
 HydraulicErosionModifier::HydraulicErosionModifier(Heightmap& heightmap)
     : Modifier(heightmap), rng(std::mt19937())
 {
-    rng.seed(std::time(0));
+    rng.seed((unsigned int)std::time(0));
 }
 
 Vector2<double> HydraulicErosionModifier::calculateGradient(const Vector2<double>& pos) {
@@ -118,8 +118,8 @@ void HydraulicErosionModifier::simulateParticle(Particle& particle) {
 }
 
 void HydraulicErosionModifier::operate() {
-    std::uniform_real_distribution<double> distX(0, heightmap.size() - 1);
-    std::uniform_real_distribution<double> distY(0, heightmap[0].size() - 1);
+    std::uniform_real_distribution<double> distX(0, (double)heightmap.size() - 1);
+    std::uniform_real_distribution<double> distY(0, (double)heightmap[0].size() - 1);
     
     for(int i = 0; i < params.numParticles; i++) {
         Vector2<double> startPos{distX(rng), distY(rng)};
