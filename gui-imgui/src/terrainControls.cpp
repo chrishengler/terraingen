@@ -59,7 +59,7 @@ void TerrainControlsWindow::render(GuiState &state) {
           std::max(1, std::min(256, state.perlinParams.cellSize));
     } break;
     case GeneratorType::FLAT: {
-      ImGui::InputFloat("Terrain Height", &state.flatParams.terrainHeight, 0.1, 1.0,
+      ImGui::InputFloat("Terrain Height", &state.flatParams.terrainHeight, 0.1f, 1.0f,
                         "%.1f");
     } break;
     default:

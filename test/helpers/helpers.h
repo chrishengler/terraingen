@@ -13,7 +13,7 @@ inline fs::path get_temp_filepath(const std::string &extension, const std::strin
         {
             filename << label << "-";
         }
-        std::srand(std::time({}));
+        std::srand(static_cast<unsigned int>(std::time({})));
         filename << std::rand() << "." << extension;
         auto filepath = fs::path(fs::temp_directory_path() / filename.str());
 
