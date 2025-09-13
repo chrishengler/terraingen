@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "data_types.h"
 
 class ImageExporter
