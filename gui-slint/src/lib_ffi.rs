@@ -20,6 +20,12 @@ pub mod ffi {
     }
 
     unsafe extern "C++" {
+        include!("imageExporter.h");
+
+        fn saveToFile(hm: &UniquePtr<Heightmap>, path: &CxxString);
+    }
+
+    unsafe extern "C++" {
         include!("generatorParameters.h");
 
         type DiamondSquareParameters;

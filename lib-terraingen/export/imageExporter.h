@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <string>
 
 #include "data_types.h"
@@ -10,3 +11,5 @@ public:
 
     void saveToFile(const Heightmap &terrain, const std::string &filepath);
 };
+
+void saveToFile(const std::unique_ptr<Heightmap> &terrain, const std::string &filepath);

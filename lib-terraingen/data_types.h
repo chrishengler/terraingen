@@ -19,14 +19,14 @@ inline std::unique_ptr<std::vector<float>> flattenHeightmap(const Heightmap& hm)
     return std::make_unique<std::vector<float>>(pixels);
 }
 
-inline std::vector<unsigned int> flatten_heightmap_uint(const Heightmap& hm, const unsigned int max){
-    std::vector<unsigned int> pixels;
+inline std::vector<unsigned char> flatten_heightmap_uchar(const Heightmap& hm){
+    std::vector<unsigned char> pixels;
     size_t rows = hm.size();
     size_t cols = hm.empty() ? 0 : hm[0].size();
     pixels.reserve(rows * cols);
     for (const auto& row : hm)
-      for (double v : row) {
-        pixels.push_back(std::clamp(static_cast<unsigned int>(v*max), 0u, max));
+      for (auto &v : row) {
+        pixels.push_back(static_cast<unsigned char>(std::clamp(v*255, 0.0, 255.0)));
       }
     return pixels;
 }

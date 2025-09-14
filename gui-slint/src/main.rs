@@ -1,6 +1,8 @@
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
+use std::path;
 use std::rc::Rc;
+use cxx::let_cxx_string;
 use cxx::CxxVector;
 use cxx::UniquePtr;
 use slint::Image;
@@ -10,6 +12,7 @@ use slint::VecModel;
 
 use crate::lib_ffi::ffi::combine;
 use crate::lib_ffi::ffi::flattenHeightmap;
+use crate::lib_ffi::ffi::saveToFile;
 use crate::lib_ffi::ffi::Heightmap;
 use crate::lib_ffi::ffi::HeightmapHandle;
 use crate::lib_ffi::ffi::{buildDiamondSquareParameters, buildPerlinParameters, new_diamond_square_generator, new_perlin_generator};
@@ -97,14 +100,11 @@ fn main() {
                 if let Some(hm_ptr) = &ld.heightmap {
                     let handle = HeightmapHandle { ptr: hm_ptr.as_ptr() };
                     heightmap_handles.pin_mut().push(handle);
-
-                    // push the weight
                     weights.pin_mut().push(layer_info.weight as f32);
                 }
             }
         }
 
-        // Call C++ combine (consumes the two UniquePtr<CxxVector<...>>)
         let combined_hm: UniquePtr<Heightmap> = combine(&heightmap_handles, &weights);
 
         if !combined_hm.is_null() {
@@ -117,10 +117,34 @@ fn main() {
                 generated_data.heightmap = Some(combined_hm);
                 app.set_heightmap_image(image.clone());
                 generated_data.image = Some(image);
+                app.set_terrain_ready(true);
             }
         }
     }
     );
+
+    let app_weak_for_save = app_weak.clone();
+    let data_for_save = generated_data.clone();
+    app.on_save_terrain(move || {
+        if let Some(app) = app_weak_for_save.upgrade(){
+            let default_path = std::env::current_dir().unwrap();
+
+            if let Some(hm) = &data_for_save.as_ref().borrow().heightmap {
+                if let Some(res) = rfd::FileDialog::new()
+                    .set_file_name("heightmap.png")
+                    .set_directory(&default_path)
+                    .save_file(){
+
+                    if let Some(path_string) = res.as_os_str().to_str(){
+                        let_cxx_string!(cxx_path = path_string);
+                        saveToFile(&hm, &cxx_path);
+                    }
+                }
+            }
+        }
+    }
+    );
+
 
     let app_weak_for_select = app_weak.clone();
     let layers_for_select = layers.clone();
@@ -131,7 +155,6 @@ fn main() {
             app.set_heightmap_image(slint::Image::default());
             if index >= 0 {
                 if let (Some(app), Some(row)) = (app_weak_for_select.upgrade(), layers_for_select.row_data(index as usize)) {
-                    println!("{}: {}", index, (if row.selected_algorithm == GeneratorType::Perlin { "Perlin" } else { "DS" }));
                     app.set_selected_algorithm(row.selected_algorithm);
                     app.set_current_perlin_params(row.perlin_params);
                     app.set_current_ds_params(row.ds_params);
@@ -147,6 +170,7 @@ fn main() {
             }
         }
     }); 
+
 
     app.on_update_layer({
         let layers = layers.clone();
@@ -202,7 +226,6 @@ fn main() {
                         if let Some(params_ref) = params.as_ref() {
                             let hm = perlin_ref.generate_unique(params_ref);
                             let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
-                            println!("Generated Perlin heightmap of length {}", image.len());
                         
                             let image = vec_to_image(&image, cols as usize, rows as usize);
                             set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
@@ -222,7 +245,6 @@ fn main() {
                         if let Some(params_ref) = params.as_ref() {
                             let hm = ds_ref.generate_unique(params_ref);
                             let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
-                            println!("generated Diamond-Square heightmap of length {}", image.len());
 
                             let image = vec_to_image(&image, cols as usize, rows as usize);
                             set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));

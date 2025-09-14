@@ -16,7 +16,11 @@ fn main() {
         .file("../lib-terraingen/generation/diamondsquare/diamondSquareGenerator.cpp")
         .file("../lib-terraingen/generation/perlin/perlinTerrainGenerator.cpp")
         .file("../lib-terraingen/generation/terrainCombination.cpp")
+        .file("../lib-terraingen/export/imageExporter.cpp")
+        .file("../lib-terraingen/external/stb/stbi.cpp")
         .include("../lib-terraingen")
+        .include("../lib-terraingen/external/stb")
+        .include("../lib-terraingen/export")
         .include("../lib-terraingen/generation")
         .include("../lib-terraingen/generation/diamondsquare")
         .include("../lib-terraingen/generation/perlin")
@@ -27,6 +31,7 @@ fn main() {
         .compile("terraingen_cpp");
 
     println!("cargo:rerun-if-changed=../lib-terraingen");
+    println!("cargo:rerun-if-changed=../lib-terraingen/export/imageExporter.h");
     println!("cargo:rerun-if-changed=../lib-terraingen/generation/data_types.h");
     println!("cargo:rerun-if-changed=../lib-terraingen/generation/terrainCombination.h");
     println!("cargo:rerun-if-changed=src/lib_ffi.rs");
