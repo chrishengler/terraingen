@@ -2,13 +2,12 @@
 #include <memory>
 #include "data_types.h"
 
-class TerrainCombination{
-    public:
-        TerrainCombination() = default;
+namespace tg {
+    namespace combine {
+        struct HeightmapHandle;
 
-        static Heightmap combineTerrains(const std::vector<Heightmap> terrains, const std::vector<float> weights);
-};
+        Heightmap combineTerrains(const std::vector<Heightmap> terrains, const std::vector<float> weights);
 
-struct HeightmapHandle;
-
-std::unique_ptr<Heightmap> combine(const std::vector<HeightmapHandle>& heightmaps, const std::vector<float>& weights);
+        std::unique_ptr<Heightmap> combine(const std::vector<HeightmapHandle>& heightmaps, const std::vector<float>& weights);
+    }
+}

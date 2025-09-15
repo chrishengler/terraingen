@@ -2,6 +2,7 @@
 pub mod ffi {
 
     #[derive(Debug)]
+    #[namespace = "tg::combine"]
     struct HeightmapHandle {
         ptr: *const Heightmap,
     }
@@ -19,6 +20,7 @@ pub mod ffi {
         fn flattenHeightmap(hm: &Heightmap) -> UniquePtr<CxxVector<f32>>;
     }
 
+    #[namespace = "tg::combine"]
     unsafe extern "C++" {
         include!("terrainCombination.h");
         
@@ -27,7 +29,7 @@ pub mod ffi {
 
     #[namespace = "tg::imgexport"]
     unsafe extern "C++" {
-        include!("imageExporter.h");
+        include!("imageExport.h");
 
         type ExportType;
 
@@ -44,24 +46,18 @@ pub mod ffi {
         fn buildPerlinParameters(cols: u32, rows: u32, seed: i32, scale: f32, cell_size: i32) -> UniquePtr<PerlinParameters>;
     }
 
+    #[namespace = "tg::generate"]
     unsafe extern "C++" {
-        include!("diamondSquareGenerator.h");
+        include!("diamondSquare.h");
 
-        type DiamondSquareGenerator;
-
-        fn new_diamond_square_generator() -> UniquePtr<DiamondSquareGenerator>;
-        fn generate_flat(self: &DiamondSquareGenerator, params: &DiamondSquareParameters) -> UniquePtr<CxxVector<f32>>;
-        fn generate_unique(self: &DiamondSquareGenerator, params: &DiamondSquareParameters) -> UniquePtr<Heightmap>;
+        fn generate_ds_unique(params: &DiamondSquareParameters) -> UniquePtr<Heightmap>;
     }
 
+    #[namespace = "tg::generate"]
     unsafe extern "C++" {
-        include!("perlinTerrainGenerator.h");
+        include!("perlin.h");
 
-        type PerlinTerrainGenerator;
-
-        fn new_perlin_generator() -> UniquePtr<PerlinTerrainGenerator>;
-        fn generate_flat(self: &PerlinTerrainGenerator, params: &PerlinParameters) -> UniquePtr<CxxVector<f32>>;
-        fn generate_unique(self: &PerlinTerrainGenerator, params: &PerlinParameters) -> UniquePtr<Heightmap>;
+        fn generate_perlin_unique(params: &PerlinParameters) -> UniquePtr<Heightmap>;
     }
 
 }

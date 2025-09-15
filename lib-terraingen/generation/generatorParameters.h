@@ -14,12 +14,6 @@ inline std::unique_ptr<PerlinParameters> buildPerlinParameters(uint32_t cols, ui
     return std::make_unique<PerlinParameters>(PerlinParameters{cols, rows, seed, scale, cell_size});
 }
 
-struct FlatParameters{
-    uint32_t cols;
-    uint32_t rows;
-    float terrainHeight = 0.5;
-};
-
 struct DiamondSquareParameters{
     uint32_t cols;
     uint32_t rows;

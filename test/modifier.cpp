@@ -41,7 +41,7 @@ TEST_CASE("Modifier Tests", "[modifier]")
         hm.push_back(std::valarray<double>{1.0, 1.0});
         hm.push_back(std::valarray<double>{1.0, 1.0});
 
-        HydraulicErosionModifier modifier(hm);
+        tg::modify::HydraulicErosionModifier modifier(hm);
         // Just verify it can be created and called without crashing
         // (actual erosion testing will come later)
         REQUIRE_NOTHROW(modifier.operate());

@@ -11,11 +11,13 @@ use slint::VecModel;
 
 use crate::lib_ffi::ffi::combine;
 use crate::lib_ffi::ffi::flattenHeightmap;
+use crate::lib_ffi::ffi::generate_ds_unique;
+use crate::lib_ffi::ffi::generate_perlin_unique;
 use crate::lib_ffi::ffi::saveToFile;
 use crate::lib_ffi::ffi::ExportType;
 use crate::lib_ffi::ffi::Heightmap;
 use crate::lib_ffi::ffi::HeightmapHandle;
-use crate::lib_ffi::ffi::{buildDiamondSquareParameters, buildPerlinParameters, new_diamond_square_generator, new_perlin_generator};
+use crate::lib_ffi::ffi::{buildDiamondSquareParameters, buildPerlinParameters};
 
 mod convert_image; 
 use crate::convert_image::vec_to_image;
@@ -218,10 +220,6 @@ fn main() {
         }
     });
 
-    // TODO: won't have to be mutable after static refactoring of generators
-    let mut perlin = new_perlin_generator();
-    let mut ds = new_diamond_square_generator();
-
     let app_weak_for_generate = app_weak.clone();
     let layer_data_for_invoke = layer_data.clone();
     app.on_invoke_generate(move |algorithm| {
@@ -235,15 +233,13 @@ fn main() {
                     let slint_params = app.get_current_perlin_params();
                     let params = buildPerlinParameters( cols as u32, rows as u32, slint_params.seed, slint_params.scale, slint_params.cell_size);
 
-                    if let Some(perlin_ref) = perlin.as_mut() {
-                        if let Some(params_ref) = params.as_ref() {
-                            let hm = perlin_ref.generate_unique(params_ref);
-                            let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
-                        
-                            let image = vec_to_image(&image, cols as usize, rows as usize);
-                            set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
-                            app.set_heightmap_image(image);
-                        }
+                    if let Some(params_ref) = params.as_ref() {
+                        let hm = generate_perlin_unique(params_ref);
+                        let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
+                    
+                        let image = vec_to_image(&image, cols as usize, rows as usize);
+                        set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
+                        app.set_heightmap_image(image);
                     }
                 } 
 
@@ -254,15 +250,13 @@ fn main() {
                     let slint_params = app.get_current_ds_params();
                     let params = buildDiamondSquareParameters(cols as u32, rows as u32, slint_params.seed, slint_params.roughness);
 
-                    if let Some(ds_ref) = ds.as_mut() {
-                        if let Some(params_ref) = params.as_ref() {
-                            let hm = ds_ref.generate_unique(params_ref);
-                            let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
+                    if let Some(params_ref) = params.as_ref() {
+                        let hm = generate_ds_unique(params_ref);
+                        let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
 
-                            let image = vec_to_image(&image, cols as usize, rows as usize);
-                            set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
-                            app.set_heightmap_image(image);
-                        }
+                        let image = vec_to_image(&image, cols as usize, rows as usize);
+                        set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
+                        app.set_heightmap_image(image);
                     }
                 }
                 _ => {}
