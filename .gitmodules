@@ -1,0 +1,3 @@
+[submodule "lib-terraingen/external/lodepng"]
+	path = lib-terraingen/external/lodepng
+	url = https://github.com/lvandeve/lodepng.git
