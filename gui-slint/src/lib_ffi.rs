@@ -50,7 +50,6 @@ pub mod ffi {
         type DiamondSquareGenerator;
 
         fn new_diamond_square_generator() -> UniquePtr<DiamondSquareGenerator>;
-        fn generate_flat(self: &DiamondSquareGenerator, params: &DiamondSquareParameters) -> UniquePtr<CxxVector<f32>>;
         fn generate_unique(self: &DiamondSquareGenerator, params: &DiamondSquareParameters) -> UniquePtr<Heightmap>;
     }
 
@@ -60,7 +59,6 @@ pub mod ffi {
         type PerlinTerrainGenerator;
 
         fn new_perlin_generator() -> UniquePtr<PerlinTerrainGenerator>;
-        fn generate_flat(self: &PerlinTerrainGenerator, params: &PerlinParameters) -> UniquePtr<CxxVector<f32>>;
         fn generate_unique(self: &PerlinTerrainGenerator, params: &PerlinParameters) -> UniquePtr<Heightmap>;
     }
 

@@ -10,6 +10,7 @@
 #include "glTexture.h"
 #include "guiState.h"
 #include "heightmapPreview.h"
+#include "imageExporter.h"
 #include "modifierControls.h"
 #include "diamondsquare/diamondSquareGenerator.h"
 #include "perlin/perlinTerrainGenerator.h"
@@ -98,7 +99,7 @@ int main() {
                     std::cerr << "Unsupported generator type selected.\n";
                     continue;
             }
-            auto pixels = flattenHeightmap(guiState.currentHeightmap);
+            auto pixels = tg::imgexport::flattenHeightmap(guiState.currentHeightmap);
             heightmapTexture.upload(*pixels, guiState.gridSize.x, guiState.gridSize.y);
         }
 
@@ -111,7 +112,7 @@ int main() {
                 erosion.operate();
                 
                 // Update the display
-                auto pixels = flattenHeightmap(guiState.currentHeightmap);
+                auto pixels = tg::imgexport::flattenHeightmap(guiState.currentHeightmap);
                 heightmapTexture.upload(*pixels, guiState.gridSize.x, guiState.gridSize.y);
             }
         }

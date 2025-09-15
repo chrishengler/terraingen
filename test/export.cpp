@@ -16,7 +16,7 @@ unsigned char* load_greyscale_png_file(const std::filesystem::path &filepath, in
 }
 
 bool data_equals_heightmap(unsigned char *data, const Heightmap &hm, const float epsilon = 1){
-    auto flattened_heightmap = flatten_heightmap_uchar(hm);
+    auto flattened_heightmap = tg::imgexport::flatten_heightmap_uchar(hm);
     for(unsigned int i = 0; i < flattened_heightmap.size(); i++){
         // assumes greyscale data, otherwise we'd have to account for number of channels
         int diff = static_cast<int>(data[i]) - static_cast<int>(flattened_heightmap[i]);

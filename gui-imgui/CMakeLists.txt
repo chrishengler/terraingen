@@ -50,6 +50,7 @@ target_link_libraries(gui-imgui
         imgui
         glfw
         lib-terraingen
+        stb_image
         generationlib
         exportlib
         OpenGL::GL

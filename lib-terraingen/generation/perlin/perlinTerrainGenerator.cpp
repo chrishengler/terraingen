@@ -51,13 +51,6 @@ std::unique_ptr<Heightmap> PerlinTerrainGenerator::generate_unique(const PerlinP
     return std::make_unique<Heightmap>(generate(params));
 }
 
-std::unique_ptr<std::vector<float>> PerlinTerrainGenerator::generate_flat(const PerlinParameters &params) const {
-    std::cout << "generating perlin with cols: " << params.cols << " and rows: " << params.rows;
-    std::cout << "length when flattened = " << params.cols * params.rows * 3 << std::endl;
-    auto hm = generate_unique(params);
-    return flattenHeightmap(*hm);
-}
-
 double PerlinTerrainGenerator::perlin(const Vector2<int> &coordinates, const std::vector<int> &permutations, const PerlinParameters &params) const
 {
     double scaled_x = (double)(coordinates.x) * params.scale;
