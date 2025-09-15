@@ -15,7 +15,7 @@ unsigned char* load_greyscale_png_file(const std::filesystem::path &filepath, in
     return stbi_load(filename.c_str(), &cols, &rows, &channels_in_file, 0);
 }
 
-bool data_equals_heightmap(unsigned char *data, const Heightmap &hm, const float epsilon = 1){
+bool data_equals_heightmap(unsigned char *data, const Heightmap &hm, const int epsilon = 1){
     auto flattened_heightmap = tg::imgexport::flatten_heightmap_uchar(hm);
     for(unsigned int i = 0; i < flattened_heightmap.size(); i++){
         // assumes greyscale data, otherwise we'd have to account for number of channels

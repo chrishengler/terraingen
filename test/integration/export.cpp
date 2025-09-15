@@ -1,7 +1,7 @@
 #include <filesystem>
 #include "catch2/catch_test_macros.hpp"
 
-#include "diamondSquare/diamondSquare.h"
+#include "diamondsquare/diamondSquare.h"
 #include "generatorParameters.h"
 #include "perlin/perlin.h"
 #include "imageExport.h"
