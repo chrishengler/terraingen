@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "data_types.h"
 #include "external/lodepng/lodepng.h"
 #include "external/stb/stb_image_write.h"
