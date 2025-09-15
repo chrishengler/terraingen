@@ -1,6 +1,5 @@
 use std::borrow::BorrowMut;
 use std::cell::RefCell;
-use std::path;
 use std::rc::Rc;
 use cxx::let_cxx_string;
 use cxx::CxxVector;
@@ -13,6 +12,7 @@ use slint::VecModel;
 use crate::lib_ffi::ffi::combine;
 use crate::lib_ffi::ffi::flattenHeightmap;
 use crate::lib_ffi::ffi::saveToFile;
+use crate::lib_ffi::ffi::ExportType;
 use crate::lib_ffi::ffi::Heightmap;
 use crate::lib_ffi::ffi::HeightmapHandle;
 use crate::lib_ffi::ffi::{buildDiamondSquareParameters, buildPerlinParameters, new_diamond_square_generator, new_perlin_generator};
@@ -39,6 +39,18 @@ fn default_layer_data() -> LayerData {
         heightmap: None,
         image: None,
         initialised: false
+    }
+}
+
+#[allow(non_snake_case)]
+fn exportAs_to_exportType(exportAs: ExportAs) -> ExportType {
+    if exportAs == ExportAs::PNG8 {
+        print!("8 bit");
+        ExportType::PNG_8
+    }
+    else {
+        print!("16 bit");
+        ExportType::PNG_16
     }
 }
 
@@ -125,9 +137,10 @@ fn main() {
 
     let app_weak_for_save = app_weak.clone();
     let data_for_save = generated_data.clone();
-    app.on_save_terrain(move || {
+    app.on_save_terrain(move |export_as| {
         if let Some(app) = app_weak_for_save.upgrade(){
             let default_path = std::env::current_dir().unwrap();
+            let export_type = exportAs_to_exportType(export_as);
 
             if let Some(hm) = &data_for_save.as_ref().borrow().heightmap {
                 if let Some(res) = rfd::FileDialog::new()
@@ -137,7 +150,7 @@ fn main() {
 
                     if let Some(path_string) = res.as_os_str().to_str(){
                         let_cxx_string!(cxx_path = path_string);
-                        saveToFile(&hm, &cxx_path);
+                        saveToFile(&hm, &cxx_path, &export_type);
                     }
                 }
             }

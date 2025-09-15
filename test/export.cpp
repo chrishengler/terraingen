@@ -34,9 +34,8 @@ TEST_CASE("export png")
         Heightmap testHeightmap;
         testHeightmap.push_back(std::valarray<double>(1));
 
-        ImageExporter imgExporter;
         auto filepath = get_temp_filepath("png");
-        imgExporter.saveToFile(testHeightmap, filepath.string());
+        tg::imgexport::savePng8(testHeightmap, filepath.string());
         REQUIRE(fs::exists(filepath));
     }
 
@@ -51,9 +50,8 @@ TEST_CASE("export png")
                 testHeightmap.push_back(row);
             }
 
-            ImageExporter imgExporter;
             auto filepath = get_temp_filepath("png");
-            imgExporter.saveToFile(testHeightmap, filepath.string());
+            tg::imgexport::savePng8(testHeightmap, filepath.string());
             REQUIRE(fs::exists(filepath));
 
             auto exampleFilepath = fs::current_path() / "data/black-10x10.png";
@@ -76,9 +74,8 @@ TEST_CASE("export png")
                 testHeightmap.push_back(row);
             }
 
-            ImageExporter imgExporter;
             auto filepath = get_temp_filepath("png");
-            imgExporter.saveToFile(testHeightmap, filepath.string());
+            tg::imgexport::savePng8(testHeightmap, filepath.string());
             REQUIRE(fs::exists(filepath));
 
             auto exampleFilepath = fs::current_path() / "data/white-10x10.png";
