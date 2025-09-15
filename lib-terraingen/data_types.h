@@ -41,7 +41,7 @@ inline std::vector<unsigned char> flatten_heightmap_16bit(const Heightmap& hm){
     for (const auto& row : hm)
       for (auto &v : row) {
         auto value = static_cast<int>(v*UINT16_MAX);
-        value = static_cast<uint16_t>(std::clamp(value, 0, UINT16_MAX));
+        value = static_cast<uint16_t>(std::clamp(value, 0, static_cast<int>(UINT16_MAX)));
         pixels.push_back(static_cast<unsigned char>((value >> 8) & 0xFF));
         pixels.push_back(static_cast<unsigned char>(value & 0xFF));
       }
