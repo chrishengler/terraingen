@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <memory>
 #include <valarray>
 #include <vector>
@@ -27,6 +28,22 @@ inline std::vector<unsigned char> flatten_heightmap_uchar(const Heightmap& hm){
     for (const auto& row : hm)
       for (auto &v : row) {
         pixels.push_back(static_cast<unsigned char>(std::clamp(v*255, 0.0, 255.0)));
+      }
+    return pixels;
+}
+
+// for lodepng which works with raw buffers, so for 16 bit we have two unsigned chars (big-endian)
+inline std::vector<unsigned char> flatten_heightmap_16bit(const Heightmap& hm){
+    std::vector<unsigned char> pixels;
+    size_t rows = hm.size();
+    size_t cols = hm.empty() ? 0 : hm[0].size();
+    pixels.reserve(rows * cols * 2);
+    for (const auto& row : hm)
+      for (auto &v : row) {
+        auto value = static_cast<int>(v*UINT16_MAX);
+        value = static_cast<uint16_t>(std::clamp(value, 0, UINT16_MAX));
+        pixels.push_back(static_cast<unsigned char>((value >> 8) & 0xFF));
+        pixels.push_back(static_cast<unsigned char>(value & 0xFF));
       }
     return pixels;
 }

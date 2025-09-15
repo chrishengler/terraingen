@@ -1,7 +1,9 @@
+import { ExportAs } from "export_type.slint";
 import { GeneratorType } from "generator_type.slint";
 
 export component DebugHelper {
     in property <GeneratorType> algo;
+    in property <ExportAs> exportAs;
     in property <int> layer;
 
     function algo_to_string(a: GeneratorType) -> string {
@@ -10,9 +12,19 @@ export component DebugHelper {
         return "Unknown";
     }
 
+    function export_as_to_string(ea: ExportAs) -> string {
+        if ea == ExportAs.PNG-8 { return "png 8-bit"; }
+        if ea == ExportAs.PNG-16 { return "png 16-bit"; }
+        return "unknown";
+    }
+
     VerticalLayout {
         Text {
             text: algo_to_string(root.algo);
+        }
+
+        Text {
+            text: export_as_to_string(root.exportAs);
         }
 
         Text {

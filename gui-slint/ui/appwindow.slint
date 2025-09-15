@@ -4,6 +4,8 @@ import { PerlinPanel, PerlinParams } from "perlin_panel.slint";
 import { GeneratorType } from "generator_type.slint";
 import { GeneratorLayerInfo, GeneratorLayer } from "generator_layer.slint";
 import { DebugHelper } from "debug.slint";
+import { ExportPanel } from "export_panel.slint";
+import { ExportAs } from "export_type.slint";
 
 export component AppWindow inherits Window {
     width: 1000px;
@@ -21,10 +23,11 @@ export component AppWindow inherits Window {
 
     in property <image> heightmap_image;
     in-out property <bool> terrain_ready: false;
+    out property <ExportAs> export_type;
     callback invoke_generate(algorithm: GeneratorType);
     callback add_layer();
     callback combine_layers();
-    callback save_terrain();
+    callback save_terrain(exportAs: ExportAs);
     callback select_layer(index: int);
     callback update_layer(layer_info: GeneratorLayerInfo, index: int);
     callback update_ds_params(params: DiamondSquareParams);
@@ -69,6 +72,7 @@ export component AppWindow inherits Window {
             Text { text: "Layers"; }
             DebugHelper {
                 algo: root.selected_algorithm;
+                exportAs: root.export_type;
                 layer: root.selected_layer_index;
             }
 
@@ -152,13 +156,12 @@ export component AppWindow inherits Window {
                 width: 512px;
                 height: 512px;
             }
-
-            Button {
-                text: "Export";
-                enabled: root.terrain_ready;
-
-                clicked => {
-                    root.save_terrain();
+            Rectangle {}
+            ExportPanel {
+                ready: root.terrain_ready;
+                exportType <=> root.export_type;
+                clicked(exportAs) => {
+                    root.save_terrain(exportAs);
                 }
             }
         }

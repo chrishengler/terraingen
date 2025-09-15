@@ -6,6 +6,12 @@ pub mod ffi {
         ptr: *const Heightmap,
     }
 
+    #[namespace = "tg::imgexport"]
+    enum ExportType{
+        PNG_8,
+        PNG_16
+    }
+
     unsafe extern "C++" {
         include!("data_types.h");
 
@@ -19,10 +25,13 @@ pub mod ffi {
         fn combine(hms: &CxxVector<HeightmapHandle>, weights: &CxxVector<f32>) -> UniquePtr<Heightmap>;
     }
 
+    #[namespace = "tg::imgexport"]
     unsafe extern "C++" {
         include!("imageExporter.h");
 
-        fn saveToFile(hm: &UniquePtr<Heightmap>, path: &CxxString);
+        type ExportType;
+
+        fn saveToFile(hm: &UniquePtr<Heightmap>, path: &CxxString, expType: &ExportType);
     }
 
     unsafe extern "C++" {

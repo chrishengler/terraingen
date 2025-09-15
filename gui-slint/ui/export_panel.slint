@@ -1,0 +1,38 @@
+import { ExportAs } from "export_type.slint";
+import { Button, ComboBox } from "std-widgets.slint";
+
+export component ExportPanel {
+    in-out property <ExportAs> exportType;
+    in-out property <bool> ready;
+    callback clicked(exportAs: ExportAs);
+    callback updated;
+
+    function string_to_export_type(type: string) -> ExportAs{
+        if type == "PNG (8-bit greyscale)" {
+            return ExportAs.PNG-8;
+        }
+        else {
+            ExportAs.PNG-16;
+        }
+
+    }
+
+    VerticalLayout {
+        ComboBox {
+            model: ["PNG (8-bit greyscale)", "PNG (16-bit greyscale"];
+
+            selected(value) => { 
+                root.exportType = string_to_export_type(value);
+                root.updated();
+            }
+        }
+        Button {
+            text: "Export";
+            enabled: root.ready;
+
+            clicked => {
+                root.clicked(root.exportType);
+            }
+        }
+    }
+}

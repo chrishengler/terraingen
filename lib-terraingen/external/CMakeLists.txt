@@ -6,3 +6,4 @@ if(NOT MSVC)
         COMPILE_FLAGS "-Wno-conversion -Wno-sign-conversion"
     )
 endif()
+add_library(lodepng lodepng/lodepng.cpp)

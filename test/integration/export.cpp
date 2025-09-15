@@ -21,9 +21,8 @@ TEST_CASE("Perlin export")
     Vector2<uint32_t> expected_size(2048,2048);
     Heightmap result = ptg.generate(pp);
 
-    ImageExporter imgExporter;
     auto filepath = get_temp_filepath("png", "perlin");
-    imgExporter.saveToFile(result, filepath.string());
+    tg::imgexport::savePng8(result, filepath.string());
     REQUIRE(fs::exists(filepath));
 }
 
@@ -34,8 +33,7 @@ TEST_CASE("Diamond Square export")
     DiamondSquareGenerator dsg;
     Heightmap result = dsg.generate(dsp);
 
-    ImageExporter imgExporter;
     auto filepath = get_temp_filepath("png", "diamond-square");
-    imgExporter.saveToFile(result, filepath.string());
+    tg::imgexport::savePng8(result, filepath.string());
     REQUIRE(fs::exists(filepath));
 }
