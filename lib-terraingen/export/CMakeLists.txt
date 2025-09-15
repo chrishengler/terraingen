@@ -1,7 +1,7 @@
 if (MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
-add_library(exportlib imageExporter.cpp)
+add_library(exportlib imageExport.cpp)
 target_include_directories(exportlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PARENT_DIRECTORY}../)
 target_link_libraries(exportlib PUBLIC lodepng)
 include(CMakePrintHelpers)

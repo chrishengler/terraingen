@@ -13,10 +13,10 @@ fn main() {
 
     slint_build::compile("ui/appwindow.slint").unwrap();
     cxx_build::bridge("src/lib_ffi.rs")
-        .file("../lib-terraingen/generation/diamondsquare/diamondSquareGenerator.cpp")
-        .file("../lib-terraingen/generation/perlin/perlinTerrainGenerator.cpp")
+        .file("../lib-terraingen/generation/diamondsquare/diamondSquare.cpp")
+        .file("../lib-terraingen/generation/perlin/perlin.cpp")
         .file("../lib-terraingen/generation/terrainCombination.cpp")
-        .file("../lib-terraingen/export/imageExporter.cpp")
+        .file("../lib-terraingen/export/imageExport.cpp")
         .file("../lib-terraingen/external/stb/stbi.cpp")
         .file("../lib-terraingen/external/lodepng/lodepng.cpp")
         .include("../lib-terraingen")
@@ -33,7 +33,7 @@ fn main() {
         .compile("terraingen_cpp");
 
     println!("cargo:rerun-if-changed=../lib-terraingen");
-    println!("cargo:rerun-if-changed=../lib-terraingen/export/imageExporter.h");
+    println!("cargo:rerun-if-changed=../lib-terraingen/export/imageExport.h");
     println!("cargo:rerun-if-changed=../lib-terraingen/generation/data_types.h");
     println!("cargo:rerun-if-changed=../lib-terraingen/generation/terrainCombination.h");
     println!("cargo:rerun-if-changed=src/lib_ffi.rs");

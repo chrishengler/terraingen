@@ -1,14 +1,22 @@
 #pragma once
-#include <algorithm>
 #include <cmath>
-#include <cstdint>
-#include <memory>
 #include <valarray>
 #include <vector>
 
 typedef std::vector<std::valarray<double>> Heightmap;
 
-
+// primarily for Rust interface
+inline std::unique_ptr<std::vector<float>> flattenHeightmap(const Heightmap& hm) {
+    std::vector<float> pixels;
+    size_t rows = hm.size();
+    size_t cols = hm.empty() ? 0 : hm[0].size();
+    pixels.reserve(rows * cols);
+    for (const auto& row : hm)
+    for (double v : row) {
+        pixels.push_back(static_cast<float>(v));
+    }
+    return std::make_unique<std::vector<float>>(pixels);
+}
 
 template<typename T>
 struct Vector2{

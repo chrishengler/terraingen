@@ -6,7 +6,7 @@
 #include "external/stb/stb_image.h"
 
 #include "data_types.h"
-#include "imageExporter.h"
+#include "imageExport.h"
 #include "helpers/helpers.h"
 
 unsigned char* load_greyscale_png_file(const std::filesystem::path &filepath, int cols, int rows){

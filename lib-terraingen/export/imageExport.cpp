@@ -1,22 +1,11 @@
 #include "data_types.h"
 #include "external/lodepng/lodepng.h"
 #include "external/stb/stb_image_write.h"
-#include "imageExporter.h"
+#include "imageExport.h"
 
 namespace tg {
     namespace imgexport {
 
-        std::unique_ptr<std::vector<float>> flattenHeightmap(const Heightmap& hm) {
-            std::vector<float> pixels;
-            size_t rows = hm.size();
-            size_t cols = hm.empty() ? 0 : hm[0].size();
-            pixels.reserve(rows * cols);
-            for (const auto& row : hm)
-            for (double v : row) {
-                pixels.push_back(static_cast<float>(v));
-            }
-            return std::make_unique<std::vector<float>>(pixels);
-        }
 
         std::vector<unsigned char> flatten_heightmap_uchar(const Heightmap& hm){
             std::vector<unsigned char> pixels;
