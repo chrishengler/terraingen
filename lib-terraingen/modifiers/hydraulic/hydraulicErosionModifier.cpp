@@ -14,7 +14,7 @@ namespace tg {
         }
 
         HydraulicErosionModifier::HydraulicErosionModifier(Heightmap &heightmap)
-            : Modifier(heightmap), rng(std::mt19937()) {
+            : heightmap(heightmap), rng(std::mt19937()) {
           rng.seed(static_cast<unsigned int>(std::time(0)));
         }
 

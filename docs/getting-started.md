@@ -5,11 +5,9 @@ This guide will help you get up and running with TerrainGen for generating proce
 ## Installation
 
 1. First, ensure you have all required dependencies installed:
-   - CMake 3.x or higher
+   - CMake 3.10 or higher
    - A C++ compiler supporting C++11 or later
-   - LibPNG v1.6
    - Catch2 (for running tests)
-   - PkgConfig (MacOS only)
 
 2. Clone the repository:
    ```bash

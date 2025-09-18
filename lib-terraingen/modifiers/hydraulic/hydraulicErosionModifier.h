@@ -1,5 +1,4 @@
 #pragma once
-#include "modifiers/modifier.h"
 #include "particle.h"
 #include <random>
 
@@ -16,15 +15,16 @@ namespace tg {
         };
 
         std::unique_ptr<Heightmap> applyHydraulicErosion(const std::unique_ptr<Heightmap> &hm, const HydraulicErosionParameters &params);
-        class HydraulicErosionModifier : public Modifier {
+        class HydraulicErosionModifier{
         public:
             explicit HydraulicErosionModifier(Heightmap& heightmap);
-            void operate() override;
+            void operate();
             void setParameters(const HydraulicErosionParameters& params) {
                 this->params = params;
             }
 
         private:
+            Heightmap heightmap;
             HydraulicErosionParameters params;
             Vector2<double> calculateGradient(const Vector2<double>& pos);
             void simulateParticle(Particle& particle);

@@ -17,6 +17,3 @@ To build from source you will need:
 
 * CMake and your build system of choice (e.g. Ninja, make)
 * Catch2
-
-If running MacOS, you will also need PkgConfig
-

@@ -1,5 +1,4 @@
 add_library(modifierslib
-    modifier.h
     hydraulic/hydraulicErosionModifier.cpp
     hydraulic/hydraulicErosionModifier.h
 )
