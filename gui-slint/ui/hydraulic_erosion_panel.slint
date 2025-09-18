@@ -30,9 +30,9 @@ export component HydraulicErosionPanel {
                 text: "Particles";
             }
             SpinBox {
-                minimum: 1;
-                maximum: 10000000;
-                step-size: 1;
+                minimum: 1000;
+                maximum: 1000000;
+                step-size: 1000;
                 value: root.params.num_particles;
                 edited => {
                     root.params.num_particles = self.value;
@@ -46,8 +46,8 @@ export component HydraulicErosionPanel {
                 text: "Inertia";
             }
             Slider { 
-                minimum: 0.1; 
-                maximum: 5.0;
+                minimum: 0.05; 
+                maximum: 1.0;
                 value: root.params.inertia;
                 changed => {
                     root.params.inertia = self.value;
@@ -65,7 +65,7 @@ export component HydraulicErosionPanel {
             }
             Slider { 
                 minimum: 0.1; 
-                maximum: 5.0;
+                maximum: 20.0;
                 value: root.params.gravity;
                 changed => {
                     root.params.gravity = self.value;
@@ -81,8 +81,8 @@ export component HydraulicErosionPanel {
                 text: "Sediment capacity";
             }
             Slider { 
-                minimum: 0.1; 
-                maximum: 5.0;
+                minimum: 0.01; 
+                maximum: 3.0;
                 value: root.params.sediment-capacity;
                 changed => {
                     root.params.sediment-capacity = self.value;
@@ -98,8 +98,8 @@ export component HydraulicErosionPanel {
                 text: "Deposition rate";
             }
             Slider { 
-                minimum: 0.1; 
-                maximum: 5.0;
+                minimum: 0.001; 
+                maximum: 3.0;
                 value: root.params.deposition-rate;
                 changed => {
                     root.params.deposition-rate = self.value;
@@ -115,8 +115,8 @@ export component HydraulicErosionPanel {
                 text: "Erosion rate";
             }
             Slider { 
-                minimum: 0.1; 
-                maximum: 5.0;
+                minimum: 0.001; 
+                maximum: 3.0;
                 value: root.params.erosion-rate;
                 changed => {
                     root.params.erosion-rate = self.value;
@@ -133,9 +133,9 @@ export component HydraulicErosionPanel {
                 text: "Steps per particle";
             }
             SpinBox {
-                minimum: 1;
-                maximum: 10000;
-                step-size: 1;
+                minimum: 10;
+                maximum: 1000;
+                step-size: 10;
                 value: root.params.num-steps;
                 edited => {
                     root.params.num-steps = self.value;
