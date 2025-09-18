@@ -36,7 +36,7 @@ namespace tg {
             }
 
         private:
-            Heightmap heightmap;
+            Heightmap& heightmap;
             HydraulicErosionParameters params;
             Vector2<double> calculateGradient(const Vector2<double>& pos);
             void simulateParticle(Particle& particle);

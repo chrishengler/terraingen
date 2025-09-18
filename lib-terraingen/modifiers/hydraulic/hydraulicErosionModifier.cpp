@@ -3,6 +3,7 @@
 #include <random>
 
 #include "hydraulicErosionModifier.h"
+#include "export/imageExport.h"
 
 namespace tg {
     namespace modify {

@@ -6,9 +6,10 @@ import { GeneratorLayerInfo, GeneratorLayer } from "generator_layer.slint";
 import { DebugHelper } from "debug.slint";
 import { ExportPanel } from "export_panel.slint";
 import { ExportAs } from "export_type.slint";
+import { HydraulicErosionPanel, HEParams } from "hydraulic_erosion_panel.slint";
 
 export component AppWindow inherits Window {
-    width: 1000px;
+    width: 1500px;
     height: 600px;
     title: "Terrain Generator";
     in-out property <int> rows: 512;
@@ -32,6 +33,7 @@ export component AppWindow inherits Window {
     callback update_layer(layer_info: GeneratorLayerInfo, index: int);
     callback update_ds_params(params: DiamondSquareParams);
     callback update_perlin_params(params: PerlinParams);
+    callback apply_hydraulic_erosion(params: HEParams);
 
     GridLayout{
         VerticalLayout { 
@@ -163,6 +165,13 @@ export component AppWindow inherits Window {
                 clicked(exportAs) => {
                     root.save_terrain(exportAs);
                 }
+            }
+        }
+
+        VerticalLayout{
+            HydraulicErosionPanel {
+                active: root.terrain_ready;
+                clicked => {root.apply_hydraulic_erosion(self.params);}
             }
         }
     }
