@@ -1,20 +1,32 @@
 #pragma once
-#include "particle.h"
+#include <memory>
 #include <random>
+#include "particle.h"
 
 namespace tg {
     namespace modify {
         struct HydraulicErosionParameters {
-            int numParticles = 5000;          // Number of particles to simulate
-            double inertia = 0.7;             // How much velocity is retained between steps
-            double gravity = 9.81;            // Gravitational constant for acceleration
-            double sedimentCapacity = 0.1;    // Maximum sediment a particle can carry
-            double depositionRate = 0.1;      // Rate at which sediment is deposited
-            double erosionRate = 0.1;         // Rate at which erosion occurs
-            int numSteps = 100;               // Number of simulation steps per particle
+            unsigned int numParticles = 5000;          // Number of particles to simulate
+            float inertia = 0.7f;                      // How much velocity is retained between steps
+            float gravity = 9.81f;                     // Gravitational constant for acceleration
+            float sedimentCapacity = 0.1f;             // Maximum sediment a particle can carry
+            float depositionRate = 0.1f;               // Rate at which sediment is deposited
+            float erosionRate = 0.1f;                  // Rate at which erosion occurs
+            unsigned int numSteps = 100;               // Number of simulation steps per particle
         };
 
+        std::unique_ptr<HydraulicErosionParameters> build_hydraulic_erosion_parameters(
+            unsigned int numParticles,
+            float inertia,
+            float gravity,
+            float sedimentCapacity,
+            float depositionRate,
+            float erosionRate,
+            unsigned int numSteps
+        );
+
         std::unique_ptr<Heightmap> applyHydraulicErosion(const std::unique_ptr<Heightmap> &hm, const HydraulicErosionParameters &params);
+
         class HydraulicErosionModifier{
         public:
             explicit HydraulicErosionModifier(Heightmap& heightmap);

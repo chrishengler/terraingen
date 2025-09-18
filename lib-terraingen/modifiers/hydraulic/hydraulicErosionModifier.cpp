@@ -6,10 +6,25 @@
 
 namespace tg {
     namespace modify {
+        std::unique_ptr<HydraulicErosionParameters> build_hydraulic_erosion_parameters(
+            unsigned int numParticles,
+            float inertia,
+            float gravity,
+            float sedimentCapacity,
+            float depositionRate,
+            float erosionRate,
+            unsigned int numSteps
+        ){
+          return std::make_unique<HydraulicErosionParameters>(HydraulicErosionParameters{
+            numParticles, inertia, gravity, sedimentCapacity, depositionRate, erosionRate, numSteps
+          });
+        }
+
         std::unique_ptr<Heightmap> applyHydraulicErosion(const std::unique_ptr<Heightmap> &hm, const HydraulicErosionParameters &params){
             auto heightmap = *hm;
             HydraulicErosionModifier hem(heightmap);
             hem.setParameters(params);
+            hem.operate();
             return std::make_unique<Heightmap>(heightmap);
         }
 
@@ -32,8 +47,8 @@ namespace tg {
               int nx = x + dx;
               int ny = y + dy;
 
-              if (nx >= 0 && nx < heightmap.size() && ny >= 0 &&
-                  ny < heightmap[0].size()) {
+              if (nx >= 0 && nx < static_cast<int>(heightmap.size()) && ny >= 0 &&
+                  ny < static_cast<int>(heightmap[0].size())) {
                 double heightDiff = heightmap[x][y] - heightmap[nx][ny];
                 gradient.x += heightDiff * dx;
                 gradient.y += heightDiff * dy;
@@ -143,7 +158,7 @@ namespace tg {
           std::uniform_real_distribution<double> distY(
               0, (double)heightmap[0].size() - 1);
 
-          for (int i = 0; i < params.numParticles; i++) {
+          for (unsigned int i = 0; i < params.numParticles; i++) {
             Vector2<double> startPos{distX(rng), distY(rng)};
             Particle particle(startPos, params.numSteps);
             simulateParticle(particle);

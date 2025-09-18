@@ -60,4 +60,23 @@ pub mod ffi {
         fn generate_perlin_unique(params: &PerlinParameters) -> UniquePtr<Heightmap>;
     }
 
+    #[namespace = "tg::modify"]
+    unsafe extern "C++" {
+        include!("hydraulicErosionModifier.h");
+
+        type HydraulicErosionParameters;
+
+        fn build_hydraulic_erosion_parameters(
+            numParticles: u32,
+            inertia: f32,
+            gravity: f32,
+            sedimentCapacity: f32,
+            depositionRate: f32,
+            erosionRate: f32,
+            numSteps: u32
+        ) -> UniquePtr<HydraulicErosionParameters>;
+
+        fn applyHydraulicErosion(hm: &UniquePtr<Heightmap>, params: &HydraulicErosionParameters) -> UniquePtr<Heightmap>;
+    }
+
 }
