@@ -48,7 +48,7 @@ namespace tg {
         {
             auto flattened_heightmap = flatten_heightmap_16bit(terrain);
             auto dims = getDimensions(terrain);
-            auto error = lodepng::encode(filepath, flattened_heightmap.data(), dims.x, dims.y, LCT_GREY, 16);
+            lodepng::encode(filepath, flattened_heightmap.data(), dims.x, dims.y, LCT_GREY, 16);
         }
 
         void saveToFile(const std::unique_ptr<Heightmap> &terrain, const std::string &filepath, const ExportType &expType){

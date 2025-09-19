@@ -1,0 +1,157 @@
+import { SpinBox, Slider, Button } from "std-widgets.slint";
+
+export struct HEParams {
+    num_particles: int,
+    inertia: float,
+    gravity: float,
+    sediment_capacity: float,
+    deposition_rate: float,
+    erosion_rate: float,
+    num_steps: int,
+}
+
+export component HydraulicErosionPanel {
+    in-out property <HEParams> params: {
+        num-particles: 5000,
+        inertia: 0.7,
+        gravity: 9.81,
+        sediment-capacity: 0.1,
+        deposition-rate: 0.1,
+        erosion-rate: 0.1,
+        num-steps: 100
+    };
+    in property <bool> active;
+    callback params_changed;
+    callback clicked;
+    
+    VerticalLayout{
+        VerticalLayout{
+            Text { 
+                text: "Particles";
+            }
+            SpinBox {
+                minimum: 1000;
+                maximum: 1000000;
+                step-size: 1000;
+                value: root.params.num_particles;
+                edited => {
+                    root.params.num_particles = self.value;
+                    root.params_changed();
+                }
+            }
+        }
+
+        VerticalLayout{
+            Text { 
+                text: "Inertia";
+            }
+            Slider { 
+                minimum: 0.05; 
+                maximum: 1.0;
+                value: root.params.inertia;
+                changed => {
+                    root.params.inertia = self.value;
+                    root.params_changed();
+                }
+            }
+            Text {
+                text: root.params.inertia;
+            }
+        }
+
+        VerticalLayout{
+            Text { 
+                text: "Gravity";
+            }
+            Slider { 
+                minimum: 0.1; 
+                maximum: 20.0;
+                value: root.params.gravity;
+                changed => {
+                    root.params.gravity = self.value;
+                    root.params_changed();
+                }
+            }
+            Text {
+                text: root.params.gravity;
+            }
+        }
+        VerticalLayout{
+            Text { 
+                text: "Sediment capacity";
+            }
+            Slider { 
+                minimum: 0.01; 
+                maximum: 3.0;
+                value: root.params.sediment-capacity;
+                changed => {
+                    root.params.sediment-capacity = self.value;
+                    root.params_changed();
+                }
+            }
+            Text {
+                text: root.params.sediment-capacity;
+            }
+        }
+        VerticalLayout{
+            Text { 
+                text: "Deposition rate";
+            }
+            Slider { 
+                minimum: 0.001; 
+                maximum: 3.0;
+                value: root.params.deposition-rate;
+                changed => {
+                    root.params.deposition-rate = self.value;
+                    root.params_changed();
+                }
+            }
+            Text {
+                text: root.params.deposition-rate;
+            }
+        }
+        VerticalLayout{
+            Text { 
+                text: "Erosion rate";
+            }
+            Slider { 
+                minimum: 0.001; 
+                maximum: 3.0;
+                value: root.params.erosion-rate;
+                changed => {
+                    root.params.erosion-rate = self.value;
+                    root.params_changed();
+                }
+            }
+            Text {
+                text: root.params.erosion-rate;
+            }
+        }
+
+        VerticalLayout{
+            Text { 
+                text: "Steps per particle";
+            }
+            SpinBox {
+                minimum: 10;
+                maximum: 1000;
+                step-size: 10;
+                value: root.params.num-steps;
+                edited => {
+                    root.params.num-steps = self.value;
+                    root.params_changed();
+                }
+            }
+        }
+
+        Button {
+            text: "Apply";
+            enabled: root.active;
+
+            clicked => {
+                root.clicked();
+            }
+        }
+    }
+}
+

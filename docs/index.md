@@ -37,6 +37,4 @@ TerrainGen is a C++ library for procedural terrain generation. It provides tools
 ## Dependencies
 
 - CMake (build system)
-- LibPNG v1.6
 - Catch2 (for tests)
-- PkgConfig (MacOS only)

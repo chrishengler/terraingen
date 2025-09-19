@@ -9,6 +9,8 @@ use slint::Model;
 use slint::ModelRc;
 use slint::VecModel;
 
+use crate::lib_ffi::ffi::applyHydraulicErosion;
+use crate::lib_ffi::ffi::build_hydraulic_erosion_parameters;
 use crate::lib_ffi::ffi::combine;
 use crate::lib_ffi::ffi::flattenHeightmap;
 use crate::lib_ffi::ffi::generate_ds_unique;
@@ -17,6 +19,7 @@ use crate::lib_ffi::ffi::saveToFile;
 use crate::lib_ffi::ffi::ExportType;
 use crate::lib_ffi::ffi::Heightmap;
 use crate::lib_ffi::ffi::HeightmapHandle;
+use crate::lib_ffi::ffi::HydraulicErosionParameters;
 use crate::lib_ffi::ffi::{buildDiamondSquareParameters, buildPerlinParameters};
 
 mod convert_image; 
@@ -32,8 +35,9 @@ pub struct LayerData {
 }
 
 pub struct GeneratedData {
-    pub heightmap: Option<UniquePtr<Heightmap>>,
-    pub image: Option<slint::Image>
+    pub combined_heightmap: Option<UniquePtr<Heightmap>>,
+    pub image: Option<slint::Image>,
+    pub modified_heightmap: Option<UniquePtr<Heightmap>>,
 }
 
 fn default_layer_data() -> LayerData {
@@ -54,6 +58,17 @@ fn exportAs_to_exportType(exportAs: ExportAs) -> ExportType {
         print!("16 bit");
         ExportType::PNG_16
     }
+}
+
+fn convert_he_params(he_params: HEParams) -> UniquePtr<HydraulicErosionParameters> {
+    return build_hydraulic_erosion_parameters(
+        he_params.num_particles as u32, 
+        he_params.inertia, 
+        he_params.gravity, 
+        he_params.sediment_capacity, 
+        he_params.deposition_rate, 
+        he_params.erosion_rate, 
+        he_params.num_steps as u32);
 }
 
 fn default_layer_info() -> GeneratorLayerInfo {
@@ -77,7 +92,7 @@ fn main() {
     let app = AppWindow::new().unwrap();
     let app_weak = app.as_weak();
 
-    let mut generated_data: Rc<RefCell<GeneratedData>> = Rc::new(RefCell::new(GeneratedData { heightmap: None, image: None }));
+    let generated_data: Rc<RefCell<GeneratedData>> = Rc::new(RefCell::new(GeneratedData { combined_heightmap: None, image: None, modified_heightmap: None }));
     let layers = Rc::new(VecModel::default());
     layers.push(default_layer_info());
 
@@ -128,7 +143,7 @@ fn main() {
                 let mut generated_data = generated_data_for_combine.as_ref().borrow_mut();
                 let flattened_map = flattenHeightmap(combined_hm.as_ref().expect("failed to unwrap heightmap"));
                 let image = vec_to_image(&flattened_map, cols as usize, rows as usize); 
-                generated_data.heightmap = Some(combined_hm);
+                generated_data.combined_heightmap = Some(combined_hm);
                 app.set_heightmap_image(image.clone());
                 generated_data.image = Some(image);
                 app.set_terrain_ready(true);
@@ -137,23 +152,20 @@ fn main() {
     }
     );
 
-    let app_weak_for_save = app_weak.clone();
     let data_for_save = generated_data.clone();
     app.on_save_terrain(move |export_as| {
-        if let Some(app) = app_weak_for_save.upgrade(){
-            let default_path = std::env::current_dir().unwrap();
-            let export_type = exportAs_to_exportType(export_as);
+        let default_path = std::env::current_dir().unwrap();
+        let export_type = exportAs_to_exportType(export_as);
 
-            if let Some(hm) = &data_for_save.as_ref().borrow().heightmap {
-                if let Some(res) = rfd::FileDialog::new()
-                    .set_file_name("heightmap.png")
-                    .set_directory(&default_path)
-                    .save_file(){
+        if let Some(hm) = &data_for_save.as_ref().borrow().combined_heightmap {
+            if let Some(res) = rfd::FileDialog::new()
+                .set_file_name("heightmap.png")
+                .set_directory(&default_path)
+                .save_file(){
 
-                    if let Some(path_string) = res.as_os_str().to_str(){
-                        let_cxx_string!(cxx_path = path_string);
-                        saveToFile(&hm, &cxx_path, &export_type);
-                    }
+                if let Some(path_string) = res.as_os_str().to_str(){
+                    let_cxx_string!(cxx_path = path_string);
+                    saveToFile(&hm, &cxx_path, &export_type);
                 }
             }
         }
@@ -215,6 +227,27 @@ fn main() {
                         row.perlin_params = params.clone();
                         layers.set_row_data(i, row);
                     }
+                }
+            }
+        }
+    });
+
+    app.on_apply_hydraulic_erosion({
+        let generated_for_erosion = generated_data.clone();
+        let app_weak_for_erosion = app_weak.clone();
+        move |params| {
+            if let Some(app) = app_weak_for_erosion.upgrade(){
+                let he_params = convert_he_params(params);
+                let mut generated_data = generated_for_erosion.as_ref().borrow_mut();
+                if let Some(combined_hm) = &generated_data.combined_heightmap{
+                    let modified_hm = applyHydraulicErosion(&combined_hm, he_params.as_ref().expect("failed to unwrap he params"));
+                    let flattened_map = flattenHeightmap(modified_hm.as_ref().expect("failed to unwrap heightmap"));
+                    generated_data.modified_heightmap = Some(modified_hm);
+                    let cols = app.get_cols();
+                    let rows = app.get_rows();
+                    let image = vec_to_image(&flattened_map, cols as usize, rows as usize); 
+                    app.set_heightmap_image(image.clone());
+                    generated_data.image = Some(image);
                 }
             }
         }
