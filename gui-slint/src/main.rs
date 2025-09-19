@@ -92,7 +92,7 @@ fn main() {
     let app = AppWindow::new().unwrap();
     let app_weak = app.as_weak();
 
-    let mut generated_data: Rc<RefCell<GeneratedData>> = Rc::new(RefCell::new(GeneratedData { combined_heightmap: None, image: None, modified_heightmap: None }));
+    let generated_data: Rc<RefCell<GeneratedData>> = Rc::new(RefCell::new(GeneratedData { combined_heightmap: None, image: None, modified_heightmap: None }));
     let layers = Rc::new(VecModel::default());
     layers.push(default_layer_info());
 
@@ -152,23 +152,20 @@ fn main() {
     }
     );
 
-    let app_weak_for_save = app_weak.clone();
     let data_for_save = generated_data.clone();
     app.on_save_terrain(move |export_as| {
-        if let Some(app) = app_weak_for_save.upgrade(){
-            let default_path = std::env::current_dir().unwrap();
-            let export_type = exportAs_to_exportType(export_as);
+        let default_path = std::env::current_dir().unwrap();
+        let export_type = exportAs_to_exportType(export_as);
 
-            if let Some(hm) = &data_for_save.as_ref().borrow().combined_heightmap {
-                if let Some(res) = rfd::FileDialog::new()
-                    .set_file_name("heightmap.png")
-                    .set_directory(&default_path)
-                    .save_file(){
+        if let Some(hm) = &data_for_save.as_ref().borrow().combined_heightmap {
+            if let Some(res) = rfd::FileDialog::new()
+                .set_file_name("heightmap.png")
+                .set_directory(&default_path)
+                .save_file(){
 
-                    if let Some(path_string) = res.as_os_str().to_str(){
-                        let_cxx_string!(cxx_path = path_string);
-                        saveToFile(&hm, &cxx_path, &export_type);
-                    }
+                if let Some(path_string) = res.as_os_str().to_str(){
+                    let_cxx_string!(cxx_path = path_string);
+                    saveToFile(&hm, &cxx_path, &export_type);
                 }
             }
         }
