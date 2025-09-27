@@ -118,27 +118,29 @@ export component AppWindow inherits Window {
             }
         }
         VerticalLayout {
-            if root.selected_layer_index >= 0 : Rectangle {
-                if root.selected_algorithm == GeneratorType.perlin : PerlinPanel { 
-                    params <=> root.current_perlin_params;
+            for selected_layer_index in (root.selected_layer_index >= 0 ? [root.selected_layer_index] : []) : 
+                Rectangle {
+                    if root.selected_algorithm == GeneratorType.perlin : PerlinPanel { 
+                        params <=> root.current_perlin_params;
 
-                    params_changed => {
-                        if root.selected_layer_index >= 0 {
-                            root.update_perlin_params(self.params);
+                        params_changed => {
+                            if root.selected_layer_index >= 0 {
+                                root.update_perlin_params(self.params);
+                            }
+                        }
+                    }
+
+                    if root.selected_algorithm == GeneratorType.diamondsquare : DiamondSquarePanel {
+                        params <=> root.current_ds_params;
+
+                        params_changed => {
+                            if root.selected_layer_index >= 0 {
+                                root.update_ds_params(self.params);
+                            }
                         }
                     }
                 }
 
-                if root.selected_algorithm == GeneratorType.diamondsquare : DiamondSquarePanel {
-                    params <=> root.current_ds_params;
-
-                    params_changed => {
-                        if root.selected_layer_index >= 0 {
-                            root.update_ds_params(self.params);
-                        }
-                    }
-                }
-            }
             Rectangle {}
 
             Button {
@@ -149,7 +151,6 @@ export component AppWindow inherits Window {
                     root.invoke_generate(root.selected_algorithm);
                 }
             }
-            
         }
 
         VerticalLayout{
