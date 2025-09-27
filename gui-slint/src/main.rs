@@ -80,12 +80,37 @@ fn default_layer_info() -> GeneratorLayerInfo {
     }
 }
 
-pub fn set_layer_data(layer_data_vec: Rc::<RefCell::<Vec::<LayerData>>>, index: i32, heightmap: Option<UniquePtr<Heightmap>>, image: Option<Image>) {
+pub fn reset_specific_layer_data(layer_data_vec: Rc::<RefCell::<Vec::<LayerData>>>, index: i32) {
+    let mut layer_data_access = layer_data_vec.as_ref().borrow_mut();
+    if let Some(layer_data) = layer_data_access.get_mut(index as usize) {
+        *layer_data = default_layer_data();
+    }
+}
+
+pub fn reset_all_layer_data(layer_data_vec: Rc::<RefCell::<Vec::<LayerData>>>) {
+    let mut layer_data_access = layer_data_vec.as_ref().borrow_mut();
+    for layer in layer_data_access.iter_mut() {
+        *layer = default_layer_data();
+    }
+}
+
+pub fn store_layer_data(layer_data_vec: Rc::<RefCell::<Vec::<LayerData>>>, index: i32, heightmap: Option<UniquePtr<Heightmap>>, image: Option<Image>) {
     let mut layer_data_access = layer_data_vec.as_ref().borrow_mut();
     if let Some(layer_data) = layer_data_access.get_mut(index as usize) {
         layer_data.heightmap = heightmap;
         layer_data.image = image;
+        layer_data.initialised = true;
     }
+}
+
+fn ready_for_combination(layer_data_vec: Rc::<RefCell::<Vec::<LayerData>>>) -> bool {
+    let layer_data_access = layer_data_vec.as_ref().borrow();
+    for layer in layer_data_access.iter() {
+        if !layer.initialised {
+            return false;
+        }
+    }
+    return true;
 }
 
 fn main() {
@@ -93,35 +118,35 @@ fn main() {
     let app_weak = app.as_weak();
 
     let generated_data: Rc<RefCell<GeneratedData>> = Rc::new(RefCell::new(GeneratedData { combined_heightmap: None, image: None, modified_heightmap: None }));
-    let layers = Rc::new(VecModel::default());
-    layers.push(default_layer_info());
+    let layer_info = Rc::new(VecModel::default());
+    layer_info.push(default_layer_info());
 
     let layer_data: Rc<RefCell<Vec<LayerData>>> = Rc::new(RefCell::new(Vec::new()));
     layer_data.as_ref().borrow_mut().push(default_layer_data());
 
-    app.set_layers(ModelRc::from(layers.clone()));
+    app.set_layers(ModelRc::from(layer_info.clone()));
 
-    let mut layers_for_add = layers.clone();
+    let mut layer_info_for_add = layer_info.clone();
     let layer_data_for_add = layer_data.clone();
     app.on_add_layer({
         move || {
             layer_data_for_add.as_ref().borrow_mut().push(default_layer_data());
-            layers_for_add.borrow_mut().push(default_layer_info());
+            layer_info_for_add.borrow_mut().push(default_layer_info());
         }
     });
 
     let app_weak_for_combine = app_weak.clone();
-    let layers_for_combine = layers.clone();
+    let layer_info_for_combine = layer_info.clone();
     let layer_data_for_combine = layer_data.clone();
     let generated_data_for_combine = generated_data.clone();
     app.on_combine_layers(move || {
-        let len = layers_for_combine.as_ref().row_count();
+        let len = layer_info_for_combine.as_ref().row_count();
 
         let mut heightmap_handles: UniquePtr<CxxVector<HeightmapHandle>> = CxxVector::new();
         let mut weights= CxxVector::<f32>::new();
 
         for idx in 0..len {
-            let layer_info_opt = layers_for_combine.row_data(idx);
+            let layer_info_opt = layer_info_for_combine.row_data(idx);
             if layer_info_opt.is_none() { continue; }
             let layer_info = layer_info_opt.unwrap();
 
@@ -174,14 +199,14 @@ fn main() {
 
 
     let app_weak_for_select = app_weak.clone();
-    let layers_for_select = layers.clone();
+    let layer_info_for_select = layer_info.clone();
     let layer_data_for_select = layer_data.clone();
     app.on_select_layer(move |index| {
         if let Some(app) = app_weak_for_select.upgrade(){
             app.set_selected_layer_index(index);
             app.set_heightmap_image(slint::Image::default());
             if index >= 0 {
-                if let (Some(app), Some(row)) = (app_weak_for_select.upgrade(), layers_for_select.row_data(index as usize)) {
+                if let (Some(app), Some(row)) = (app_weak_for_select.upgrade(), layer_info_for_select.row_data(index as usize)) {
                     app.set_selected_algorithm(row.selected_algorithm);
                     app.set_current_perlin_params(row.perlin_params);
                     app.set_current_ds_params(row.ds_params);
@@ -198,16 +223,31 @@ fn main() {
         }
     }); 
 
+    app.on_size_updated({
+        let layer_data_for_size_update = layer_data.clone();
+        let app_weak = app_weak.clone();
+        move || {
+            if let Some(app) = app_weak.upgrade() {
+                reset_all_layer_data(layer_data_for_size_update.clone());
+                app.set_ready_for_combination(false);
+            }
+        }
+    });
 
     app.on_update_layer({
-        let layers = layers.clone();
+        let layers = layer_info.clone();
+        let layer_data_for_update = layer_data.clone();
         let app_weak = app_weak.clone();
         move |layer_info, idx| {
             if let Some(app) = app_weak.upgrade() {
                 if idx >= 0 {
                     if let Some(mut row) = layers.row_data(idx as usize) {
                         row = layer_info.clone();
-                        app.set_selected_algorithm(row.selected_algorithm);
+                        if row.selected_algorithm != app.get_selected_algorithm() {
+                            app.set_selected_algorithm(row.selected_algorithm);
+                            app.set_ready_for_combination(false);
+                            reset_specific_layer_data(layer_data_for_update.clone(), idx);
+                        }
                         layers.set_row_data(idx as usize, row);
                     }
                 }
@@ -215,17 +255,36 @@ fn main() {
         }
     });
 
-    app.on_update_perlin_params({
-        let layers = layers.clone();
+    app.on_update_ds_params({
+        let layer_info = layer_info.clone();
+        let layer_data_for_update_ds = layer_data.clone();
         let app_weak = app_weak.clone();
         move |params| {
             if let Some(app) = app_weak.upgrade() {
                 let idx = app.get_selected_layer_index();
                 if idx >= 0 {
                     let i = idx as usize;
-                    if let Some(mut row) = layers.row_data(i) {
+                    if let Some(mut row) = layer_info.row_data(i) {
+                        row.ds_params = params.clone();
+                        reset_specific_layer_data(layer_data_for_update_ds.clone(), idx);
+                    }
+                }
+            }
+        }
+    });
+
+    app.on_update_perlin_params({
+        let layer_info = layer_info.clone();
+        let layer_data_for_update_perlin = layer_data.clone();
+        let app_weak = app_weak.clone();
+        move |params| {
+            if let Some(app) = app_weak.upgrade() {
+                let idx = app.get_selected_layer_index();
+                if idx >= 0 {
+                    let i = idx as usize;
+                    if let Some(mut row) = layer_info.row_data(i) {
                         row.perlin_params = params.clone();
-                        layers.set_row_data(i, row);
+                        reset_specific_layer_data(layer_data_for_update_perlin.clone(), idx);
                     }
                 }
             }
@@ -271,7 +330,7 @@ fn main() {
                         let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
                     
                         let image = vec_to_image(&image, cols as usize, rows as usize);
-                        set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
+                        store_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
                         app.set_heightmap_image(image);
                     }
                 } 
@@ -288,12 +347,13 @@ fn main() {
                         let image = flattenHeightmap(hm.as_ref().expect("failed to unwrap heightmap"));
 
                         let image = vec_to_image(&image, cols as usize, rows as usize);
-                        set_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
+                        store_layer_data(layer_data_for_invoke.clone(), selected_layer_index, Some(hm), Some(image.clone()));
                         app.set_heightmap_image(image);
                     }
                 }
                 _ => {}
             }
+            app.set_ready_for_combination(ready_for_combination(layer_data_for_invoke.clone()));
         }
     });
 
