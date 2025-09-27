@@ -1,0 +1,59 @@
+import { ListView, Button } from "std-widgets.slint";
+import { GeneratorLayer, GeneratorLayerInfo } from "generator_layer.slint";
+
+export component LayersPanel {
+
+    in-out property <[GeneratorLayerInfo]> layers;
+    in-out property <int> selected_layer_index;
+    in property <bool> ready_for_combination: false;
+
+    callback add_layer();
+    callback combine_layers();
+    callback select_layer(index: int);
+    callback update_layer(layer_info: GeneratorLayerInfo, index: int);
+
+    VerticalLayout {
+        Text { text: "Layers"; }
+
+            Rectangle {
+                background: #c0c0c0;  
+                border-radius: 6px;
+                clip: true;            
+
+                ListView {
+                    for layer[i] in root.layers: GeneratorLayer { layer_info: layer;  
+                        selected: root.selected_layer_index == i;
+                        clicked => { 
+                            if self.selected { 
+                                root.select_layer(-1); 
+                            }
+                            else {
+                                root.select_layer(i);
+                            }
+                        }
+
+                        updated => {
+                            root.update_layer(self.layer_info, i);
+                            root.select_layer(i);
+                        }
+                    }
+                }
+            }
+           
+            Button {
+                text: "Add Layer";
+                clicked => {
+                    root.add_layer();
+                }
+            }
+
+            Button {
+                text: "Perform combination";
+                enabled: root.ready_for_combination;
+                clicked => {
+                    root.combine_layers();
+                }
+            }
+
+        }
+    }

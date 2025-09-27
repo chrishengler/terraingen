@@ -7,6 +7,7 @@ import { DebugHelper } from "debug.slint";
 import { ExportPanel } from "export_panel.slint";
 import { ExportAs } from "export_type.slint";
 import { HydraulicErosionPanel, HEParams } from "hydraulic_erosion_panel.slint";
+import { LayersPanel } from "layers_panel.slint";
 
 export component AppWindow inherits Window {
     width: 1500px;
@@ -22,10 +23,12 @@ export component AppWindow inherits Window {
     in-out property <DiamondSquareParams> current_ds_params: { seed: 0, roughness: 1 };
     in-out property <GeneratorType> selected_algorithm;
 
-    in property <image> heightmap_image;
+    in-out property <image> heightmap_image;
+    in-out property <bool> ready_for_combination: false;
     in-out property <bool> terrain_ready: false;
     out property <ExportAs> export_type;
     callback invoke_generate(algorithm: GeneratorType);
+    callback size_updated();
     callback add_layer();
     callback combine_layers();
     callback save_terrain(exportAs: ExportAs);
@@ -53,6 +56,8 @@ export component AppWindow inherits Window {
                     value: root.cols;
                     edited => {
                         root.cols = self.value;
+                        root.heightmap_image = @image-url("");
+                        root.size_updated();
                     }
                 }
 
@@ -66,54 +71,34 @@ export component AppWindow inherits Window {
                     value: root.rows;
                     edited => {
                         root.rows = self.value;
+                        root.heightmap_image = @image-url("");
+                        root.size_updated();
                     }
                 }
             }
-
-
-            Text { text: "Layers"; }
             DebugHelper {
                 algo: root.selected_algorithm;
                 exportAs: root.export_type;
                 layer: root.selected_layer_index;
             }
 
-            Rectangle {
-                background: #c0c0c0;  
-                border-radius: 6px;
-                clip: true;            
+            LayersPanel {
+                layers <=> root.layers;
+                selected_layer_index <=> root.selected_layer_index;
+                ready_for_combination: root.ready_for_combination;
 
-                ListView {
-                    for layer[i] in root.layers: GeneratorLayer { layer_info: layer;  
-                        selected: root.selected_layer_index == i;
-                        clicked => { 
-                            if self.selected { 
-                                root.select_layer(-1); 
-                            }
-                            else {
-                                root.select_layer(i);
-                            }
-                        }
-
-                        updated => {
-                            root.update_layer(self.layer_info, i);
-                            root.select_layer(i);
-                        }
-                    }
-                }
-            }
-           
-            Button {
-                text: "Add Layer";
-                clicked => {
+                add_layer => {
                     root.add_layer();
+                    root.ready_for_combination = false;
                 }
-            }
-
-            Button {
-                text: "Perform combination";
-                clicked => {
+                combine_layers => {
                     root.combine_layers();
+                }
+                select_layer(index) => {
+                    root.select_layer(index);
+                }
+                update_layer(layer-info, index) => {
+                    root.update_layer(layer-info, index);
                 }
             }
         }
